@@ -1,0 +1,30 @@
+body{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: #18191A;
+}
+
+p {
+    color: white;
+}
+
+h2 {
+    color: white;
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+
+#content {
+    display: flex;
+    justify-content: center;
+    background-color: #18191A;
+}
+
+.section {
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    background-color:#242526;
+}
