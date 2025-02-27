@@ -2,10 +2,10 @@
     <div class="section">
          <div style="display: flex; flex-direction: column; justify-content: space-between;">
             <div>
-                <h2>{{ this.userName}}'s Recorded Games</h2>
+                <h2 id="playerRecordedGames">{{ this.userName}}'s Recorded Games</h2>
             </div>
-            <div style="margin-right: 5px; display: flex; flex-direction: row; width: 600px; flex-wrap: wrap;">
-                <div v-for="game in [...recentGames].reverse()">
+            <div style="margin-right: 5px; display: flex; flex-direction: row; width: 792px; flex-wrap: wrap;">
+                <div v-for="game in [...recentGames]">
                     <RecentGame :gameData="game"/>
                 </div>
             </div>
@@ -51,3 +51,10 @@ export default {
     }
 }
 </script>
+
+<style>
+#playerRecordedGames{
+    margin: 0px;
+    margin-left: 10px;
+}
+</style>

@@ -13,6 +13,11 @@ const router = createRouter({
       name: 'GameRecords',
       component: () => import("../components/GameRecords.vue"),
     },
+    {
+      path: '/addrecord',
+      name: 'AddRecord',
+      component: () => import("../components/AddRecord.vue"),
+    },
   ],
 })
 

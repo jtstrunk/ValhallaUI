@@ -2,12 +2,12 @@
     <nav>
         <h2>Valhalla's Tabletop Games</h2>
         <div style="display: flex; flex-direction: row;" >
-            <a href="/home" class="">Return Home</a>
-            <a href="/addGame" class="">Add Record</a>
+            <a href="/" class="">Return Home</a>
+            <a href="/addrecord" class="">Add Record</a>
             <div class="dropdown MobileHide">
                 <button class="dropbtn" style="width: 85px !important;">View Tools</button>
                 <div class="dropdown-content">
-                    <a href="/showGames">View Records</a>
+                    <a href="/gamerecords">View Records</a>
                     <a href="/DominionSelect">Dominion Selector</a>
                 </div>
             </div>
@@ -16,6 +16,25 @@
         </div>
     </nav>
 </template>
+
+<script>
+import axios from "axios"
+
+export default {
+    name: "Home",
+    data(){
+        return{
+            userName: 'Josh',
+            posterID: 1
+        }
+    },
+    methods: {
+        test(){
+            console.log("ADD GAME SCREEN");
+        },
+    },
+}
+</script>
 
 <style>
 nav{

@@ -1,6 +1,6 @@
 <template>
     <div id="content">
-        <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 510px; position: sticky; top: 60px;">
+        <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
             <div>
                 <img src="/src/assets/profilepictures/joshpfp.png" id="profile" onclick="location.href='/profile?name=current'">
             </div>
@@ -55,13 +55,13 @@
                 </div>
             </div>
         </div>
-        <div class="section MobileHide" style="width: 290px; height: 510px; position: sticky; top: 60px;">
+        <div class="section MobileHide" style="width: 290px; height: 530px; position: sticky; top: 60px;">
             <div id="quickadd">
                 <h2 style="color: white; margin-top: 0px; margin-bottom: 14px;">Quick Features</h2>
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Dominion</p>
-                        <button id="addDominion" style="width: 170px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addDominion" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/Dominion.png">
                 </div>
@@ -69,7 +69,7 @@
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Heat</p>
-                        <button id="addHeat" style="width: 170px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addHeat" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/Heat.png">
                 </div>
@@ -77,7 +77,7 @@
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Clank</p>
-                        <button id="addClank" style="width: 170px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addClank" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/Clank.png">
                 </div>
@@ -85,7 +85,7 @@
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Lords of Waterdeep</p>
-                        <button id="addLords" style="width: 170px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addLords" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/LordsofWaterdeep.png">
                 </div>
@@ -93,7 +93,7 @@
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Race for the Galaxy</p>
-                        <button id="addRace" style="width: 170px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addRace" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/RacefortheGalaxy.png">
                 </div>
@@ -283,7 +283,7 @@ export default {
     padding: 10px; 
     border-radius: 5px; 
     margin-top: 25px; 
-    width: 250px;
+    width: 270px;
 }
 
 #latestGame p {
@@ -305,7 +305,7 @@ export default {
     padding: 10px; 
     border-radius: 5px; 
     margin-top: 10px; 
-    width: 250px;
+    width: 270px;
 }
 
 .quickLink:hover {
@@ -317,7 +317,7 @@ export default {
 .quickgame {
     display: flex;
     flex-direction: row;
-    width: 280px;
+    width: 270px;
     justify-content: space-between;
     margin-top: 10px;
     background-color: #3A3B3C;
@@ -332,7 +332,7 @@ export default {
 }
 .quickgame p {
     color: white;
-    font-size: larger;
+    font-size: large;
     margin-bottom: 8px;
     margin-top: 6px;
     font-family: 'Manolo Mono', sans-serif !important;
