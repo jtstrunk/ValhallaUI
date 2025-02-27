@@ -100,8 +100,6 @@
             </div>
         </div>
     </div>
-
-    
 </template>
 
 
@@ -178,20 +176,6 @@ export default {
                 console.error("Error fetching data:", error);
             });
         },
-        async fetchUsersPlayedWith(user) {
-            axios.get(`http://127.0.0.1:8000/getuseruniqueplayers/${user}`, {
-            withCredentials: false,
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(response => {
-                console.log(response.data)
-                // this.apiData = response.data;
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-            });
-        },
         async fetchCards(cardType) {
             let res = await fetch(`http://127.0.0.1:5000/type?cardType=${cardType}`);
             let cards = await res.json();
@@ -225,7 +209,6 @@ export default {
         this.test();
         this.fetchGames('josh');
         this.fetchUserStats('josh');
-        this.fetchUsersPlayedWith('josh');
     }
 }
 </script>

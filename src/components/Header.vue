@@ -2,17 +2,17 @@
     <nav>
         <h2>Valhalla's Tabletop Games</h2>
         <div style="display: flex; flex-direction: row;" >
-            <a href="/" class="">Return Home</a>
-            <a href="/addrecord" class="">Add Record</a>
+            <router-link to="/" class="">Return Home</router-link>
+            <router-link to="/addrecord" class="">Add Record</router-link>
             <div class="dropdown MobileHide">
                 <button class="dropbtn" style="width: 85px !important;">View Tools</button>
                 <div class="dropdown-content">
-                    <a href="/gamerecords">View Records</a>
-                    <a href="/DominionSelect">Dominion Selector</a>
+                    <router-link to="/gamerecords">View Records</router-link>
+                    <!-- <router-link to="/DominionSelect">Dominion Selector</router-link> -->
                 </div>
             </div>
-            <a href="/profile?name=current" class="">Your Profile</a>
-            <a href="/logout" class="">Log Out</a>
+            <!-- <router-link to="/profile?name=current" class="">Your Profile</router-link>
+            <router-link to="/logout" class="">Log Out</router-link> -->
         </div>
     </nav>
 </template>
@@ -50,7 +50,6 @@ nav{
 
 nav a {
     margin: 10px;
-    height: 20px;
     text-decoration: none;
     padding-top: 4px;
     padding-bottom: 4px;

@@ -45,7 +45,7 @@
             </div>
             <div class="players">
                 <div class="playerSection">
-                    <label for="secondName">Runner Up</label>
+                    <label for="secondName">Second</label>
                     <AutoComplete v-model="secondName" :suggestions="filteredNames" optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'second')" id="secondName"
                         class="custom-autocomplete" optionValue="name" @change="inputName($event, 'second')"  @keydown="handleKeyDown($event, 'second')"
@@ -159,7 +159,6 @@
                     <Input v-model.number="fifthScore" id="fifthScore"></Input>
                 </div>
             </div>
-            <Input v-model="date" id="date"></Input>
             <button class="btn-primary" @click="submitRecord">Submit Record</button>
         </div>
     </div>
@@ -170,7 +169,6 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import Dialog from 'primevue/dialog'
-import Enumerable from "linq";
 
 export default {
     name: "Add Record",
@@ -192,8 +190,7 @@ export default {
             fourthName: null,
             fourthScore: null,
             fifthName: null,
-            fifthScore: null,
-            date: null
+            fifthScore: null
         }
     },
     components: {
@@ -245,8 +242,7 @@ export default {
                 "fourthname": this.fourthName,
                 "fourthscore": this.fourthScore,
                 "fifthname": this.fifthName,
-                "fifthscore": this.fifthScore,
-                "date": this.date
+                "fifthscore": this.fifthScore
             }
 
             console.log(insertObject)
@@ -401,12 +397,6 @@ input {
     color: white;
 }
 
-.customAutocomplete input::placeholder {
-    color: #2e6da4;
-}
-
-
-
 .btn-primary{
     color: #fff;
     background-color: #337ab7;
@@ -422,6 +412,17 @@ input {
     border-radius: 4px;
 }
 
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
+    backdrop-filter: blur(3px); /* Apply the blur effect to the overlay */
+    z-index: 1000; /* Ensure the overlay is behind the popup */
+}
+
 .gamepopup {
     width: 450px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -433,17 +434,6 @@ input {
     border-radius: 8%;
     text-align: center;
     z-index: 1001;
-}
-
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
-    backdrop-filter: blur(3px); /* Apply the blur effect to the overlay */
-    z-index: 1000; /* Ensure the overlay is behind the popup */
 }
 
 .customAutocomplete {
