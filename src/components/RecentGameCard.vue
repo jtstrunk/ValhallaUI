@@ -191,6 +191,9 @@ export default {
         gameData: { 
             Object
         },
+        suggestedNames: { 
+            Array
+        }
     },
     data(){
         return{

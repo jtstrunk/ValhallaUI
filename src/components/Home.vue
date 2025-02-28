@@ -12,7 +12,7 @@
                     <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostplayed }}</p>
                 </div>
                 <div class="stat">
-                    <img class="icon" src="/src/assets/icons/mostwon.png" style="width: 25px;">
+                    <img class="icon" src="/src/assets/icons/mostwon.png" style="width: 3%;">
                     <p style="margin-top: 14px;">Most Won Game</p>
                     <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostwon }}</p>
                 </div>
@@ -24,11 +24,11 @@
                     <span style="font-size: medium;">{{ formattedDate }}</span>
                 </div>
             </div>
-            <div onclick="location.href='/showGames'" class="quickLink">
+            <div @click="$router.push('/gamerecords')" class="quickLink">
                 <span style="color: white;">View Your Games</span>
                 <img src="/src/assets/icons/arrow.png" class="arrow">
             </div>
-            <div onclick="location.href='/DominionSelect'" class="quickLink" >
+            <div class="quickLink" >
                 <span style="color: white;">Dominion Selector</span>
                 <img src="/src/assets/icons/arrow.png" class="arrow">
             </div>
@@ -44,13 +44,13 @@
                 </div>
                 <div v-if="showGrid" style="display: flex; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames.slice(0, 9)">
-                        <RecentGame :gameData="game"/>
+                        <RecentGame :gameData="game" :showingGames="showingGames" :suggestedNames="suggestedNames"/>
                     </div>
                 </div>
 
                 <div v-if="showList" style="display: flex; justify-content: center; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames">
-                        <RecentGameCard :gameData="game"/>
+                        <RecentGameCard :gameData="game" :suggestedNames="suggestedNames"/>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Dominion</p>
-                        <button id="addDominion" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addDominion" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/Dominion.png">
                 </div>
@@ -117,6 +117,8 @@ export default {
             showList: true,
             recentGamesIndex: 1,
             recentGames: [],
+            showingGames: [],
+            suggestedNames: [],
             userStats: Object,
         }
     },
@@ -125,21 +127,14 @@ export default {
         RecentGameCard
     },
     methods: {
-        test(){
-            console.log("AYOO")
-        },
         swapView(type) {
-            console.log(type);
-            
             if (type === 'list') {
                 if (!this.showList) {
-                    // Only swap if we're not already in list view
                     this.showList = true;
                     this.showGrid = false;
                 }
             } else if (type === 'grid') {
                 if (!this.showGrid) {
-                    // Only swap if we're not already in grid view
                     this.showGrid = true;
                     this.showList = false;
                 }
@@ -170,17 +165,34 @@ export default {
             .then(response => {
                 console.log(response.data)
                 this.userStats = response.data;
-                // this.apiData = response.data;
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
             });
         },
-        async fetchCards(cardType) {
-            let res = await fetch(`http://127.0.0.1:5000/type?cardType=${cardType}`);
-            let cards = await res.json();
-            return cards;
-        }
+        async fetchUsersPlayedWith(user) {
+            axios.get(`http://127.0.0.1:8000/getuseruniqueplayers/${user}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                this.suggestedNames = response.data;
+                console.log(response.data)
+
+                if (!this.suggestedNames.some(item => item.name === user)) {
+                    this.suggestedNames.unshift({ name: user });
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        // async fetchCards(cardType) {
+        //     let res = await fetch(`http://127.0.0.1:5000/type?cardType=${cardType}`);
+        //     let cards = await res.json();
+        //     return cards;
+        // }
     },
     computed: {
         headerWidth() {
@@ -195,7 +207,6 @@ export default {
         },
         formattedDate(){
             let parts = this.recentGames[0].date.split('-');
-            // let parts = this.gameData.date.split('-');
             let year = parts[0];
             let month = parts[1];
             let day = parts[2];
@@ -206,9 +217,9 @@ export default {
         }
     },
     created() {
-        this.test();
         this.fetchGames('josh');
         this.fetchUserStats('josh');
+        this.fetchUsersPlayedWith('josh');
     }
 }
 </script>
@@ -228,7 +239,6 @@ export default {
 .stat {
     width: 270px;
     height: 80px;
-    /* border: 1px solid #17a2b8; */
     background-color: #3A3B3C;
     margin-top: 35px;
     display: flex;
@@ -250,11 +260,10 @@ export default {
 .icon {
     background-color: #3A3B3C;
     z-index: 199;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     position: absolute;
-    top: -22px;
-    /* border: 1px solid white; */
+    top: -25px;
     border-radius: 50%;
     border-bottom-right-radius: 0px !important;
     border-bottom-left-radius: 0px !important;
@@ -307,11 +316,9 @@ export default {
     padding-left: 6px;
     border-radius:5px !important;
 }
-
 .quickgame:hover {
     transform: scale(1.02);
     transition: transform 0.2s;
-    cursor: pointer;
 }
 .quickgame p {
     color: white;
@@ -334,9 +341,11 @@ export default {
     margin-top: 5px;
 }
 
-.quickadd{
+.quickadd {
+    width: 160px;
     border-radius: 4px;
     outline: none;
     font-size: medium;
+    cursor: pointer;
 }
 </style>

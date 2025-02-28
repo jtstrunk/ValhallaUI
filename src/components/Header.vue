@@ -1,6 +1,6 @@
 <template>
     <nav>
-        <h2>Valhalla's Tabletop Games</h2>
+        <h2 @click="$router.push('/')">Valhalla's Tabletop Games</h2>
         <div style="display: flex; flex-direction: row;" >
             <router-link to="/" class="">Return Home</router-link>
             <router-link to="/addrecord" class="">Add Record</router-link>
@@ -47,7 +47,6 @@ nav{
     top: 0px;
     z-index: 1000;
 }
-
 nav a {
     margin: 10px;
     text-decoration: none;
@@ -61,15 +60,14 @@ nav a {
     color: black;
     background-color: white;
 }
-
 nav h2 {
     margin-top: 10px;
     margin-bottom: 12px;
     margin-right: 100px;
     color: white;
+    cursor: pointer;
 }
 
-/* Style the dropdown button */
 .dropbtn {
     margin: 10px;
     height: 30px;
@@ -87,7 +85,6 @@ nav h2 {
     cursor: pointer;
     font-size: 15px;
 }
-
 .dropbtn:hover {
     margin: 10px;
     height: 30px;
@@ -105,24 +102,17 @@ nav h2 {
     cursor: pointer;
     font-size: 15px;
 }
-  
-/* Style the dropdown content (hidden by default) */
 .dropdown-content {
     display: none;
     position: absolute;
     z-index: 1;
-    /* display: block;
-    width: 90px; */
 }
-
 .dropdown:hover a {
     width: 130px;
     display: block;
     margin: 0 10px;
     margin-bottom: 2px;
 }
-  
-/* Show the dropdown content on hover */
 .dropdown:hover .dropdown-content {
     display: block;
     width: 90px;
