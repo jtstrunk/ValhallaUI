@@ -1,4 +1,5 @@
 <template>
+    <!-- <button @click="handleLogout">Logout</button> -->
     <div id="content">
         <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
             <div>
@@ -12,7 +13,7 @@
                     <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostplayed }}</p>
                 </div>
                 <div class="stat">
-                    <img class="icon" src="/src/assets/icons/mostwon.png" style="width: 3%;">
+                    <img class="icon" src="/src/assets/icons/mostwon.png" style="width: 35px;">
                     <p style="margin-top: 14px;">Most Won Game</p>
                     <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostwon }}</p>
                 </div>
@@ -107,6 +108,7 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import RecentGameCard from './RecentGameCard.vue'
+import { userState } from '/src/state/userState'
 
 export default {
     name: "Home",
@@ -220,6 +222,8 @@ export default {
         this.fetchGames('josh');
         this.fetchUserStats('josh');
         this.fetchUsersPlayedWith('josh');
+        console.log(userState.userID)
+        console.log(userState.username)
     }
 }
 </script>

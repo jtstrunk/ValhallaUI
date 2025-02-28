@@ -50,7 +50,6 @@
                                 style: { backgroundColor: '#404040', transform: 'translateY(8px)', 
                                 borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
                             }
-                            
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
@@ -79,7 +78,6 @@
                             pcInputText: {
                                 style: { '::placeholder': { color: '#2e6da4' } }
                             }
-                            
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
@@ -108,7 +106,6 @@
                             pcInputText: {
                                 style: { '::placeholder': { color: '#2e6da4' } }
                             }
-                            
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
@@ -137,7 +134,6 @@
                             pcInputText: {
                                 style: { '::placeholder': { color: '#2e6da4' } }
                             }
-                            
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
@@ -166,7 +162,6 @@
                             pcInputText: {
                                 style: { '::placeholder': { color: '#2e6da4' } }
                             }
-                            
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
