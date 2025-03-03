@@ -25,7 +25,7 @@
                 </div>
                 <div style="margin-right: 5px; display: flex; flex-direction: row; width: 792px; flex-wrap: wrap;">
                     <div v-for="game in [...recentGames]">
-                        <RecentGame :gameData="game" :showingGames="showingGames" :suggestedNames="suggestedNames"/>
+                        <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" :showingGames="showingGames"/>
                     </div>
                 </div>
             </div>
@@ -46,6 +46,7 @@ export default {
             recentGames: [],
             showingGames: [],
             suggestedNames: [],
+            isVisitor: false,
         }
     },
     components: {
@@ -98,7 +99,12 @@ export default {
         },
     },
     created() {
-        this.fetchGames(this.userName);
+        let searchName = this.userName;
+        if(searchName == 'Guest') {
+            searchName = 'josh'
+            this.isVisitor = true;
+        }
+        this.fetchGames(searchName);
         this.fetchUsersPlayedWith(this.userName);
     }
 }

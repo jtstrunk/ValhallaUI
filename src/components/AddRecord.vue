@@ -159,7 +159,7 @@
                     <Input v-model.number="fifthScore" id="fifthScore"></Input>
                 </div>
             </div>
-            <button class="btn-primary" @click="submitRecord">Submit Record</button>
+            <button class="btn-primary" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
         </div>
     </div>
 </template>
@@ -178,6 +178,7 @@ export default {
             userName: userState.username,
             userID: userState.userID,
             showDialog: false,
+            isVisitor: false,
             insertingGameName: '',
             insertingPlayerCount: null,
             filteredNames: [],
@@ -224,15 +225,10 @@ export default {
             this[placement + 'Name'] = name;
         },
         inputName(input, placement) {
-            console.log('input name')
-            console.log(input)
-            console.log(placement)
             this.positionMapping[placement] = input.value;
             this[placement + 'Name'] = input.value;
-            console.log(this[placement + 'Name'])
         },
         submitRecord(){
-            console.log(this.userName)
             let insertObject = {
                 "posterid": this.userID,
                 "gamename": this.insertingGameName,
@@ -248,8 +244,6 @@ export default {
                 "fifthscore": this.fifthScore,
                 date: null
             }
-
-            console.log(insertObject)
 
             fetch('http://127.0.0.1:8000/insertgame', {
                 method: 'POST',
@@ -291,11 +285,16 @@ export default {
             }})
             .then(response => {
                 this.suggestedNames = response.data;
-                console.log(response.data)
 
                 if (!this.suggestedNames.some(item => item.name === user)) {
                     this.suggestedNames.unshift({ name: user });
                 }
+
+                if (this.isVisitor == true) {
+                    this.suggestedNames = [
+                        { name: 'Player 1' }, { name: 'Player 2' }, { name: 'Player 3' }, { name: 'Player 4' }, { name: 'Player 5' }, { name: 'Player 6' }];
+                }
+
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -315,6 +314,10 @@ export default {
         },
     },
     created(){
+        let searchName = this.userName;
+        if(searchName == 'Guest') {
+            this.isVisitor = true;
+        }
         this.createMapping();
         this.fetchUsersPlayedWith('josh');
     }
@@ -344,10 +347,10 @@ export default {
     color: white;
 }
 .card {
-    transition: transform 0.2s; /* Add a smooth transition */
+    transition: transform 0.2s;
 } 
 .card:hover {
-    transform: scale(1.04); /* Increase the scale on hover */
+    transform: scale(1.04);
     cursor: pointer;
 }
 
@@ -414,6 +417,8 @@ input {
     text-align: center;
     border: 1px solid transparent;
     border-radius: 4px;
+    width: 150px;
+    cursor: pointer;
 }
 
 #overlay {

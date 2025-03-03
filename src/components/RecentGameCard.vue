@@ -15,15 +15,15 @@
         <div class="gameInformation">
             <div class="podium">
                 <img src="/src/assets/icons/firstblack.png" class="medal">
-                <p class="placer">{{ gameData.winnername }}</p>
+                <p class="placer">{{ this.winnerName }}</p>
             </div>
             <div v-if="gameData.secondname" class="podium">
                 <img src="/src/assets/icons/secondblack.png" class="medal">
-                <p class="placer">{{ gameData.secondname }}</p>
+                <p class="placer">{{ this.secondName }}</p>
             </div>
             <div v-if="gameData.thirdname" class="podium">
                 <img src="/src/assets/icons/thirdblack.png" class="medal">
-                <p class="placer">{{ gameData.thirdname }}</p>
+                <p class="placer">{{ this.thirdName }}</p>
             </div>
         </div>
     </div>
@@ -186,6 +186,9 @@ export default {
         gameData: { 
             Object
         },
+        isVisitor: {
+            Boolean
+        },
         suggestedNames: { 
             Array
         }
@@ -195,37 +198,28 @@ export default {
             userName: userState.username,
             showDialog: false,
             insertingPlayerCount: null,
-            insertingGameName: null,
+            insertingGameName: this.gameData.gamename,
             filteredNames: [],
-            winnerName: null,
-            winnerScore: null,
-            secondName: null,
-            secondScore: null,
-            thirdName: null,
-            thirdScore: null,
-            fourthName: null,
-            fourthScore: null,
-            fifthName: null,
-            fifthScore: null,
-            date: null,
+            winnerName: this.gameData.winnername || null,
+            winnerScore: this.gameData.winnerscore || null,
+            secondName: this.gameData.secondname || null,
+            secondScore: this.gameData.secondscore || null,
+            thirdName: this.gameData.thirdname || null,
+            thirdScore: this.gameData.thirdscore || null,
+            fourthName: this.gameData.fourthname || null,
+            fourthScore: this.gameData.fourthscore || null,
+            fifthName: this.gameData.fifthname || null,
+            fifthScore: this.gameData.fifthscore || null,
+            date: this.gameData.date,
             userMapping: { 1: 'josh', 2: 'john', 3: 'thetwinmeister', 4: 'ethangambles'}
         }
     },
     methods: {
         createPopup(playerCount){
+            if(this.isVisitor == true) {
+                return;
+            }
             this.gameid = this.gameData.gameid;
-            this.insertingGameName = this.gameData.gamename;
-            this.winnerName = this.gameData.winnername || null;
-            this.winnerScore = this.gameData.winnerscore || null;
-            this.secondName = this.gameData.secondname || null;
-            this.secondScore = this.gameData.secondscore || null;
-            this.thirdName = this.gameData.thirdname || null;
-            this.thirdScore = this.gameData.thirdscore || null;
-            this.fourthName = this.gameData.fourthname || null;
-            this.fourthScore = this.gameData.fourthscore || null;
-            this.fifthName = this.gameData.fifthname || null;
-            this.fifthScore = this.gameData.fifthscore || null;
-            this.date = this.gameData.date;
             this.insertingPlayerCount = playerCount.charAt(4);
             this.showDialog = !this.showDialog
         },
@@ -308,6 +302,9 @@ export default {
     },
     computed: {
         profileImageSrc() {
+            if(this.isVisitor == true) {
+                return new URL('../assets/profilepictures/Guest.png', import.meta.url).href;
+            }
             let name = this.userMapping[this.gameData.posterid];
             return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href
         },
@@ -334,6 +331,12 @@ export default {
         }
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
+        }
+
+        if(this.isVisitor == true) {
+            this.winnerName = 'Player 1';
+            this.secondName = 'Player 2';
+            this.thirdName = 'Player 3';
         }
     }
 }

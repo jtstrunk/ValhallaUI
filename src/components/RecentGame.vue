@@ -5,8 +5,8 @@
         </div>
         <div class="gameContent">
             <h4 class="gameName" :style="gameNameStyle">{{ gameData.gamename }}</h4>
-            <h5>Winner: {{ gameData.winnername }}</h5>
-            <h5>Second: {{ gameData.secondname }}</h5>
+            <h5>Winner: {{ this.winnerName }}</h5>
+            <h5>Second: {{ this.secondName }}</h5>
             <span class='gameID' style="font-size: smaller;">Game ID {{ gameData.gameid}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <span style="font-size: smaller;">{{ gameData.date }}</span>
         </div>
@@ -174,50 +174,43 @@ export default {
         gameData: { 
             Object
         },
-        showingGames:{
-            Array
+        isVisitor: {
+            Boolean
         },
         suggestedNames: { 
             Array
-        }
+        },
+        showingGames:{
+            Array
+        },
+
     },
     data(){
         return{
             showDialog: false,
             insertingPlayerCount: null,
-            insertingGameName: null,
+            insertingGameName: this.gameData.gamename,
             filteredNames: [],
-            winnerName: null,
-            winnerScore: null,
-            secondName: null,
-            secondScore: null,
-            thirdName: null,
-            thirdScore: null,
-            fourthName: null,
-            fourthScore: null,
-            fifthName: null,
-            fifthScore: null,
-            date: null
+            winnerName: this.gameData.winnername || null,
+            winnerScore: this.gameData.winnerscore || null,
+            secondName: this.gameData.secondname || null,
+            secondScore: this.gameData.secondscore || null,
+            thirdName: this.gameData.thirdname || null,
+            thirdScore: this.gameData.thirdscore || null,
+            fourthName: this.gameData.fourthname || null,
+            fourthScore: this.gameData.fourthscore || null,
+            fifthName: this.gameData.fifthname || null,
+            fifthScore: this.gameData.fifthscore || null,
+            date: this.gameData.date
         }
     },
     methods: {
         createPopup(playerCount){
-            console.log(this.gameData)
+            if(this.isVisitor == true) {
+                return;
+            }
             this.gameid = this.gameData.gameid;
-            this.insertingGameName = this.gameData.gamename;
-            this.winnerName = this.gameData.winnername || null;
-            this.winnerScore = this.gameData.winnerscore || null;
-            this.secondName = this.gameData.secondname || null;
-            this.secondScore = this.gameData.secondscore || null;
-            this.thirdName = this.gameData.thirdname || null;
-            this.thirdScore = this.gameData.thirdscore || null;
-            this.fourthName = this.gameData.fourthname || null;
-            this.fourthScore = this.gameData.fourthscore || null;
-            this.fifthName = this.gameData.fifthname || null;
-            this.fifthScore = this.gameData.fifthscore || null;
-            this.date = this.gameData.date;
             this.insertingPlayerCount = playerCount.charAt(4);
-            console.log(this.insertingPlayerCount)
             this.showDialog = !this.showDialog
         },
         searchName(event) {
@@ -327,6 +320,11 @@ export default {
         }
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
+        }
+
+        if(this.isVisitor == true) {
+            this.winnerName = 'Player 1';
+            this.secondName = 'Player 2';
         }
     }
 }

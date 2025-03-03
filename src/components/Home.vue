@@ -46,13 +46,13 @@
                 </div>
                 <div v-if="showGrid" style="display: flex; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames.slice(0, 9)">
-                        <RecentGame :gameData="game" :showingGames="showingGames" :suggestedNames="suggestedNames"/>
+                        <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" :showingGames="showingGames"/>
                     </div>
                 </div>
 
                 <div v-if="showList" style="display: flex; justify-content: center; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames">
-                        <RecentGameCard :gameData="game" :suggestedNames="suggestedNames"/>
+                        <RecentGameCard :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"/>
                     </div>
                 </div>
             </div>
@@ -118,6 +118,7 @@ export default {
             userName: userState.username,
             showGrid: false,
             showList: true,
+            isVisitor: false,
             recentGamesIndex: 1,
             recentGames: [],
             showingGames: [],
@@ -223,11 +224,14 @@ export default {
         }
     },
     created() {
-        this.fetchGames(this.userName);
-        this.fetchUserStats(this.userName);
+        let searchName = this.userName;
+        if(searchName == 'Guest') {
+            searchName = 'josh'
+            this.isVisitor = true;
+        }
+        this.fetchGames(searchName);
+        this.fetchUserStats(searchName);
         this.fetchUsersPlayedWith(this.userName);
-        console.log(userState.userID)
-        console.log(userState.username)
     }
 }
 </script>
