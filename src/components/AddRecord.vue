@@ -169,12 +169,14 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import Dialog from 'primevue/dialog'
+import { userState } from "@/state/userState"
 
 export default {
     name: "Add Record",
     data(){
         return{
-            userName: 'Josh',
+            userName: userState.username,
+            userID: userState.userID,
             showDialog: false,
             insertingGameName: '',
             insertingPlayerCount: null,
@@ -230,8 +232,9 @@ export default {
             console.log(this[placement + 'Name'])
         },
         submitRecord(){
+            console.log(this.userName)
             let insertObject = {
-                "posterid": 1,
+                "posterid": this.userID,
                 "gamename": this.insertingGameName,
                 "winnername": this.winnerName,
                 "winnerscore": this.winnerScore,
@@ -242,7 +245,8 @@ export default {
                 "fourthname": this.fourthName,
                 "fourthscore": this.fourthScore,
                 "fifthname": this.fifthName,
-                "fifthscore": this.fifthScore
+                "fifthscore": this.fifthScore,
+                date: null
             }
 
             console.log(insertObject)

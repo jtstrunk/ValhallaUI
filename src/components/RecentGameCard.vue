@@ -2,7 +2,6 @@
     <div class="game" @click="createPopup(this.gamePlayerCounts[gameData.gamename])">
         <div class="header">
             <div style="display: flex; flex-direction: row;">
-                <!-- <img src="{{ url_for('static', filename='images/addgame/' + game.game_type.replace(' ', '') + '.png') }}" class="gamePicture"> -->
                 <img class="gamePicture" :src="imageSource" style="border-top-left-radius: 5px;">
                 <div class="testtext" style="margin-left: 15px;">
                     <p class="name">{{ this.userName }}</p>
@@ -11,7 +10,7 @@
                     <span class='gameID' style="display: none;">Game ID {{ gameData.game_id}}</span>
                 </div>
             </div>
-            <img src="/src/assets/profilepictures/joshpfp.png" class="profilePicture">
+            <img :src="profileImageSrc" class="profilePicture">
         </div>
         <div class="gameInformation">
             <div class="podium">
@@ -179,6 +178,7 @@
 </template>
     
 <script>
+import { userState } from '/src/state/userState'
 
 export default {
     name: "Home",
@@ -192,7 +192,7 @@ export default {
     },
     data(){
         return{
-            userName: 'Josh',
+            userName: userState.username,
             showDialog: false,
             insertingPlayerCount: null,
             insertingGameName: null,
@@ -207,7 +207,8 @@ export default {
             fourthScore: null,
             fifthName: null,
             fifthScore: null,
-            date: null
+            date: null,
+            userMapping: { 1: 'josh', 2: 'john', 3: 'thetwinmeister', 4: 'ethangambles'}
         }
     },
     methods: {
@@ -226,11 +227,9 @@ export default {
             this.fifthScore = this.gameData.fifthscore || null;
             this.date = this.gameData.date;
             this.insertingPlayerCount = playerCount.charAt(4);
-            console.log(this.insertingPlayerCount)
             this.showDialog = !this.showDialog
         },
         searchName(event) {
-            console.log(this.suggestedNames)
             this.filteredNames = this.suggestedNames.filter(x => x.name.toLowerCase().includes(event.query.toLowerCase()));
         },
         updateName(selectedName, placement) {
@@ -239,12 +238,8 @@ export default {
             this[placement + 'Name'] = name;
         },
         inputName(input, placement) {
-            console.log('input name')
-            console.log(input)
-            console.log(placement)
             this.positionMapping[placement] = input.value;
             this[placement + 'Name'] = input.value;
-            console.log(this[placement + 'Name'])
         },
         handleKeyDown(event, placement) {
             if (event.key === ' ' && !this.overlayVisible) {
@@ -312,6 +307,10 @@ export default {
 
     },
     computed: {
+        profileImageSrc() {
+            let name = this.userMapping[this.gameData.posterid];
+            return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href
+        },
         imageSource() {
             const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
             return `/src/assets/addgame/${cleanedGameName}.png`;

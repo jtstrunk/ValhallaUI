@@ -3,7 +3,7 @@
     <div id="content">
         <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
             <div>
-                <img src="/src/assets/profilepictures/joshpfp.png" id="profile" onclick="location.href='/profile?name=current'">
+                <img :src="profileImageSrc" id="profile" onclick="location.href='/profile?name=current'">
             </div>
             <p style="color: white; margin-top: 5px; margin-bottom: 8px;">{{ this.userName }}</p>
             <div>
@@ -21,7 +21,8 @@
             <div>
                 <div id="latestGame" v-for="game in recentGames.slice(0, 1)">
                     <p>Latest Game</p>
-                    <span style="font-size: large;">{{ game.gamename }}</span><span style="color: white;"> - </span>
+                    <span style="font-size: large;">{{ game.gamename.slice(0, 13) }}{{ game.gamename.length > 14 ? '...' : '' }}</span>
+                    <span style="color: white;"> - </span>
                     <span style="font-size: medium;">{{ formattedDate }}</span>
                 </div>
             </div>
@@ -114,7 +115,7 @@ export default {
     name: "Home",
     data(){
         return{
-            userName: 'Josh',
+            userName: userState.username,
             showGrid: false,
             showList: true,
             recentGamesIndex: 1,
@@ -207,6 +208,9 @@ export default {
             marginRight: this.showList == true ? '0px' : '10px'
             }
         },
+        profileImageSrc() {
+            return new URL(`../assets/profilepictures/${this.userName}.png`, import.meta.url).href
+        },
         formattedDate(){
             let parts = this.recentGames[0].date.split('-');
             let year = parts[0];
@@ -219,9 +223,9 @@ export default {
         }
     },
     created() {
-        this.fetchGames('josh');
-        this.fetchUserStats('josh');
-        this.fetchUsersPlayedWith('josh');
+        this.fetchGames(this.userName);
+        this.fetchUserStats(this.userName);
+        this.fetchUsersPlayedWith(this.userName);
         console.log(userState.userID)
         console.log(userState.username)
     }

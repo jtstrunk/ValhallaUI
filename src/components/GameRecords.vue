@@ -36,12 +36,13 @@
 <script>
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
+import { userState } from '/src/state/userState'
 
 export default {
     name: "Home",
     data(){
         return{
-            userName: 'Josh',
+            userName: userState.username,
             recentGames: [],
             showingGames: [],
             suggestedNames: [],
@@ -97,8 +98,8 @@ export default {
         },
     },
     created() {
-        this.fetchGames('josh');
-        this.fetchUsersPlayedWith('josh');
+        this.fetchGames(this.userName);
+        this.fetchUsersPlayedWith(this.userName);
     }
 }
 </script>

@@ -11,14 +11,14 @@
                     <!-- <router-link to="/DominionSelect">Dominion Selector</router-link> -->
                 </div>
             </div>
-            <!-- <router-link to="/profile?name=current" class="">Your Profile</router-link>
-            <router-link to="/logout" class="">Log Out</router-link> -->
+            <!-- <router-link to="/profile?name=current" class="">Your Profile</router-link> -->
+            <router-link to="/login" @click="logUserOut" class="">Log Out</router-link>
         </div>
     </nav>
 </template>
 
 <script>
-import axios from "axios"
+import { userState } from '/src/state/userState'
 
 export default {
     name: "Home",
@@ -29,8 +29,11 @@ export default {
         }
     },
     methods: {
-        test(){
-            console.log("ADD GAME SCREEN");
+        logUserOut(){
+            console.log("logging user out");
+            userState.userID = null;
+            userState.username = null;
+            userState.isLoggedIn = false
         },
     },
 }
