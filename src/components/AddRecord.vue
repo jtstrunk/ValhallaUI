@@ -183,7 +183,7 @@ export default {
             insertingPlayerCount: null,
             filteredNames: [],
             supportedGames: ['Dominion', 'Moonrakers', 'Clank', 'Lords of Waterdeep', 'Race for the Galaxy', 'Heat', 
-                'Space Base', 'Dune Imperium', ' Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
+                'Space Base', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
             secondName: null,

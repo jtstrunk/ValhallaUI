@@ -183,7 +183,12 @@ export default {
         showingGames:{
             Array
         },
-
+        themeGames:{
+            Array
+        },
+        typeGames:{
+            Array
+        },
     },
     data(){
         return{
@@ -306,10 +311,12 @@ export default {
             return `/src/assets/homegame/${cleanedGameName}.png`;
         },
         isGameShowing() {
-            if (this.showingGames.length == 0) {
+            if (this.showingGames.length == 0 && this.themeGames.length == 0 && this.typeGames.length == 0) {
                 return true
             }
-            return this.showingGames.includes(this.gameData.gamename);
+            return this.showingGames.includes(this.gameData.gamename) ||
+                    this.themeGames.includes(this.gameData.gamename) ||
+                    this.typeGames.includes(this.gameData.gamename);
         }
     },
     created() {
