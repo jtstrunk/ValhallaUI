@@ -189,6 +189,14 @@ export default {
         typeGames:{
             Array
         },
+        searchType: {
+            String,
+            required: true
+        },
+        filtersApplied: {
+            Boolean,
+            required: true
+        }
     },
     data(){
         return{
@@ -311,12 +319,36 @@ export default {
             return `/src/assets/homegame/${cleanedGameName}.png`;
         },
         isGameShowing() {
+            console.log(this.filtersApplied)
+            // console.log('is game showing?')
+            // console.log(this.showingGames)
+            // console.log(this.themeGames)
+            // console.log(this.typeGames)
             if (this.showingGames.length == 0 && this.themeGames.length == 0 && this.typeGames.length == 0) {
-                return true
+                return true;
             }
-            return this.showingGames.includes(this.gameData.gamename) ||
+            // if (!this.filtersApplied) {
+            //     return true; // Show all games if no filters are applied
+            // }
+
+            if (this.searchType === 'exclusive') {
+                console.log('exclusive');
+                return (
+                (this.showingGames.length === 0 || this.showingGames.includes(this.gameData.gamename)) &&
+                (this.themeGames.length === 0 || this.themeGames.includes(this.gameData.gamename)) &&
+                (this.typeGames.length === 0 || this.typeGames.includes(this.gameData.gamename))
+                );
+            } else {
+                // Inclusive search logic
+                console.log('inclusive');
+                return (
+                    this.showingGames.includes(this.gameData.gamename) ||
                     this.themeGames.includes(this.gameData.gamename) ||
-                    this.typeGames.includes(this.gameData.gamename);
+                    this.typeGames.includes(this.gameData.gamename)
+                );
+            }
+            
+
         }
     },
     created() {
@@ -333,6 +365,8 @@ export default {
             this.winnerName = 'Player 1';
             this.secondName = 'Player 2';
         }
+
+        console.log(this.searchType)
     }
 }
 </script>
