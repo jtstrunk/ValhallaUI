@@ -193,8 +193,12 @@ export default {
             String,
             required: true
         },
-        filtersApplied: {
-            Boolean,
+        startDate: {
+            type: String,
+            required: true
+        },
+        endDate: {
+            type: String,
             required: true
         }
     },
@@ -319,36 +323,31 @@ export default {
             return `/src/assets/homegame/${cleanedGameName}.png`;
         },
         isGameShowing() {
-            console.log(this.filtersApplied)
-            // console.log('is game showing?')
-            // console.log(this.showingGames)
-            // console.log(this.themeGames)
-            // console.log(this.typeGames)
+            const gameDate = new Date(this.date);
+            const startDate = new Date(this.startDate);
+            const endDate = new Date(this.endDate);
+
+            if (gameDate < startDate || gameDate > endDate) {
+                return false;
+            }
+
             if (this.showingGames.length == 0 && this.themeGames.length == 0 && this.typeGames.length == 0) {
                 return true;
             }
-            // if (!this.filtersApplied) {
-            //     return true; // Show all games if no filters are applied
-            // }
 
             if (this.searchType === 'exclusive') {
-                console.log('exclusive');
                 return (
                 (this.showingGames.length === 0 || this.showingGames.includes(this.gameData.gamename)) &&
                 (this.themeGames.length === 0 || this.themeGames.includes(this.gameData.gamename)) &&
                 (this.typeGames.length === 0 || this.typeGames.includes(this.gameData.gamename))
                 );
             } else {
-                // Inclusive search logic
-                console.log('inclusive');
                 return (
                     this.showingGames.includes(this.gameData.gamename) ||
                     this.themeGames.includes(this.gameData.gamename) ||
                     this.typeGames.includes(this.gameData.gamename)
                 );
             }
-            
-
         }
     },
     created() {
@@ -360,13 +359,10 @@ export default {
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
         }
-
         if(this.isVisitor == true) {
             this.winnerName = 'Player 1';
             this.secondName = 'Player 2';
         }
-
-        console.log(this.searchType)
     }
 }
 </script>
@@ -376,7 +372,6 @@ export default {
     transform: scale(1.02);
     cursor: pointer;
 }
-
 .game {
     display: flex;
     flex-direction: column;

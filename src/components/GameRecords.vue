@@ -6,11 +6,11 @@
                 <div style="display: flex; flex-direction: row; justify-content: space-around;">
                     <div class="searchType">
                         <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
-                        <label for="exclusive">match every</label>
+                        <label for="exclusive">Match Every</label>
                     </div>
                     <div class="searchType">
                         <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
-                        <label for="inclusive">match any</label>
+                        <label for="inclusive">Match Any</label>
                     </div>
                 </div>
             </div>
@@ -44,13 +44,31 @@
                             @click="toggleShowingTheme('fantasy')">Fantasy</button>                
                     </div>
                     <div class="games">
-                        <h3>Types</h3>
+                        <h3>Mechanics</h3>
                         <button :class="['gamebtn', showingTypes.includes('deckBuilding') ? 'btn-main' : 'btn-outline']"  
                             @click="toggleShowingType('deckBuilding')">Deck Building</button>
                         <button :class="['gamebtn', showingTypes.includes('resourceManagement') ? 'btn-main' : 'btn-outline']" 
                             @click="toggleShowingType('resourceManagement')">Resource Management</button>
                         <button :class="['gamebtn', showingTypes.includes('workerPlacement') ? 'btn-main' : 'btn-outline']" 
                             @click="toggleShowingType('workerPlacement')">Worker Placement</button>                
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>Filter Between</h3>
+                <div style="display: flex; flex-direction: column; justify-content: space-around;">
+                    <div class="searchDate">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" class="date-input" v-model="startDate">
+                    </div>
+                    <div class="searchDate">
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate" class="date-input" v-model="endDate">
+                    </div>
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top: 8px;">
+                        <button id="monthDates" class="dateFilters" @click="monthDates">This Month</button>
+                        <button id="yearDates" class="dateFilters" @click="yearDates">This Year</button>
+                        <button id="resetDates" class="dateFilters" @click="resetDates">Reset</button>
                     </div>
                 </div>
             </div>
@@ -64,7 +82,7 @@
                     <div v-for="game in [...recentGames]">
                         <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" 
                             :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames" 
-                            :searchType="searchType" :filtersApplied="filtersApplied"/>
+                            :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
                     </div>
                 </div>
             </div>
@@ -82,9 +100,10 @@ export default {
     data(){
         return{
             userName: userState.username,
-            deckBuilding: ['Dominion', 'Moonrakers', 'Clank', 'Dune Imperium'],
-            workerPlacement : ['Puerto Rico', 'Dune Imperium'],
-            resourceManagement : ['Catan', 'Space Base', 'Puerto Rico'],
+            deckBuilding: ['fakegame', 'Dominion', 'Moonrakers', 'Clank', 'Dune Imperium'],
+            workerPlacement : ['fakegame', 'Puerto Rico', 'Dune Imperium', 'Lords of Waterdeep'],
+            resourceManagement : ['fakegame', 'Catan', 'Space Base', 'Puerto Rico'],
+            roleSelection : ['fakegame', 'Race for the Galaxy', 'Puerto Rico'],
             space: ['Moonrakers', 'Space Base', 'Dune Imperium', 'Race for the Galaxy'],
             medieval : ['Dominion', 'Puerto Rico', 'Lords of Waterdeep', 'Catan'],
             fantasy : ['Clank', 'Munchkin'],
@@ -96,7 +115,9 @@ export default {
             typeGames: [],
             suggestedNames: [],
             isVisitor: false,
-            searchType: 'exclusive'
+            searchType: 'exclusive',
+            startDate: '2023-06-13',
+            endDate: new Date().toISOString().slice(0, 10),
         }
     },
     components: {
@@ -106,16 +127,6 @@ export default {
         searchType() {
             console.log(this.searchType)
             this.resetGames();
-        }
-    },
-    computed: {
-        filtersApplied() {
-            return (
-                // this.showingGames.length == 0 && this.themeGames.length == 0 && this.typeGames.length == 0 
-                this.typeGames.length == 0 && this.showingTypes.length == 0
-                
-                // tpyr games 0 and showing tpes has length
-            );
         }
     },
     methods: {
@@ -158,39 +169,44 @@ export default {
                 
             }
         },
-
-        // this needs to be reworked to allow the user to click one selected and remove its restriction on it
+        // this could be reworked so that you can select multiple Mechanics on excluisve
         toggleShowingType(gameType) {
             if(this.searchType == 'inclusive') {
                 if (!this.showingTypes.includes(gameType)) {
                     this.showingTypes.push(gameType);
                     this.typeGames = [...new Set([...this.typeGames, ...this[gameType]])];
                 } else {
-                    this.showingTypes = this.showingTypes.filter(x => x !== gameType);
+                    this.showingTypes = this.showingTypes.filter(x => x != gameType);
                     this.typeGames = this.typeGames.filter(game => !this[gameType].includes(game));
                 }
             } else if (this.searchType == 'exclusive') {
-                // tricky because i need to compare
-
-                if (this.showingTypes.length === 0) {
-                    console.log('length of 0')
-                    // If no types are currently selected, initialize typeGames with the games from the selected type
-                    this.showingTypes.push(gameType);
-                    this.typeGames = [...this[gameType]];
+                if (!this.showingTypes.includes(gameType)) {
+                    this.showingTypes = [gameType];
+                    this.typeGames = [];
+                    this.typeGames = [...new Set([...this.typeGames, ...this[gameType]])];
                 } else {
-                    console.log('already has a filter selected')
-                    if(!this.showingTypes.includes(gameType)) {
-                        this.showingTypes.push(gameType);
-                        this.typeGames = this.typeGames.filter(game => this[gameType].includes(game));
-                    } else {
-                        this.showingTypes = this.showingGames.filter(x => x != gameType)
-                    }
-                    // Otherwise, keep only the games that are in both typeGames and the new gameType
-                    // this.typeGames = this.typeGames.filter(game => this[gameType].includes(game));
+                    this.showingTypes = [];
+                    this.typeGames = [];
                 }
             }
-            console.log('this.typeGames', this.typeGames)
-            console.log('this.showingTypes', this.showingTypes)
+        },
+        monthDates() {
+            const today = new Date();
+            const startDate = new Date();
+            startDate.setDate(today.getDate() - 28);
+            this.startDate = startDate.toISOString().slice(0, 10);
+            this.endDate = today.toISOString().slice(0, 10);
+        },
+        yearDates() {
+            const today = new Date();
+            const startDate = new Date();
+            startDate.setDate(today.getDate() - 365);
+            this.startDate = startDate.toISOString().slice(0, 10);
+            this.endDate = today.toISOString().slice(0, 10);
+        },
+        resetDates(){
+            this.startDate = '2023-06-13';
+            this.endDate = new Date().toISOString().slice(0, 10);
         },
         resetGames(){
             this.showingGames = [];
@@ -247,9 +263,48 @@ export default {
 <style>
 .searchType label {
     color: #fff;
+    font-family: 'Manolo Mono', sans-serif !important;
 }
 .searchType input {
     margin-right: 5px;
+}
+
+.searchDate {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+}
+.searchDate label {
+    color: #fff;
+    font-family: 'Manolo Mono', sans-serif !important;
+    margin-right: 10px;
+}
+.searchDate input {
+    background-color: #3A3B3C;
+    color: #fff;
+    border: 0px;
+    padding: 5px;
+    border-radius: 4px;
+    font-family: 'Manolo Mono', sans-serif;
+}
+.dateFilters {
+    color: #17a2b8 !important;
+    background: transparent;
+    border: 2px solid #17a2b8;
+    border-radius: 5px;
+    height: 21px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+}
+.dateFilters:hover {
+    color: #fff !important;
+    background-color: #17a2b8;
+    border: 2px solid #17a2b8;
+    transition: .5s;
 }
 
 .games {
@@ -263,9 +318,10 @@ export default {
     margin-top: 7px;
     width: 100px;
 }
-    h3 {
+h3 {
     color: white;
     margin: 0px 0px 5px 0px;
+    font-family: 'Manolo Mono', sans-serif !important;
 }
 .games .btn-main {
     color: #fff !important;
@@ -279,7 +335,7 @@ export default {
     background: transparent;
     transition: .5s;
 }
-.games .btn-outline {
+.btn-outline {
     color: #17a2b8 !important;
     background: transparent;
     border: 2px solid #17a2b8;
