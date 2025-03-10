@@ -1,6 +1,6 @@
 <template>
     <!-- <button @click="handleLogout">Logout</button> -->
-    <div id="content">
+    <div id="content" @scroll="handleScroll">
         <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
             <div>
                 <img :src="profileImageSrc" id="profile" onclick="location.href='/profile?name=current'">
@@ -113,6 +113,12 @@ import { userState } from '/src/state/userState'
 
 export default {
     name: "Home",
+    props: {
+        scrolledToBottom: {
+            type: Boolean,
+            required: true,
+        },
+    },
     data(){
         return{
             userName: userState.username,
@@ -130,6 +136,15 @@ export default {
         RecentGame,
         RecentGameCard
     },
+    watch: {
+        scrolledToBottom() {
+            let searchName = this.userName;
+            if(searchName == 'Guest') {
+                searchName = 'josh'
+            }
+            this.fetchGames(searchName);
+        },
+    },
     methods: {
         swapView(type) {
             if (type === 'list') {
@@ -144,8 +159,13 @@ export default {
                 }
             }
         },
+        handleScroll() {
+            const content = document.getElementById('content');
+            if (content.scrollTop + content.clientHeight >= content.scrollHeight - 10) {
+                this.fetchMoreGames(this.userName);
+            }
+        },
         async fetchGames(user) {
-            console.log('index', this.recentGamesIndex)
             axios.get(`http://127.0.0.1:8000/homepagegames/${user}/${this.recentGamesIndex}`, {
             withCredentials: false,
             headers: {
@@ -154,7 +174,7 @@ export default {
             .then(response => {
                 console.log(response.data)
                 this.recentGames = [...this.recentGames, ...response.data];
-                this.recentGamesIndex = this.recentGamesIndex + 1;
+                this.recentGamesIndex += 1;
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
