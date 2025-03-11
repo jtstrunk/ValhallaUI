@@ -46,7 +46,9 @@
                 </div>
                 <div v-if="showGrid" style="display: flex; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames.slice(0, 9)">
-                        <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" :showingGames="showingGames"/>
+                        <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" 
+                            :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames" 
+                            :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
                     </div>
                 </div>
 
@@ -104,7 +106,6 @@
     </div>
 </template>
 
-
 <script>
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
@@ -122,6 +123,7 @@ export default {
     data(){
         return{
             userName: userState.username,
+            currentProfile: 'josh',
             showGrid: false,
             showList: true,
             isVisitor: false,
@@ -129,6 +131,12 @@ export default {
             recentGames: [],
             showingGames: [],
             suggestedNames: [],
+            showingThemes: [],
+            themeGames: [],
+            showingTypes: [],
+            typeGames: [],
+            startDate: '2023-06-13',
+            endDate: new Date().toISOString().slice(0, 10),
             userStats: Object,
         }
     },
