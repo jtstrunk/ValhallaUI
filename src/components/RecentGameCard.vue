@@ -15,15 +15,15 @@
         <div class="gameInformation">
             <div class="podium">
                 <img src="/src/assets/icons/firstblack.png" class="medal">
-                <p class="placer">{{ this.winnerName }}</p>
+                <p class="placer" @click="navigateToProfile(this.winnerName)">{{ this.winnerName }}</p>
             </div>
             <div v-if="gameData.secondname" class="podium">
                 <img src="/src/assets/icons/secondblack.png" class="medal">
-                <p class="placer">{{ this.secondName }}</p>
+                <p class="placer" @click="navigateToProfile(this.secondName)">{{ this.secondName }}</p>
             </div>
             <div v-if="gameData.thirdname" class="podium">
                 <img src="/src/assets/icons/thirdblack.png" class="medal">
-                <p class="placer">{{ this.thirdName }}</p>
+                <p class="placer" @click="navigateToProfile(this.thirdName)">{{ this.thirdName }}</p>
             </div>
         </div>
     </div>
@@ -215,6 +215,14 @@ export default {
         }
     },
     methods: {
+        navigateToProfile(name) {
+            this.$router.push(`/profile/${name}`);
+            let searchName = name;
+            if(searchName == 'Guest') {
+                searchName = 'josh'
+                this.isVisitor = true;
+            }
+        },
         createPopup(playerCount){
             if(this.isVisitor == true) {
                 return;

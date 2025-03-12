@@ -8,10 +8,10 @@
                 <button class="dropbtn" style="width: 85px !important;">View Tools</button>
                 <div class="dropdown-content">
                     <router-link to="/gamerecords">View Records</router-link>
-                    <!-- <router-link to="/DominionSelect">Dominion Selector</router-link> -->
+                    <!-- <router-link to="/dominionselect">Dominion Selector</router-link> -->
                 </div>
             </div>
-            <!-- <router-link to="/profile?name=current" class="">Your Profile</router-link> -->
+            <router-link :to="`/profile/${this.userName}`" class="">Your Profile</router-link>
             <router-link to="/login" @click="logUserOut" class="">Log Out</router-link>
         </div>
     </nav>
@@ -24,7 +24,7 @@ export default {
     name: "Home",
     data(){
         return{
-            userName: 'Josh',
+            userName: userState.username,
             posterID: 1
         }
     },

@@ -1,66 +1,53 @@
 <template>
-    <!-- <button @click="handleLogout">Logout</button> -->
-    <div id="content">
-        <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 545px; position: sticky; top: 60px;">
-            <div>
-                <img :src="profileImageSrc" @error="setDefaultImage" id="profilePicture" onclick="location.href='/profile?name=current'">
+    <div>
+        <div class="section MobileHide" style="display: flex; flex-direction: row; justify-content: space-between; width: 815px; position: sticky; top: 60px;">
+            <div id="profileInformation">
+                <img id="profilePicture" :src="profileImageSrc" @error="setDefaultImage" onclick="location.href='/profile?name=current'">
+                <div id="profileDetails">
+                    <p id="profileName">{{ this.userName }}</p>
+                    <p id="profileLocation">Lynchburg, VA</p>
+                    <div v-if="logginUser != userName">
+                        <button v-if="userRelationship === 'Follow'" id="follow" @click="FollowUser(userName)">Follow</button>
+                        <button v-else-if="userRelationship === 'Unfollow'" id="unfollow" @click="UnfollowUser(userName)">Unfollow</button>
+                    </div>
+                </div>
             </div>
-            <p style="color: white; margin-top: 5px; margin-bottom: 8px;">{{ this.userName }}</p>
-            <div>
+            <div style="margin-right: 10px;">
                 <div class="stat">
-                    <img class="icon" src="/src/assets/icons/bestfriend.png" style="width: 40px; height: 40px;">
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div style="display: flex; flex-direction: column; align-items: center;">
-                            <p style="margin-top: 14px;">Games Played</p>
-                            <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.gamesplayed }}</p>
+                            <p class="statHeader">Followers</p>
+                            <p class="statDetail">{{ this.followers.length }}</p>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: center;">
-                            <p style="margin-top: 14px;">Games Won</p>
-                            <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.gameswon }}</p>
+                            <p class="statHeader">Following</p>
+                            <p class="statDetail">{{ this.following.length }}</p>
                         </div>
                     </div>
-                    
                 </div>
-                <div class="stat">
-                    <img class="icon" src="/src/assets/icons/mostplayed.png">
-                    <p style="margin-top: 14px;">Most Played Game</p>
-                    <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostplayed }}</p>
-                </div>
-                <div class="stat">
-                    <img class="icon" src="/src/assets/icons/mostwon.png" style="width: 40px; padding: 6px 7px;">
-                    <p style="margin-top: 14px;">Most Won Game</p>
-                    <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostwon }}</p>
-                </div>
-            </div>
-            <div>
-                <div id="latestGame" v-for="game in recentGames.slice(0, 1)">
-                    <p>Latest Game</p>
-                    <span style="font-size: large;">{{ game.gamename.slice(0, 13) }}{{ game.gamename.length > 14 ? '...' : '' }}</span>
-                    <span style="color: white;"> - </span>
-                    <span style="font-size: medium;">{{ formattedDate }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="section">
-            <div :style="headerWidth" style="display: flex; flex-direction: column; justify-content: space-between;">
-                <h2 style="margin: 0px; ">Recent Games</h2>
-                <div style="display: flex; flex-direction: row; flex-wrap: wrap;" :key="refeshGames">
-                    <div v-for="game in recentGames.slice(0, 9)">
-                        <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" 
-                            :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames" 
-                            :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
+                <div class="stat" style="margin-top: 15px">
+                    <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <p class="statHeader">Games Played</p>
+                            <p class="statDetail">{{ this.userStats.gamesplayed }}</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <p class="statHeader">Games Won</p>
+                            <p class="statDetail">{{ this.userStats.gameswon }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="section MobileHide" style="width: 290px; height: 530px; position: sticky; top: 60px;">
-            <div>
-                <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                    <h2 style="color: white; margin-top: 0px; margin-bottom: 14px;">Friends</h2>
-                    <button v-if="logginUser != userName" id="addFriendBtn">Add Friend</button>
-                </div>
-                <div v-for="name in friendNames">
-                    <p class="friendName" @click="navigateToProfile(name)">{{ name }}</p>
+    </div>
+    <div class="section">
+        <div :style="headerWidth" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <h2 style="margin: 0px; ">Recent Games</h2>
+            <div style="display: flex; flex-direction: row; flex-wrap: wrap;" :key="refeshGames">
+                <div v-for="game in recentGames.slice(0, 8)">
+                    <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" 
+                        :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames" 
+                        :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
                 </div>
             </div>
         </div>
@@ -78,6 +65,7 @@ export default {
         return{
             userName: this.$route.params.username,
             logginUser: userState.username,
+            logginUserID: userState.userID,
             isVisitor: false,
             refeshGames: 0,
             recentGamesIndex: 1,
@@ -88,11 +76,14 @@ export default {
             themeGames: [],
             showingTypes: [],
             typeGames: [],
-            friendNames: ['josh', 'thetwinmeister', 'ethangambles', 'jimmneyswift11', 'john'],
+            followers: [],
+            following: [],
+            userRelationship: 'Follow',
             startDate: '2023-06-13',
             searchType: 'exclusive',
             endDate: new Date().toISOString().slice(0, 10),
             userStats: Object,
+            followRefresh: 0,
         }
     },
     components: {
@@ -161,15 +152,127 @@ export default {
                 console.error("Error fetching data:", error);
             });
         },
+        async fetchUsersFollowers(user) {
+            axios.get(`http://127.0.0.1:8000/getfollowers/${user}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                console.log('followers')
+                this.followers = response.data
+                console.log(this.followers)
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async fetchUsersFollowing(user) {
+            axios.get(`http://127.0.0.1:8000/getfollowing/${user}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                console.log('following')
+                this.following = response.data
+                console.log(this.following)
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async fetchUserRelationship(user) {
+            let insertObject = {
+                "follower": this.logginUserID,
+                "following": user
+            }
+            console.log(insertObject)
+            fetch('http://127.0.0.1:8000/getuserelationship', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                console.log('data:', data);
+                this.userRelationship = data.relationship === "Following User" ? "Unfollow" : "Follow";
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async FollowUser(user) {
+            let insertObject = {
+                "follower": this.logginUserID,
+                "following": user
+            }
+            console.log(insertObject)
+            fetch('http://127.0.0.1:8000/followuser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if(data.event == "Followed User") {
+                    this.userRelationship = "Unfollow";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async UnfollowUser(user) {
+            let insertObject = {
+                "follower": this.logginUserID,
+                "following": user
+            }
+            console.log(insertObject)
+            fetch('http://127.0.0.1:8000/unfollowuser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if(data.event == "Unfollowed User") {
+                    this.userRelationship = "Follow";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+
     },
     computed: {
         headerWidth() {
         return {
-            width: '595px'
+            width: '795px'
             }
         },
         profileImageSrc() {
             return new URL(`../assets/profilepictures/${this.userName}.png`, import.meta.url).href
+        },
+        buttonText() {
+            console.log('button text changing')
+            return this.userRelationship;
         },
         formattedDate(){
             let parts = this.recentGames[0].date.split('-');
@@ -190,72 +293,48 @@ export default {
         }
         this.fetchGames(searchName);
         this.fetchUserStats(searchName);
+        this.fetchUsersFollowers(searchName);
+        this.fetchUsersFollowing(searchName);
+        this.fetchUserRelationship(searchName);
     }
 }
 </script>
 
 <style scoped>
-#profilePicture {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-}
-.arrow {
-    width: 20px;
-    height: 20px;
-}
-.stat {
-    width: 270px;
-    height: 80px;
-    background-color: #3A3B3C;
-    margin-top: 35px;
+#profileInformation {
+    width: 140px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    position: relative;
-    border-radius: 8px;
-
+    margin-left: 10px;
 }
-.stat p {
-    color: white;
-    font-size: larger;
-    z-index: 200;
-    margin-top: 0px;
-    margin-bottom: 10px;
-}
-.icon {
-    background-color: #3A3B3C;
-    z-index: 199;
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    top: -25px;
+#profilePicture {
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
-    border-bottom-right-radius: 0px !important;
-    border-bottom-left-radius: 0px !important;
-    padding: 6px;
 }
-#latestGame{
-    background-color: #3A3B3C; 
-    padding: 10px; 
-    border-radius: 5px; 
-    margin-top: 25px; 
-    width: 270px;
+#profileDetails{
+    margin-left: 20px;
+    padding-bottom: 45px;
 }
-#latestGame p {
+#profileName {
+    font-size: xx-large;
     color: white;
-    font-size: medium;
-    margin-top: 0px;
-    margin-bottom: 0px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+    font-family: 'Manolo Mono', sans-serif !important;
 }
-#latestGame span {
+#profileLocation {
+    width: 200px;
+    font-size: large;
     color: white;
+    margin-top: 5px;
+    margin-bottom: 8px;
+    font-family: 'Manolo Mono', sans-serif !important;
 }
-
-#addFriendBtn {
-    margin-top: 2px;
-    margin-right: 3px;
-    height: 70%;
+#follow {
+    margin-top: 5px;
+    width: 75px;
     color: #17a2b8 !important;
     background: transparent;
     border: 2px solid #17a2b8;
@@ -263,8 +342,42 @@ export default {
     padding: 4px 7px;
     border-radius: 5px;
 }
-.friendName {
+#unfollow {
+    margin-top: 5px;
+    width: 75px;
+    color: #fff !important;
+    background-color: #17a2b8;
+    border: 2px solid #17a2b8;
+    outline: none;
+    padding: 4px 7px;
+    border-radius: 5px;
+}
+.stat {
+    width: 240px;
+    height: 75px;
+    background-color: #3A3B3C;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    border-radius: 8px;
+
+}
+.statHeader {
+    color: white;
+    font-size: larger;
+    margin-top: 14px;
+    margin-bottom: 10px;
+    font-size: small !important;
     font-family: 'Manolo Mono', sans-serif !important;
+    z-index: 200;
+}
+.statDetail{
+    color: white;
+    font-size: larger;
+    z-index: 200;
     margin-top: 0px;
+    margin-bottom: 10px;
+    font-family: 'Manolo Mono', sans-serif !important;
 }
 </style>
