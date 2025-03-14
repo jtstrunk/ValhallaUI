@@ -1,5 +1,4 @@
 <template>
-    <!-- <button @click="handleLogout">Logout</button> -->
     <div id="content" @scroll="handleScroll">
         <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
             <div>
@@ -39,19 +38,23 @@
             <div :style="headerWidth" style="display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
                     <h2 style="margin: 0px; ">Recent Games</h2>
-                    <div :style="headerMargin">
+                    <!-- <div :style="headerMargin">
                         <img src="/src/assets/icons/listblue.png" @click="swapView('list')" id="listView" style="width: 25px; height: 25px; margin-right: 5px;">
                         <img src="/src/assets/icons/gridblue.png" @click="swapView('grid')" id="gridView" style="width: 25px; height: 25px;">
+                    </div> -->
+                    <div style="display: flex; flex-direction: row;">
+                        <p style="margin: 0px; margin-top: 2px; margin-right: 10px; font-family: 'Manolo Mono', sans-serif !important;">Following Games</p>
+                        <VueToggles v-model="followingGames" :width="50" checkedBg="#17a2b8"/>
                     </div>
+                    
                 </div>
-                <div v-if="showGrid" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                <!-- <div v-if="showGrid" style="display: flex; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames.slice(0, 9)">
                         <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" 
                             :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames" 
                             :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
                     </div>
-                </div>
-
+                </div> -->
                 <div v-if="showList" style="display: flex; justify-content: center; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames">
                         <RecentGameCard :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"/>
@@ -111,6 +114,7 @@ import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import RecentGameCard from './RecentGameCard.vue'
 import { userState } from '/src/state/userState'
+import VueToggles from "vue-toggles";
 
 export default {
     name: "Home",
@@ -124,6 +128,7 @@ export default {
         return{
             userName: userState.username,
             currentProfile: 'josh',
+            followingGames: true,
             showGrid: false,
             showList: true,
             isVisitor: false,
@@ -131,6 +136,7 @@ export default {
             recentGames: [],
             showingGames: [],
             suggestedNames: [],
+            users: [],
             showingThemes: [],
             themeGames: [],
             showingTypes: [],
@@ -142,7 +148,8 @@ export default {
     },
     components: {
         RecentGame,
-        RecentGameCard
+        RecentGameCard,
+        VueToggles
     },
     watch: {
         scrolledToBottom() {
@@ -150,8 +157,29 @@ export default {
             if(searchName == 'Guest') {
                 searchName = 'josh'
             }
-            this.fetchGames(searchName);
+            if(this.followingGames == true) {
+                this.fetchUserandFollowingGames(searchName);
+            } else {
+                this.fetchUserGames(searchName);
+            }
         },
+        followingGames: {
+            handler(newValue) {
+                let searchName = this.userName;
+                if(searchName == 'Guest') {
+                    searchName = 'josh'
+                }
+                if(newValue == true) {
+                    this.recentGamesIndex = 1;
+                    this.recentGames = [];
+                    this.fetchUserandFollowingGames(searchName);
+                } else {
+                    this.recentGamesIndex = 1;
+                    this.recentGames = [];
+                    this.fetchUserGames(searchName)
+                }
+            }
+        }
     },
     methods: {
         swapView(type) {
@@ -173,8 +201,26 @@ export default {
                 this.fetchMoreGames(this.userName);
             }
         },
-        async fetchGames(user) {
-            axios.get(`http://127.0.0.1:8000/homepagegames/${user}/${this.recentGamesIndex}`, {
+        async fetchUserandFollowingGames(user) {
+            axios.get(`http://127.0.0.1:8000/userfollowinggames/${user}/${this.recentGamesIndex}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                console.log(response.data);
+                const newGames = response.data.filter(newGame => 
+                    !this.recentGames.some(existingGame => existingGame.gameid === newGame.gameid)
+                );
+                this.recentGames = [...this.recentGames, ...newGames];
+                this.recentGamesIndex += 1;
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async fetchUserGames(user) {
+            axios.get(`http://127.0.0.1:8000/usergames/${user}/${this.recentGamesIndex}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -220,6 +266,19 @@ export default {
                 console.error("Error fetching data:", error);
             });
         },
+        async fetchUsers() {
+            axios.get('http://127.0.0.1:8000/getusers', {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                this.users = response.data.map(user => user.username);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        }
         // async fetchCards(cardType) {
         //     let res = await fetch(`http://127.0.0.1:5000/type?cardType=${cardType}`);
         //     let cards = await res.json();
@@ -257,9 +316,10 @@ export default {
             searchName = 'josh'
             this.isVisitor = true;
         }
-        this.fetchGames(searchName);
+        this.fetchUserandFollowingGames(searchName);
         this.fetchUserStats(searchName);
         this.fetchUsersPlayedWith(this.userName);
+        this.fetchUsers();
     }
 }
 </script>

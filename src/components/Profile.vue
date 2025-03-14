@@ -5,8 +5,8 @@
                 <img id="profilePicture" :src="profileImageSrc" @error="setDefaultImage" onclick="location.href='/profile?name=current'">
                 <div id="profileDetails">
                     <p id="profileName">{{ this.userName }}</p>
-                    <p id="profileLocation">Lynchburg, VA</p>
-                    <div v-if="logginUser != userName">
+                    <p v-if="this.users.includes(userName)" id="profileLocation">{{ this.userStats.location }}</p>
+                    <div v-if="logginUser != userName && this.users.includes(userName)">
                         <button v-if="userRelationship === 'Follow'" id="follow" @click="FollowUser(userName)">Follow</button>
                         <button v-else-if="userRelationship === 'Unfollow'" id="unfollow" @click="UnfollowUser(userName)">Unfollow</button>
                     </div>
@@ -68,7 +68,6 @@ export default {
             logginUserID: userState.userID,
             isVisitor: false,
             refeshGames: 0,
-            recentGamesIndex: 1,
             recentGames: [],
             showingGames: [],
             suggestedNames: [],
@@ -76,6 +75,7 @@ export default {
             themeGames: [],
             showingTypes: [],
             typeGames: [],
+            users: [],
             followers: [],
             following: [],
             userRelationship: 'Follow',
@@ -105,8 +105,22 @@ export default {
         setDefaultImage(event) {
             event.target.src = new URL('../assets/profilepictures/Guest.png', import.meta.url).href;
         },
+        async fetchUsers() {
+            axios.get('http://127.0.0.1:8000/getusers', {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                this.users = response.data.map(user => user.username);
+                console.log('users', this.users)
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
         async fetchGames(user) {
-            axios.get(`http://127.0.0.1:8000/homepagegames/${user}/${this.recentGamesIndex}`, {
+            axios.get(`http://127.0.0.1:8000/usergames/${user}/1`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -296,6 +310,7 @@ export default {
         this.fetchUsersFollowers(searchName);
         this.fetchUsersFollowing(searchName);
         this.fetchUserRelationship(searchName);
+        this.fetchUsers();
     }
 }
 </script>
@@ -318,6 +333,7 @@ export default {
     padding-bottom: 45px;
 }
 #profileName {
+    width: 350px;
     font-size: xx-large;
     color: white;
     margin-top: 5px;
@@ -325,7 +341,7 @@ export default {
     font-family: 'Manolo Mono', sans-serif !important;
 }
 #profileLocation {
-    width: 200px;
+    width: 350px;
     font-size: large;
     color: white;
     margin-top: 5px;
