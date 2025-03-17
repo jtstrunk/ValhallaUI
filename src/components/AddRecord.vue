@@ -15,7 +15,7 @@
     </div>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
-        <div style="width: 450px; display: flex; flex-direction: column; align-items: center; margin-bottom: 25px;">
+        <div class="popupContainer">
             <p style="color: white; display: inline-block;">Add a {{ this.insertingGameName }} record</p>
             <div class="players">
                 <div class="playerSection">
@@ -444,6 +444,13 @@ input {
     text-align: center;
     z-index: 1001;
 }
+.popupContainer {
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
 
 .customAutocomplete {
     background-color: #404040;
@@ -451,5 +458,28 @@ input {
     color: white;
     padding: 6px;
     border-radius: 5px;
+}
+
+@media (max-width: 	420px) {
+    .MobileHide {
+        display: none !important;
+    }
+
+    #availableGames{
+        width: 385px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .card {
+        margin-top: 12px;
+    }
+
+    .gamepopup {
+        width: 385px;
+    }
+    .popupContainer {
+        width: 410px;
+    }
 }
 </style>

@@ -494,4 +494,40 @@ input {
     border: 2px solid #17a2b8;
     transition: .5s;
 }
+
+@media (max-width: 	420px) {
+    .MobileHide {
+        display: none !important;
+    }
+
+    .game {
+        height: 170px;
+        width: 385px;
+        margin-top: 8px;
+    }
+    .gamePicture {
+        height: 100px;
+        width: 100px;
+    }
+    .gameInformation {
+        margin-top: 12px;
+    }
+    .name {
+        font-size: 18px;
+    }
+    .date {
+        font-size: 12px;
+    }
+    .gameName {
+        font-size: 20px;
+    }
+    .medal {
+        height: 30px;
+        width: 30px;
+    }
+    .placer {
+        font-size: 13px;
+    }
+    
+}
 </style>

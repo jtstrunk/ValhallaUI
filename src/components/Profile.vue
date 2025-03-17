@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="section MobileHide" style="display: flex; flex-direction: row; justify-content: space-between; width: 815px; position: sticky; top: 60px;">
+        <div class="section" id="profileHeader">
             <div id="profileInformation">
                 <img id="profilePicture" :src="profileImageSrc" @error="setDefaultImage" onclick="location.href='/profile?name=current'">
                 <div id="profileDetails">
@@ -12,7 +12,7 @@
                     </div>
                 </div>
             </div>
-            <div style="margin-right: 10px;">
+            <div id="statHolder" style="margin-right: 10px;">
                 <div class="stat">
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -40,8 +40,8 @@
             </div>
         </div>
     </div>
-    <div class="section">
-        <div :style="headerWidth" style="display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="section" id="gamesHeader">
+        <div :style="headerWidth" id="gamesContainter">
             <h2 style="margin: 0px; ">Recent Games</h2>
             <div style="display: flex; flex-direction: row; flex-wrap: wrap;" :key="refeshGames">
                 <div v-for="game in recentGames.slice(0, 8)">
@@ -297,6 +297,9 @@ export default {
                 "July", "August", "September", "October", "November", "December"];
             const monthName = months[month - 1];
             return `${monthName} ${day}, ${year}`
+        },
+        isMobile() {
+            return window.innerWidth < 410;
         }
     },
     created() {
@@ -316,6 +319,14 @@ export default {
 </script>
 
 <style scoped>
+#profileHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 815px;
+    position: sticky;
+    top: 60px;
+}
 #profileInformation {
     width: 140px;
     display: flex;
@@ -328,7 +339,7 @@ export default {
     height: 140px;
     border-radius: 50%;
 }
-#profileDetails{
+#profileDetails {
     margin-left: 20px;
     padding-bottom: 45px;
 }
@@ -395,5 +406,63 @@ export default {
     margin-top: 0px;
     margin-bottom: 10px;
     font-family: 'Manolo Mono', sans-serif !important;
+}
+
+#gamesContainter{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+@media (max-width: 	420px) {
+    .MobileHide {
+        display: none !important;
+    }
+
+    .section{
+        padding: 5px;
+    }
+
+    #profileHeader {
+        flex-direction: column;
+        width: 385px;
+    }
+    #profilePicture {
+        width: 90px;
+        height: 90px;
+    }
+    #profileDetails {
+        padding-bottom: 20px;
+    }
+    #statHolder {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 0px !important;
+    }
+    #statHolder .stat {
+        margin-top: 0px !important;
+    }
+    .stat {
+        width: 180px;
+        height: 50px;
+    }
+    .statHeader {
+        font-size: 12px;
+        margin-top: 8px !important;
+        margin-bottom: 2px;
+    }
+    .statDetail{
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    #gamesHeader {
+        width: 385px;
+        margin-top: 0px;
+    }
+    #gamesContainter{
+        width: 400px !important;
+    }
 }
 </style>
