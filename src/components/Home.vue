@@ -37,12 +37,12 @@
         <div class="section">
             <div :style="headerWidth" style="display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                    <h2 style="margin: 0px; ">Recent Games</h2>
+                    <h2 style="margin: 0px;">Recent Games</h2>
                     <!-- <div :style="headerMargin">
                         <img src="/src/assets/icons/listblue.png" @click="swapView('list')" id="listView" style="width: 25px; height: 25px; margin-right: 5px;">
                         <img src="/src/assets/icons/gridblue.png" @click="swapView('grid')" id="gridView" style="width: 25px; height: 25px;">
                     </div> -->
-                    <div style="display: flex; flex-direction: row;">
+                    <div class="MobileHide" style="display: flex; flex-direction: row;">
                         <p style="margin: 0px; margin-top: 2px; margin-right: 10px; font-family: 'Manolo Mono', sans-serif !important;">Following Games</p>
                         <VueToggles v-model="followingGames" :width="50" checkedBg="#17a2b8"/>
                     </div>
@@ -287,9 +287,10 @@ export default {
     },
     computed: {
         headerWidth() {
-        return {
-            width: this.showList == true ? '500px' : '595px'
-            }
+            const isMobile = window.innerWidth <= 400;
+            return {
+                width: isMobile ? '400px' : (this.showList ? '500px' : '595px')
+            };
         },
         headerMargin() {
         return {
@@ -447,5 +448,21 @@ export default {
     outline: none;
     font-size: medium;
     cursor: pointer;
+}
+
+@media (max-width: 	420px) {
+    .MobileHide {
+        display: none !important;
+    }
+
+    .section {
+        padding: 0px;
+    }
+
+    h2 {
+        margin-top: 5px !important;
+        margin-left: 5px !important;
+    }
+
 }
 </style>

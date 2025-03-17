@@ -2,8 +2,8 @@
     <nav>
         <h2 @click="$router.push('/')">Valhalla's Tabletop Games</h2>
         <div style="display: flex; flex-direction: row;" >
-            <router-link to="/" class="">Return Home</router-link>
-            <router-link to="/addrecord" class="">Add Record</router-link>
+            <router-link :class="['nav-link']" to="/" class="">Return Home</router-link>
+            <router-link :class="['nav-link']" to="/addrecord" class="">Add Record</router-link>
             <div class="dropdown MobileHide">
                 <button class="dropbtn" style="width: 85px !important;">View Tools</button>
                 <div class="dropdown-content">
@@ -11,8 +11,8 @@
                     <!-- <router-link to="/dominionselect">Dominion Selector</router-link> -->
                 </div>
             </div>
-            <router-link :to="`/profile/${this.userName}`" class="">Your Profile</router-link>
-            <router-link to="/login" @click="logUserOut" class="">Log Out</router-link>
+            <router-link :class="['nav-link']" :to="`/profile/${this.userName}`" class="">Your Profile</router-link>
+            <router-link :class="['nav-link']" to="/login" @click="logUserOut" class="">Log Out</router-link>
         </div>
     </nav>
 </template>
@@ -119,5 +119,26 @@ nav h2 {
 .dropdown:hover .dropdown-content {
     display: block;
     width: 90px;
+}
+
+
+@media (max-width: 	420px) {
+    .MobileHide {
+        display: none !important;
+    }
+
+    nav{
+        flex-direction: column;
+        justify-content: center;
+    }
+    nav h2 {
+        font-size: 30px;
+        margin-bottom: 0px;
+        margin-right: 0px;
+        text-align: center;
+    }
+    .nav-link {
+        font-size: 14px; /* Smaller font size for screens <= 420px */
+    }
 }
 </style>
