@@ -36,7 +36,7 @@
         </div>
         <div class="section">
             <div :style="headerWidth" style="display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div id="recentGamesContainer"style="display: flex; flex-direction: row; justify-content: space-between;">
                     <h2 style="margin: 0px;">Recent Games</h2>
                     <!-- <div :style="headerMargin">
                         <img src="/src/assets/icons/listblue.png" @click="swapView('list')" id="listView" style="width: 25px; height: 25px; margin-right: 5px;">
@@ -57,7 +57,7 @@
                 </div> -->
                 <div v-if="showList" style="display: flex; justify-content: center; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames">
-                        <RecentGameCard :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"/>
+                        <RecentGameCard :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" :users="users"/>
                     </div>
                 </div>
             </div>
@@ -273,7 +273,10 @@ export default {
                 'Content-Type': 'application/json',
             }})
             .then(response => {
-                this.users = response.data.map(user => user.username);
+                this.users = response.data.map(user => ({
+                    id: user.id,
+                    username: user.username
+                }));
             })
             .catch(error => {
                 console.error("Error fetching data:", error);

@@ -32,6 +32,11 @@ const router = createRouter({
       name: 'Profile',
       component: () => import("../components/Profile.vue"),
     },
+    {
+      path: '/dominioncounter',
+      name: 'DominionCounter',
+      component: () => import("../components/DominionCounter.vue"),
+    },
   ],
 })
 

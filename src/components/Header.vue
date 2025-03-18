@@ -8,6 +8,7 @@
                 <button class="dropbtn" style="width: 85px !important;">View Tools</button>
                 <div class="dropdown-content">
                     <router-link to="/gamerecords">View Records</router-link>
+                    <router-link to="/dominioncounter">Dominion Counter</router-link>
                     <!-- <router-link to="/dominionselect">Dominion Selector</router-link> -->
                 </div>
             </div>

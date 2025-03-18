@@ -4,7 +4,7 @@
             <div style="display: flex; flex-direction: row;">
                 <img class="gamePicture" :src="imageSource" style="border-top-left-radius: 5px;">
                 <div class="testtext" style="margin-left: 15px;">
-                    <p class="name">{{ this.userName }}</p>
+                    <p class="name">{{ posterName }}</p>
                     <p class="date">{{ formattedDate }}</p>
                     <p class="gameName">{{ gameData.gamename }}</p>
                     <span class='gameID' style="display: none;">Game ID {{ gameData.game_id}}</span>
@@ -36,7 +36,7 @@
                     <label for="winnerName">Winner</label>
                     <AutoComplete v-model="winnerName" :suggestions="filteredNames"  optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'winner')" id="winnerName"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'winner')"  @keydown="handleKeyDown($event, 'winner')"
+                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'winner')" @keydown="handleKeyDown($event, 'winner')"
                         :pt="{
                             root: {
                                 class: 'customAutocomplete'
@@ -61,7 +61,7 @@
                     <label for="secondName">Second</label>
                     <AutoComplete v-model="secondName" :suggestions="filteredNames" optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'second')" id="secondName"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'second')"  @keydown="handleKeyDown($event, 'second')"
+                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'second')" @keydown="handleKeyDown($event, 'second')"
                         :pt="{
                             root: {
                                 class: 'customAutocomplete',
@@ -89,7 +89,7 @@
                     <label for="thirdName">Third</label>
                     <AutoComplete v-model="thirdName" :suggestions="filteredNames" optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'third')" id="thirdName"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'third')"  @keydown="handleKeyDown($event, 'third')"
+                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'third')" @keydown="handleKeyDown($event, 'third')"
                         :pt="{
                             root: {
                                 class: 'customAutocomplete',
@@ -191,6 +191,10 @@ export default {
         },
         suggestedNames: { 
             Array
+        },
+        users : {
+            Array,
+            required: true
         }
     },
     data(){
@@ -309,17 +313,6 @@ export default {
 
     },
     computed: {
-        profileImageSrc() {
-            if(this.isVisitor == true) {
-                return new URL('../assets/profilepictures/Guest.png', import.meta.url).href;
-            }
-            let name = this.userMapping[this.gameData.posterid];
-            return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href
-        },
-        imageSource() {
-            const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
-            return `/src/assets/addgame/${cleanedGameName}.png`;
-        },
         formattedDate(){
             let parts = this.gameData.date.split('-');
             let year = parts[0];
@@ -329,6 +322,20 @@ export default {
                 "July", "August", "September", "October", "November", "December"];
             const monthName = months[month - 1];
             return `${monthName} ${day}, ${year}`
+        },
+        posterName(){
+            return this.users.find(user => user.id === this.gameData.posterid)?.username
+        },
+        imageSource() {
+            const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
+            return `/src/assets/addgame/${cleanedGameName}.png`;
+        },
+        profileImageSrc() {
+            if(this.isVisitor == true) {
+                return new URL('../assets/profilepictures/Guest.png', import.meta.url).href;
+            }
+            let name = this.userMapping[this.gameData.posterid];
+            return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href
         }
     },
     created() {
@@ -346,6 +353,7 @@ export default {
             this.secondName = 'Player 2';
             this.thirdName = 'Player 3';
         }
+        console.log(this.users)
     }
 }
 </script>
