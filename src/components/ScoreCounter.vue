@@ -4,10 +4,8 @@
             <div style="display: flex; flex-direction: row; justify-content: space-between;">
                 <p style="font-size: 26px; margin-left: 5px;">{{ typeof playerName === 'string' ? playerName : playerName.name }}</p>
                 <div style="display: flex; flex-direction: row; margin-right: 15px;">
-                    <!-- <p>Total VP</p> -->
                     <p style="font-size: 30px; margin-left: 5px;">{{ victoryPoints }}</p>
                     <img src="/src/assets/icons/vp.png" style="height: 25px; width: 25px; margin-top: 5px; margin-left: 5px;">
-                    <!-- <p>Total VP</p> -->
                 </div>
             </div>
             <div style="width: 365px; display: flex; flex-direction: row; flex-wrap: wrap;">
@@ -25,10 +23,10 @@
 </template>
 
 <script>
-import axios from "axios"
 import { userState } from '/src/state/userState'
 
 export default {
+    inheritAttrs: false,
     name: "Home",
     props: {
         playerName: {
@@ -92,9 +90,11 @@ export default {
             );
         },
         victoryPoints() {
-            return this.cardCounts['Estate'] + (this.cardCounts['Duchy'] * 3) + (this.cardCounts['Province'] * 6) + (this.cardCounts['Colony'] * 6)
-            + this.cardCounts['Tokens'] + (this.cardCounts['Gardens'] * Math.floor(this.cardCounts['Cards'] / 10)) + (this.cardCounts['Duke'] * this.cardCounts['Duchy'])
-            + ((this.cardCounts['Farm'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill']
+            let playerScore = this.cardCounts['Estate'] + (this.cardCounts['Duchy'] * 3) + (this.cardCounts['Province'] * 6) + (this.cardCounts['Colony'] * 10)
+                + this.cardCounts['Tokens'] + (this.cardCounts['Gardens'] * Math.floor(this.cardCounts['Cards'] / 10)) + (this.cardCounts['Duke'] * this.cardCounts['Duchy'])
+                + ((this.cardCounts['Farm'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill']
+            this.$emit('updateScore', playerScore, this.playerNumber)
+            return playerScore
         }
     },
     watch: {
