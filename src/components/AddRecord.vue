@@ -242,6 +242,8 @@ export default {
                 "fourthscore": this.fourthScore,
                 "fifthname": this.fifthName,
                 "fifthscore": this.fifthScore,
+                "sixthname": "",
+                "sixthscore": 1,
                 date: null
             }
 

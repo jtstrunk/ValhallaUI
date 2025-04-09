@@ -230,6 +230,8 @@ export default {
                 "fourthscore": this.fourthScore,
                 "fifthname": this.fifthName,
                 "fifthscore": this.fifthScore,
+                "sixthname": null,
+                "sixthscore": null,
                 date: null
             }
 
