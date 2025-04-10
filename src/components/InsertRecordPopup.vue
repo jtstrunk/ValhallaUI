@@ -1,7 +1,7 @@
 <template>
     <div id="popups" class="gamepopup" v-if="this.insertPopup"> 
         <div class="popupContainer">
-            <p style="color: white; display: inline-block;">Add a {{ this.insertingGameName }} record</p>
+            <p style="color: white; display: inline-block;">Update a {{ this.insertingGameName }} record</p>
             <div class="players">
                 <div class="playerSection">
                     <label for="winnerName">Winner</label>
@@ -23,7 +23,7 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div class="playerSection">
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
                     <label for="winnerScore">Score</label>
                     <Input v-model.number="winnerScore" id="winnerScore"></Input>
                 </div>
@@ -52,7 +52,7 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div class="playerSection">
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
                     <label for="secondScore">Score</label>
                     <Input v-model.number="secondScore" id="secondScore"></Input>
                 </div>
@@ -81,7 +81,7 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div class="playerSection">
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
                     <label for="secondScore">Score</label>
                     <Input v-model.number="thirdScore" id="thirdScore"></Input>
                 </div>
@@ -110,7 +110,7 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div class="playerSection">
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
                     <label for="secondScore">Score</label>
                     <Input v-model.number="fourthScore" id="fourthScore"></Input>
                 </div>
@@ -139,9 +139,38 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div class="playerSection">
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
                     <label for="fifthScore">Score</label>
                     <Input v-model.number="fifthScore" id="fifthScore"></Input>
+                </div>
+            </div>
+            <div v-if="this.insertingPlayerCount > 5" class="players">
+                <div class="playerSection">
+                    <label for="sixthName">Sixth</label>
+                    <AutoComplete v-model="sixthName" :suggestions="filteredNames" optionLabel="name"
+                        @complete="searchName" @item-select="updateName($event, 'sixth')" id="sixthName"
+                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'sixth')" @keydown="handleKeyDown($event, 'sixth')"
+                        :pt="{
+                            root: {
+                                class: 'customAutocomplete',
+                            },
+                            option: 
+                            { 
+                                style: { color: 'white', padding: '4px 8px'}
+                            },
+                            overlay: {
+                                style: { backgroundColor: '#404040', transform: 'translateY(8px)', 
+                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                            },
+                            pcInputText: {
+                                style: { '::placeholder': { color: '#2e6da4' } }
+                            }
+                            
+                        }"></AutoComplete>
+                </div>
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
+                    <label for="sixthScore">Score</label>
+                    <Input v-model.number="sixthScore" id="sixthScore"></Input>
                 </div>
             </div>
             <button class="btn-primary" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
@@ -201,7 +230,7 @@ export default {
                 'Cosmic Encounter': '3 - 5 Players', 'Catan': '2 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players'
             }
             this.positionMapping = {
-                'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
+                'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName, 'sixth': this.sixthName,
             }
         },
         searchName(event) {
@@ -217,6 +246,11 @@ export default {
             this[placement + 'Name'] = input.value;
         },
         submitRecord(){
+            if (this.insertingGameName === "Heat") {
+                this.winnerScore = 0;
+                this.secondScore = 0;
+            }
+            
             let insertObject = {
                 "posterid": this.userID,
                 "gamename": this.insertingGameName,
@@ -230,8 +264,8 @@ export default {
                 "fourthscore": this.fourthScore,
                 "fifthname": this.fifthName,
                 "fifthscore": this.fifthScore,
-                "sixthname": null,
-                "sixthscore": null,
+                "sixthname": this.sixthName,
+                "sixthscore": this.sixthScore,
                 date: null
             }
 
@@ -257,6 +291,8 @@ export default {
                 this.fourthScore = null;
                 this.fifthName = null;
                 this.fifthScore = null;
+                this.sixthName = null;
+                this.sixthScore = null;
                 this.$emit('gameInserted')
                 return response.json();
             })
