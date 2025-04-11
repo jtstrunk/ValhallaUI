@@ -11,25 +11,8 @@
                         :class="{
                             'btn-dark': !selectedExpansions.includes(expansion),
                             'btn': selectedExpansions.includes(expansion)
-                        }"
-                        >
-                        {{ expansion }}
+                        }" > {{ expansion }}
                     </button>
-                    <!-- <button class="btn-dark" @click="this.hideSet('base', $event)">Dominion</button>
-                    <button class="btn-dark" @click="this.hideSet('Intrigue', $event)">Intrigue</button>
-                    <button class="btn-dark" @click="this.hideSet('Seaside', $event)">Seaside</button>
-                    <button class="btn-dark" @click="this.hideSet('Prosperity', $event)">Prosperity</button>
-                    <button class="btn-dark" @click="this.hideSet('Plunder', $event)">Plunder</button>
-                    <button class="btn-dark" @click="this.hideSet('Rising Sun', $event)">Rising Sun</button> -->
-                    <!-- <button class="set sort deselected">Hinterlands</button>
-                    <button class="set sort deselected">Dark Ages</button>
-                    <button class="set sort deselected">Guilds</button>
-                    <button class="set sort deselected">Adventures</button>
-                    <button class="set sort deselected">Empires</button>
-                    <button class="set sort deselected">Nocturne</button>
-                    <button class="set sort deselected">Renaissance</button>
-                    <button class="set sort deselected">Menagerie</button>
-                    <button class="set sort deselected">Allies</button> -->
                 </div>
         
             </div>
@@ -66,6 +49,64 @@
             <img v-for="card in cardList" :key="card" :alt="card"
                 :src="'src/assets/dominioncards/200px-' + card + '.jpg'" />
         </div>
+        <div id="selectedCards" >
+            <span class="special">Start a Game</span>
+            <div class="buttons" style="margin-bottom: 15px;">
+                <button @click="startGame()" id="selectedCardsbtn" class="btn-option btn-dark">Use Selected Cards</button>
+                <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button>
+            </div>
+            <div class="buttons">
+                <span class="special" style="margin-top: 15px !important;">Select Random Cards From</span>
+                <span class="special" style="margin-left: 50px;" @click="this.showDialog=!this.showDialog">Advanced</span>
+            </div>
+            
+            <span id="alert"></span>
+            <div class="buttons">
+                <button @click="selectedFill()" id="selectedFill" class="btn-option btn-dark">Selected Filters</button>
+                <button @click="anyFill()" id="randomFill" class="btn-option btn-dark">Any Filter</button>
+            </div>
+            <div id="selcards">
+                <img v-for="card in selectedCards" :key="card" :alt="card" class="miniCard"
+                    :src="'src/assets/dominioncards/200px-' + card + '.jpg'" />
+            </div>
+        </div>
+    </div>
+    <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
+    <div id="popups" class="gamepopup" v-if="this.showDialog"> 
+        <div class="popupContainer">
+            <p>Advanced Settings</p>
+            <div style="display: flex; flex-direction: row; justify-content: space-between; width: 710px;">
+                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 112.5px; justify-content: space-between;">
+                    <button
+                        v-for="cardType in cardTypes"
+                        :key="cardType"
+                        @click="toggleAdvancedcardType(cardType)"
+                        :class="{
+                            'btn-dark': !selectedAdvancedCardTypes.includes(cardType),
+                            'btn-seleced': selectedAdvancedCardTypes.includes(cardType)
+                        }" > {{ cardType }}
+                    </button>
+                </div>
+                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 75px; justify-content: space-between;">
+                    <button
+                        v-for="expansion in expansions"
+                        :key="expansion"
+                        @click="toggleAdvancedExpansion(expansion)"
+                        :class="{
+                            'btn-dark': !selectedAdvancedExpansions.includes(expansion),
+                            'btn-seleced': selectedAdvancedExpansions.includes(expansion)
+                        }" > {{ expansion }}
+                    </button>
+                </div>
+            </div>
+            <div>
+                <button @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
+            </div>
+            <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 720px;">
+                <img v-for="card in selectedCards" :key="card" :alt="card" class="tinyCard"
+                    :src="'src/assets/dominioncards/200px-' + card + '.jpg'" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -85,10 +126,15 @@ export default {
     data(){
         return{
             userName: userState.username,
+            showDialog: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
+            cardTypes: ['Debit', 'Trait', 'Event', 'Prophecy', 'Treasure', 'Victory', 'Col & Plat'],
             selectedExpansions: [],
+            selectedAdvancedExpansions: [],
+            selectedAdvancedCardTypes: [],
             selectedTypes: [],
             selectedCategories: [],
+            selectedCards: [],
             cardList:[
                 "Cellar",
                 "Chapel",
@@ -535,6 +581,56 @@ export default {
                 this.selectedExpansions.push(expansion);
             }
         },
+        toggleAdvancedExpansion(expansion){
+            if (this.selectedAdvancedExpansions.includes(expansion)) {
+                this.selectedAdvancedExpansions = this.selectedAdvancedExpansions.filter(item => item !== expansion);
+            } else {
+                this.selectedAdvancedExpansions.push(expansion);
+            }
+        },
+        toggleAdvancedcardType(cardType){
+            if (this.selectedAdvancedCardTypes.includes(cardType)) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(item => item !== cardType);
+            } else {
+                this.selectedAdvancedCardTypes.push(cardType);
+            }
+        },
+        startGame() {
+            console.log('starting game')
+        },
+        clearSelections() {
+            console.log('clearing selections')
+            this.selectedCards = [];
+        },
+        selectedFill() {
+            console.log('getting cards from this list')
+        },
+        anyFill() {
+            let tempCardList = JSON.parse(JSON.stringify(this.cardList));
+            let loopCount = 10 - this.selectedCards.length;
+            loopCount = Math.max(loopCount, 0);
+            let addedCount = 0;
+            let attempts = 0;
+
+            while (addedCount < loopCount && attempts < 100) {
+                attempts++;
+                let randomIndex = Math.floor(Math.random() * tempCardList.length);
+                let cardName = tempCardList[randomIndex];
+
+                if (!this.selectedCards.includes(cardName)) {
+                    this.selectedCards.push(cardName);
+                    tempCardList.splice(randomIndex, 1);
+                    addedCount++;
+                }
+            }
+        },
+        generateAdvancedKingdom(){
+            console.log(this.selectedAdvancedExpansions)
+            console.log(this.selectedAdvancedCardTypes)
+            if(this.selectedAdvancedCardTypes.includes(cardName)) {
+                console.log('omen', this.omenCards)
+            }
+        },
         async fetchUsersPlayedWith(user) {
             axios.get(`http://127.0.0.1:8000/getuseruniqueplayers/${user}`, {
             withCredentials: false,
@@ -587,18 +683,6 @@ h3{
     font-family: 'Manolo Mono', sans-serif !important;
 }
 
-.btn-dark {
-    width: 110px;
-    color: #fff !important;
-    background-color: #404040;
-    border: 2px solid #404040;
-    outline: none;
-    padding: 4px 7px;
-    border-radius: 5px;
-}
-.btn-dark:hover {
-    cursor: pointer;
-}
 .btn {
     width: 110px;
     color: #fff !important;
@@ -609,6 +693,32 @@ h3{
     border-radius: 5px;
 }
 .btn:hover {
+    cursor: pointer;
+}
+.btn-dark {
+    width: 110px;
+    height: 32px;
+    color: #fff !important;
+    background-color: #404040;
+    border: 2px solid #404040;
+    outline: none;
+    padding: 4px 7px;
+    border-radius: 5px;
+}
+.btn-dark:hover {
+    cursor: pointer;
+}
+.btn-seleced {
+    width: 110px;
+    height: 32px;
+    color: #17a2b8 !important;
+    background-color: #404040;
+    border: 2px solid #17a2b8;
+    outline: none;
+    padding: 4px 7px;
+    border-radius: 5px;
+}
+.btn-selcted:hover {
     cursor: pointer;
 }
 .btn-outline {
@@ -622,6 +732,11 @@ h3{
 }
 .btn-outline:hover {
     cursor: pointer;
+}
+.btn-option {
+    width: 150px !important;
+    height: 32px !important;
+    margin-left: 2px !important; 
 }
 
 label {
@@ -695,38 +810,75 @@ img {
     margin: 3.5px;
 }
 
-/* .counter{
-    display: flex;
-    flex-direction: column;
+#selectedCards {
+    position: sticky;
+    top: 65px;
+    /* set initial overflow to hidden */
+    /* overflow-y: scroll;
+    scrollbar-width: thin; */
 }
-.counter span {
-    color: #fff;
-    font-size: 26px;
+
+.special {
+    text-align: left !important;
+    margin: 0%;
+    margin-left: 5px;
+    color: white;
 }
-.counter p {
-    margin: 0px;
+.miniCard {
+    width: 148px;
+    height: 238px;
+    margin: 2px;
 }
-.type {
-    margin: 10px;
+.tinyCard {
+    width: 140px;
+    height: 215px;
+    margin: 2px;
 }
-.cardCounter {
+#selcards {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    width: 316px;
+    margin-left: 2px;
 }
-.cardCounter p {
-    margin: 0px;
-}
-.score {
-    padding: 0px 4px;
-    width: 30px;
-    text-align: center;
-    font-size: 20px;
-    margin-top: 5px !important;
-}
-.subtracting {
-    font-size: 24px;
-}
-.adding {
-    font-size: 24px;
+/* .scroll {
+    height: 760px;
 } */
+
+.selected {
+    border: 2.5px solid #5cc0e4;
+    background-color: #656668;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
+    backdrop-filter: blur(3px); /* Apply the blur effect to the overlay */
+    z-index: 1000; /* Ensure the overlay is behind the popup */
+}
+
+.gamepopup {
+    width: 800px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background-color: #242526;
+    border-radius: 2%;
+    text-align: center;
+    z-index: 1001;
+    height: 680px;
+}
+.popupContainer {
+    width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
 </style>
