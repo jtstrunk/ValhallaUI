@@ -45,6 +45,7 @@
                 </div>
             </div>
         </div>
+        <!-- add number box to ask how many to filter -->
         <div id="cards" class="show-all">
             <img v-for="card in cardList" :key="card" :alt="card"
                 :src="'src/assets/dominioncards/200px-' + card + '.jpg'" />
@@ -126,15 +127,16 @@ export default {
     data(){
         return{
             userName: userState.username,
-            showDialog: false,
+            showDialog: true,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
-            cardTypes: ['Debit', 'Trait', 'Event', 'Prophecy', 'Treasure', 'Victory', 'Col & Plat'],
+            cardTypes: ['Debit', 'Trait', 'Loot', 'Event', 'Prophecy', 'Treasure', 'Victory', 'Col & Plat'],
             selectedExpansions: [],
             selectedAdvancedExpansions: [],
             selectedAdvancedCardTypes: [],
             selectedTypes: [],
             selectedCategories: [],
             selectedCards: [],
+            selectedAddons: [],
             cardList:[
                 "Cellar",
                 "Chapel",
@@ -559,7 +561,77 @@ export default {
                 "River_Shrine",
                 "Rustic_Village",
                 "Tea_House"
-            ]
+            ],
+            lootCards: [
+                "Cutthroat",
+                "Jewelled_Egg",
+                "Pickaxr",
+                "Sam_Of_Loot",
+                "Search",
+                "Weathy_Village"
+            ],
+            events: [
+                "Summon",
+                "Continue",
+                "Amass",
+                "Asceticism",
+                "Credit",
+                "Foresight",
+                "Kintsugi",
+                "Practice",
+                "Sea_Trade",
+                "Receive_Tribute",
+                "Gather",
+                "Bury",
+                "Avoid",
+                "Deliver",
+                "Peril",
+                "Rush",
+                "Foray",
+                "Launch",
+                "Mirror",
+                "Prepare",
+                "Scrounge",
+                "Journey",
+                "Maelstrom",
+                "Looting",
+                "Invasion",
+                "Prosper"
+            ],
+            traits: [
+                "Cheap",
+                "Cursed",
+                "Fated",
+                "Fawning",
+                "Friendly",
+                "Hasty",
+                "Inherited",
+                "Inspiring",
+                "Nearby",
+                "Patient",
+                "Pious",
+                "Reckless",
+                "Rich",
+                "Shy",
+                "Tireless"
+            ],
+            prophecies: [
+                "Approaching_Army",
+                "Biding_Time",
+                "Bureaucracy",
+                "Divine_Wind",
+                "Enlightenment",
+                "Flourishing_Trade",
+                "Good_Harvest",
+                "Great_Leader",
+                "Growth",
+                "Harsh_Winter",
+                "Kind_Emperor",
+                "Panic",
+                "Progress",
+                "Rapid_Expansion",
+                "Sickness"
+            ],
         }
     },
     components: {
@@ -625,10 +697,64 @@ export default {
             }
         },
         generateAdvancedKingdom(){
+            this.selectedCards = [];
+            this.selectedAddons = [];
             console.log(this.selectedAdvancedExpansions)
             console.log(this.selectedAdvancedCardTypes)
-            if(this.selectedAdvancedCardTypes.includes(cardName)) {
-                console.log('omen', this.omenCards)
+            if(this.selectedAdvancedCardTypes.includes('Prophecy')) {
+                let numOmen = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(randomChance < 71) {
+                    numOmen = 1
+                } else {
+                    numOmen = 2
+                }
+
+                while (addedCount < numOmen && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.omenCards.length);
+                    let cardName = this.omenCards[randomIndex];
+
+                    if (!this.selectedCards.includes(cardName)) {
+                        this.selectedCards.push(cardName);
+                        addedCount++;
+                    }
+                }
+
+                let prophecyRandomIndex = Math.floor(Math.random() * this.prophecies.length);
+                let cardName = this.prophecies[prophecyRandomIndex];
+                console.log('prophecy', cardName)
+            }
+
+            if(this.selectedAdvancedCardTypes.includes('Event')) {
+                let numEvent = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(randomChance < 71) {
+                    numEvent = 1
+                } else {
+                    numEvent = 2
+                }
+
+                console.log('num events', numEvent)
+
+                while (addedCount < numEvent && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.events.length);
+                    let eventName = this.events[randomIndex];
+
+                    if (!this.selectedAddons.includes(eventName)) {
+                        this.selectedAddons.push(eventName);
+                        addedCount++;
+                    }
+                }
+
+                console.log('addons', this.selectedAddons)
             }
         },
         async fetchUsersPlayedWith(user) {

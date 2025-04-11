@@ -124,12 +124,10 @@
         </div>
     </div>
     <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px;" @click="endGame">Submit Current Scores</button>
-
     <ScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
     <ScoreCounter v-if="showCounters" :playerName="playerTwoName" :playerNumber="2" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
     <ScoreCounter v-if="showCounters && playerCount > 2" :playerName="playerThreeName" :playerNumber="3" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
     <ScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-
     <div id="overlay" v-if="this.showPopup" @click="this.showPopup=!this.showPopup"></div>
     <InsertRecordPopup :insertPopup="showPopup" :gameInformationObject="insertObject" :gameName="'Dominion'"
         :insertingPlayerCount="playerCount" @gameInserted="resetGameState" ></InsertRecordPopup>
@@ -176,7 +174,9 @@ export default {
                 fourthname: null,
                 fourthscore: null,
                 fifthname: null,
-                fifthscore: null
+                fifthscore: null,
+                sixthname: null,
+                sixthscore: null
             }
         }
     },
@@ -276,7 +276,9 @@ export default {
                 fourthname: players[3]?.name || null,
                 fourthscore: players[3]?.score || null,
                 fifthname: players[4]?.name || null,
-                fifthscore: players[4]?.score || null
+                fifthscore: players[4]?.score || null,
+                sixthname: players[5]?.name || null,
+                sixthscore: players[5]?.score || null
             };
 
             this.showPopup = true;

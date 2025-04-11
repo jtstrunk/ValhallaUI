@@ -213,7 +213,7 @@ export default {
             userName: userState.username,
             userID: userState.userID,
             isVisitor: false,
-            insertingGameName: this.gameName ||'',
+            insertingGameName: this.gameName || '',
             filteredNames: [],
             supportedGames: ['Dominion', 'Moonrakers', 'Clank', 'Lords of Waterdeep', 'Race for the Galaxy', 'Heat', 
                 'Space Base', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
@@ -374,6 +374,12 @@ export default {
         },
         fifthScore() {
             return this.gameInformationObject.fifthscore;
+        },
+        sixthName() {
+            return this.gameInformationObject.sixthname;
+        },
+        sixthScore() {
+            return this.gameInformationObject.sixthscore;
         }
     },
     created(){
@@ -454,9 +460,9 @@ input {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
-    backdrop-filter: blur(3px); /* Apply the blur effect to the overlay */
-    z-index: 1000; /* Ensure the overlay is behind the popup */
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
 }
 
 .gamepopup {
@@ -485,6 +491,7 @@ input {
     color: white;
     padding: 6px;
     border-radius: 5px;
+    width: 90%;
 }
 
 @media (max-width: 	420px) {
