@@ -14,7 +14,6 @@
                         }" > {{ expansion }}
                     </button>
                 </div>
-        
             </div>
             <div>
                 <div id="types">
@@ -101,11 +100,16 @@
                 </div>
             </div>
             <div>
-                <button @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
+                <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
             </div>
             <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 720px;">
                 <img v-for="card in selectedCards" :key="card" :alt="card" class="tinyCard"
-                    :src="'src/assets/dominioncards/200px-' + card + '.jpg'" />
+                    :src="'src/assets/dominioncards/200px-' + card + '.jpg'" 
+                    :class="{ traitCards: this.traitCards.includes(card) }" @click="removeCard(card)" />
+            </div>
+            <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 660px;">
+                <img v-for="card in selectedAddons" :key="card" :alt="card" class="addonCard"
+                    :src="'src/assets/dominioncards/' + card + '.jpg'" />
             </div>
         </div>
     </div>
@@ -129,7 +133,7 @@ export default {
             userName: userState.username,
             showDialog: true,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
-            cardTypes: ['Debit', 'Trait', 'Loot', 'Event', 'Prophecy', 'Treasure', 'Victory', 'Col & Plat'],
+            cardTypes: ['Treasure', 'Victory', 'Shadow', 'Debt', 'Loot', 'Col & Plat', 'Prophecy', 'Event', 'Trait'],
             selectedExpansions: [],
             selectedAdvancedExpansions: [],
             selectedAdvancedCardTypes: [],
@@ -137,6 +141,7 @@ export default {
             selectedCategories: [],
             selectedCards: [],
             selectedAddons: [],
+            traitCards: [],
             cardList:[
                 "Cellar",
                 "Chapel",
@@ -467,7 +472,7 @@ export default {
                 "Pendant",
                 "Pickaxe",
                 "Rope",
-                "Sack_Of_Loot",
+                "Sack_of_Loot",
                 "Silver_Mine",
                 "Tools",
             ],
@@ -562,13 +567,24 @@ export default {
                 "Rustic_Village",
                 "Tea_House"
             ],
+            debtCards: [
+                "Artist",
+                "Change",
+                "Craftsman",
+                "Daimyo",
+                "Gold_Mine",
+                "Imperial_Envoy",
+                "Litter",
+                "Mountain_Shrine",
+                "Root_Cellar"
+            ],
             lootCards: [
                 "Cutthroat",
                 "Jewelled_Egg",
-                "Pickaxr",
-                "Sam_Of_Loot",
+                "Pickaxe",
+                "Sack_of_Loot",
                 "Search",
-                "Weathy_Village"
+                "Wealthy_Village"
             ],
             events: [
                 "Summon",
@@ -667,11 +683,15 @@ export default {
                 this.selectedAdvancedCardTypes.push(cardType);
             }
         },
+        removeCard(card) {
+            console.log('remove this card', card)
+            let index = this.selectedCards[card]
+            this.selectedCards.splice(index, 1);
+        },
         startGame() {
             console.log('starting game')
         },
         clearSelections() {
-            console.log('clearing selections')
             this.selectedCards = [];
         },
         selectedFill() {
@@ -699,8 +719,147 @@ export default {
         generateAdvancedKingdom(){
             this.selectedCards = [];
             this.selectedAddons = [];
+            this.traitCards = [];
             console.log(this.selectedAdvancedExpansions)
             console.log(this.selectedAdvancedCardTypes)
+
+            if(this.selectedAdvancedCardTypes.includes('Treasure')) {
+                let numTreasure = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(this.selectedAdvancedCardTypes.includes('Col & Plat')) {
+                    console.log('change them joints fr')
+                    if(randomChance <= 60) {
+                        numTreasure = 1;
+                    } else if(60 < randomChance <= 95) {
+                        numTreasure = 2;
+                    } else {
+                        numTreasure = 3;
+                    }
+                } else {
+                    if(randomChance <= 40) {
+                        numTreasure = 1;
+                    } else if(45 < randomChance <= 85) {
+                        numTreasure = 2;
+                    } else {
+                        numTreasure = 3;
+                    }
+                }
+
+                while (addedCount < numTreasure && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.treasureCards.length);
+                    let cardName = this.treasureCards[randomIndex];
+
+                    if (!this.selectedCards.includes(cardName)) {
+                        this.selectedCards.push(cardName);
+                        addedCount++;
+                    }
+                }
+            }
+
+            if(this.selectedAdvancedCardTypes.includes('Victory')) {
+                let numVictory = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(randomChance <= 55) {
+                    numVictory = 1;
+                } else if(55 < randomChance <= 95) {
+                    numVictory = 2;
+                } else {
+                    numVictory = 3;
+                }
+
+                while (addedCount < numVictory && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.victoryCards.length);
+                    let cardName = this.victoryCards[randomIndex];
+
+                    if (!this.selectedCards.includes(cardName)) {
+                        this.selectedCards.push(cardName);
+                        addedCount++;
+                    }
+                }
+            }
+
+            if(this.selectedAdvancedCardTypes.includes('Shadow')) {
+                let numShadow = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(randomChance <= 92) {
+                    numShadow = 1;
+                } else {
+                    numShadow = 2;
+                }
+
+                while (addedCount < numShadow && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.shadowCards.length);
+                    let cardName = this.shadowCards[randomIndex];
+
+                    if (!this.selectedCards.includes(cardName)) {
+                        this.selectedCards.push(cardName);
+                        addedCount++;
+                    }
+                }
+            }
+
+            if(this.selectedAdvancedCardTypes.includes('Debt')) {
+                let numDebt = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(randomChance <= 45) {
+                    numDebt = 1;
+                } else if(45 < randomChance <= 80) {
+                    numDebt = 2;
+                } else {
+                    numDebt = 3;
+                }
+                
+                while (addedCount < numDebt && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.debtCards.length);
+                    let cardName = this.debtCards[randomIndex];
+
+                    if (!this.selectedCards.includes(cardName)) {
+                        this.selectedCards.push(cardName);
+                        addedCount++;
+                    }
+                }
+            }
+
+            if(this.selectedAdvancedCardTypes.includes('Loot')) {
+                let numLoot = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(randomChance <= 65) {
+                    numLoot = 1;
+                } else{
+                    numLoot = 2;
+                } 
+
+                while (addedCount < numLoot && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.lootCards.length);
+                    let cardName = this.lootCards[randomIndex];
+
+                    if (!this.selectedCards.includes(cardName)) {
+                        this.selectedCards.push(cardName);
+                        addedCount++;
+                    }
+                }
+            }
+
             if(this.selectedAdvancedCardTypes.includes('Prophecy')) {
                 let numOmen = 0;
                 let addedCount = 0;
@@ -727,6 +886,9 @@ export default {
                 let prophecyRandomIndex = Math.floor(Math.random() * this.prophecies.length);
                 let cardName = this.prophecies[prophecyRandomIndex];
                 console.log('prophecy', cardName)
+                if (!this.selectedAddons.includes(cardName)) {
+                    this.selectedAddons.push(cardName);
+                }
             }
 
             if(this.selectedAdvancedCardTypes.includes('Event')) {
@@ -735,13 +897,15 @@ export default {
                 let attempts = 0;
                 let randomChance = Math.floor(Math.random() * 100);
 
-                if(randomChance < 71) {
-                    numEvent = 1
+                if (this.prophecies.some(prophecy => this.selectedAddons.includes(prophecy))) {
+                    numEvent = 1;
                 } else {
-                    numEvent = 2
+                    if(randomChance < 81) {
+                        numEvent = 1;
+                    } else {
+                        numEvent = 2;
+                    }
                 }
-
-                console.log('num events', numEvent)
 
                 while (addedCount < numEvent && attempts < 20) {
                     attempts++;
@@ -751,11 +915,67 @@ export default {
                     if (!this.selectedAddons.includes(eventName)) {
                         this.selectedAddons.push(eventName);
                         addedCount++;
+                        console.log('event', eventName)
                     }
                 }
-
-                console.log('addons', this.selectedAddons)
             }
+
+            if(this.selectedAdvancedCardTypes.includes('Trait')) {
+                let numTrait = 0;
+                let addedCount = 0;
+                let attempts = 0;
+                let randomChance = Math.floor(Math.random() * 100);
+
+                if(randomChance < 71) {
+                    numTrait = 1
+                } else {
+                    numTrait = 2
+                }
+
+                numTrait = 2;
+
+                while (addedCount < numTrait && attempts < 20) {
+                    attempts++;
+                    let randomIndex = Math.floor(Math.random() * this.traits.length);
+                    let traitName = this.traits[randomIndex];
+
+                    if (!this.selectedAddons.includes(traitName)) {
+                        this.selectedAddons.push(traitName);
+                        addedCount++;
+                    }
+                }
+            }
+
+            console.log(this.selectedCards)
+            this.anyFill()
+            if(!this.prophecies.some(prophecy => this.selectedAddons.includes(prophecy)) 
+                && this.omenCards.some(omen => this.selectedCards.includes(omen))) {
+                let prophecyRandomIndex = Math.floor(Math.random() * this.prophecies.length);
+                let cardName = this.prophecies[prophecyRandomIndex];
+                if (!this.selectedAddons.includes(cardName)) {
+                    this.selectedAddons.push(cardName);
+                }
+            }
+
+            let traitNumber = 0;
+            let traitCount = 0;
+            let attempts = 0;
+            this.traits.forEach(trait => {
+                if (this.selectedAddons.includes(trait)) {
+                    traitNumber++;
+                }
+            });
+            while (traitCount < traitNumber && attempts < 20) {
+                let randomNumber = Math.floor(Math.random() * 10);
+                console.log('randomNumber', randomNumber)
+                console.log('card', this.selectedCards[randomNumber])
+                if(!this.traitCards.includes(this.selectedCards[randomNumber])) {
+                    this.traitCards.push(this.selectedCards[randomNumber])
+                    traitCount++;
+                }
+                attempts++
+            }
+            console.log('Number of matching traits:', this.traitNumber);
         },
         async fetchUsersPlayedWith(user) {
             axios.get(`http://127.0.0.1:8000/getuseruniqueplayers/${user}`, {
@@ -789,16 +1009,6 @@ export default {
 .section {
     display: flex;
     flex-direction: row !important;
-}
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
-    backdrop-filter: blur(3px); /* Apply the blur effect to the overlay */
-    z-index: 1000; /* Ensure the overlay is behind the popup */
 }
 
 h2 {
@@ -863,6 +1073,13 @@ h3{
     width: 150px !important;
     height: 32px !important;
     margin-left: 2px !important; 
+}
+.btn-start {
+    margin-top: 5px;
+    background-color: tan;
+    border-radius: 5px;
+    border: 1px solid;
+    padding: 5px;
 }
 
 label {
@@ -960,6 +1177,11 @@ img {
     height: 215px;
     margin: 2px;
 }
+.addonCard {
+    width: 215px;
+    height: 140px;
+    margin: 2px;
+}
 #selcards {
     display: flex;
     flex-direction: row;
@@ -982,13 +1204,13 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for transparency */
-    backdrop-filter: blur(3px); /* Apply the blur effect to the overlay */
-    z-index: 1000; /* Ensure the overlay is behind the popup */
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
 }
 
 .gamepopup {
-    width: 800px;
+    width: 820px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 50%;
@@ -999,6 +1221,22 @@ img {
     text-align: center;
     z-index: 1001;
     height: 680px;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #242526;
+}
+.gamepopup::-webkit-scrollbar {
+    width: 8px;
+}
+.gamepopup::-webkit-scrollbar-track {
+    background: #242526;
+}
+.gamepopup::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+.gamepopup::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
 }
 .popupContainer {
     width: 800px;
@@ -1006,5 +1244,8 @@ img {
     flex-direction: column;
     align-items: center;
     margin-bottom: 25px;
+}
+.traitCards {
+    border: 3.5px solid purple;
 }
 </style>

@@ -49,6 +49,7 @@ export default {
                 Estate: 3,
                 Duchy: 0,
                 Province: 0,
+                Curse: 0,
                 Colony: 0,
                 Tokens: 0,
                 Gardens: 0,
@@ -80,19 +81,17 @@ export default {
     },
     computed: {
         filteredCardCounts() {
-            console.log('changig filterd')
-            console.log(this.selectedAltVPCards)
-            const baseCards = ['Estate', 'Duchy', 'Province'];
+            const baseCards = ['Estate', 'Duchy', 'Province', 'Curse'];
             return Object.fromEntries(
                 Object.entries(this.cardCounts).filter(([cardType]) => 
-                baseCards.includes(cardType) || this.selectedAltVPCards.includes(cardType)
+                    baseCards.includes(cardType) || this.selectedAltVPCards.includes(cardType)
                 )
             );
         },
         victoryPoints() {
             let playerScore = this.cardCounts['Estate'] + (this.cardCounts['Duchy'] * 3) + (this.cardCounts['Province'] * 6) + (this.cardCounts['Colony'] * 10)
                 + this.cardCounts['Tokens'] + (this.cardCounts['Gardens'] * Math.floor(this.cardCounts['Cards'] / 10)) + (this.cardCounts['Duke'] * this.cardCounts['Duchy'])
-                + ((this.cardCounts['Farm'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill']
+                + ((this.cardCounts['Farm'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill'] - this.cardCounts['Curse']
             this.$emit('updateScore', playerScore, this.playerNumber)
             return playerScore
         }
