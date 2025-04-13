@@ -6,11 +6,12 @@
                 <div id="collapsibleSets" class="">
                     <button
                         v-for="expansion in expansions"
+                        style="margin: 2px 0"
                         :key="expansion"
                         @click="toggleExpansion(expansion)"
                         :class="{
                             'btn-dark': !selectedExpansions.includes(expansion),
-                            'btn': selectedExpansions.includes(expansion)
+                            'btn-seleced': selectedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
                 </div>
@@ -46,8 +47,8 @@
         </div>
         <!-- add number box to ask how many to filter -->
         <div id="cards" class="show-all">
-            <img v-for="card in cardList" :key="card" :alt="card"
-                :src="'src/assets/dominioncards/200px-' + card + '.jpg'" />
+            <img v-for="card in filteredCards" :key="card.name" :alt="card.name"
+                :src="'src/assets/dominioncards/200px-' + card.name + '.jpg'" />
         </div>
         <div id="selectedCards" >
             <span class="special">Start a Game</span>
@@ -71,6 +72,7 @@
             </div>
         </div>
     </div>
+
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
@@ -131,12 +133,13 @@ export default {
     data(){
         return{
             userName: userState.username,
-            showDialog: true,
+            showDialog: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             cardTypes: ['Treasure', 'Victory', 'Shadow', 'Debt', 'Loot', 'Col & Plat', 'Prophecy', 'Event', 'Trait'],
-            selectedExpansions: [],
+            categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver', '', '', '', '', '', '', '', '', '', '', ''],
             selectedAdvancedExpansions: [],
             selectedAdvancedCardTypes: [],
+            selectedExpansions: [],
             selectedTypes: [],
             selectedCategories: [],
             selectedCards: [],
@@ -312,7 +315,8 @@ export default {
                 "Samurai",
                 "Rice"
             ],
-            actionCards: [
+
+actionCards: [
                 "Artisan",
                 "Bandit",
                 "Bureaucrat",
@@ -648,6 +652,7 @@ export default {
                 "Rapid_Expansion",
                 "Sickness"
             ],
+            
         }
     },
     components: {
@@ -655,19 +660,27 @@ export default {
     },
     computed: {
         filteredCards() {
-        if (this.selectedExpansions.length === 0) {
-            return this.cards; // Show all cards if no expansion is selected
+            // Filter cards based on selectedExpansions
+            if (this.selectedExpansions.length === 0) {
+                console.log("No expansions selected, showing all cards.");
+                return this.cards;
+            }
+
+            console.log("Filtering cards..."); // Debugging output
+            return this.cards.filter(card =>
+                this.selectedExpansions.includes(card.set)
+            );
         }
-        return this.cards.filter(card => this.selectedExpansions.includes(card.expansion));
-        },
     },
     methods: {
         toggleExpansion(expansion) {
+            // Add or remove the clicked expansion from selectedExpansions
             if (this.selectedExpansions.includes(expansion)) {
                 this.selectedExpansions = this.selectedExpansions.filter(item => item !== expansion);
             } else {
                 this.selectedExpansions.push(expansion);
             }
+            console.log("Selected Expansions:", this.selectedExpansions); // Debugging output
         },
         toggleAdvancedExpansion(expansion){
             if (this.selectedAdvancedExpansions.includes(expansion)) {
@@ -932,8 +945,6 @@ export default {
                     numTrait = 2
                 }
 
-                numTrait = 2;
-
                 while (addedCount < numTrait && attempts < 20) {
                     attempts++;
                     let randomIndex = Math.floor(Math.random() * this.traits.length);
@@ -996,11 +1007,1063 @@ export default {
             });
         },
     },
-    computed: {
-
-    },
     created() {
-        
+        this.cards = [
+            {
+                name: "Cellar",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Chapel",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Moat",
+                set: "Dominion",
+                types: ["Action, Reaction"],
+                categories: [""]
+            },
+            {
+                name: "Harbinger",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "Merchant",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "Vassal",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Village",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Workshop",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Bureaucrat",
+                set: "Dominion",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Gardens",
+                set: "Dominion",
+                types: ["Victory"],
+                categories: [""]
+            },
+            {
+                name: "Militia",
+                set: "Dominion",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Moneylender",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Poacher",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Remodel",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Smithy",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Throne_Room",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Bandit",
+                set: "Dominion",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Council_Room",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Festival",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Laboratory",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Library",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Market",
+                set: "Dominion",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Mine",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Sentry",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Cantrip", "Trasher"]
+            },
+            {
+                name: "Witch",
+                set: "Dominion",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Artisan",
+                set: "Dominion",
+                types: ["Action"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Captain",
+                set: "Promo",
+                types: ["Action", "Duration", "Command"],
+                categories: [""]
+            },
+            {
+                name: "Church",
+                set: "Promo",
+                types: ["Action", "Duration"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Haven",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "Lighthouse",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Native_Village",
+                set: "Seaside",
+                types: ["Action"],
+                categories: ["Village", "Trasher"]
+                
+            },
+            {
+                name: "Astrolabe",
+                set: "Seaside",
+                types: ["Treasure", "Duration"],
+                categories: [""]
+                
+            },
+            {
+                name: "Fishing_Village",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: ["Village"]
+                
+            },
+            {
+                name: "Lookout",
+                set: "Seaside",
+                types: ["Action"],
+                categories: ["Trasher"]
+                
+            },
+            {
+                name: "Monkey",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: [""]
+                
+            },
+            {
+                name: "Sea_Chart",
+                set: "Seaside",
+                types: ["Action"],
+                categories: ["Cantrip"]
+                
+            },
+            {
+                name: "Smugglers",
+                set: "Seaside",
+                types: ["Action"],
+                categories: ["Gainer"]
+                
+            },
+            {
+                name: "Warehouse",
+                set: "Seaside",
+                types: ["Action"],
+                categories: [""]
+                
+            },
+            {
+                name: "Blockade",
+                set: "Seaside",
+                types: ["Action", "Duration", "Attack"],
+                categories: ["Gainer"]
+                
+            },
+            {
+                name: "Caravan",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: ["Cantrip"]
+                
+            },
+            {
+                name: "Cutpurse",
+                set: "Seaside",
+                types: ["Action", "Attack"],
+                categories: [""]
+                
+            },
+            {
+                name: "Island",
+                set: "Seaside",
+                types: ["Action", "Victory"],
+                categories: ["Trasher"]
+                
+            },
+            {
+                name: "Sailor",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: ["Trasher"]
+                
+            },
+            {
+                name: "Salvager",
+                set: "Seaside",
+                types: ["Action"],
+                categories: ["Trasher"]
+                
+            },
+            {
+                name: "Tide_Pools",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: [""]
+                
+            },
+            {
+                name: "Treasure_Map",
+                set: "Seaside",
+                types: ["Action"],
+                categories: [""]
+                
+            },
+            {
+                name: "Bazaar",
+                set: "Seaside",
+                types: ["Action"],
+                categories: ["Village"]
+                
+            },
+            {
+                name: "Corsair",
+                set: "Seaside",
+                types: ["Action", "Duration", "Attack"],
+                categories: [""]
+                
+            },
+            {
+                name: "Merchant_Ship",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: [""]
+                
+            },
+            {
+                name: "Outpost",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: [""]
+                
+            },
+            {
+                name: "Pirate",
+                set: "Seaside",
+                types: ["Action", "Duration", "Reaction"],
+                categories: ["Gainer"]
+                
+            },
+            {
+                name: "Sea_Witch",
+                set: "Seaside",
+                types: ["Action", "Duration", "Attack"],
+                categories: [""]
+                
+            },
+            {
+                name: "Tactician",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: ["Village"]
+                
+            },
+            {
+                name: "Treasury",
+                set: "Seaside",
+                types: ["Action"],
+                categories: [""]
+                
+            },
+            {
+                name: "Wharf",
+                set: "Seaside",
+                types: ["Action", "Duration"],
+                categories: [""]
+                
+            },
+            {
+                name: "Courtyard",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: [""]
+                
+            },
+            {
+                name: "Lurker",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Gainer", "Trasher"]
+                
+            },
+            {
+                name: "Pawn",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Cantrip"]
+                
+            },
+            {
+                name: "Masquerade",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Trasher", "Trasher"]
+                
+            },
+            {
+                name: "Shanty_Town",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Village"]
+                
+            },
+            {
+                name: "Steward",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Trasher"]
+                
+            },
+            {
+                name: "Swindler",
+                set: "Intrigue",
+                types: ["Action", "Attack"],
+                categories: [""]
+                
+            },
+            {
+                name: "Wishing_Well",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Cantrip"]
+                
+            },
+            {
+                name: "Baron",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: [""]
+                
+            },
+            {
+                name: "Conspirator",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: [""]
+                
+            },
+            {
+                name: "Diplomat",
+                set: "Intrigue",
+                types: ["Action", "Reaction"],
+                categories: ["Village"]
+                
+            },
+            {
+                name: "Ironworks",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Cantrip", "Gainer"]
+                
+            },
+            {
+                name: "Mill",
+                set: "Intrigue",
+                types: ["Action", "Victory"],
+                categories: ["Cantrip"]
+                
+            },
+            {
+                name: "Mining_Village",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Village"]
+                
+            },
+            {
+                name: "Secret_Passage",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: [""]
+                
+            },
+            {
+                name: "Courtier",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Duke",
+                set: "Intrigue",
+                types: ["Victory"],
+                categories: [""]
+            },
+            {
+                name: "Minion",
+                set: "Intrigue",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Patrol",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Replace",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Torturer",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Trading_Post",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Upgrade",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Cantrip", "Gainer"]
+            },
+            {
+                name: "Harem",
+                set: "Intrigue",
+                types: ["Treasure", "Victory"],
+                categories: [""]
+            },
+            {
+                name: "Nobles",
+                set: "Intrigue",
+                types: ["Action", "Victory"],
+                categories: ["Village"]
+            },
+            {
+                name : "Anvil",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: ["Gainer"]
+            },
+            {
+                name : "Watchtower",
+                set: "Prosperity",
+                types: ["Action", "Reaction"],
+                categories: ["Trasher"]
+            },
+            {
+                name : "Bishop",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: ["Trasher"]
+            },
+            {
+                name : "Clerk",
+                set: "Prosperity",
+                types: ["Action", "Reaction", "Attack"],
+                categories: [""]
+            },
+            {
+                name : "Investment",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: ["Trasher"]
+            },
+            {
+                name : "Monument",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name : "Quarry",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name : "Tiara",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name : "Worker's_Village",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name : "Charlatan",
+                set: "Prosperity",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name : "City",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name : "Collection",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name : "Crystal_Ball",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: ["Trasher"]
+            },
+            {
+                name : "Magnate",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name : "Mint",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: ["Gainer", "Trasher"]
+            },
+            {
+                name : "Rabble",
+                set: "Prosperity",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name : "Vault",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name : "War_Chest",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name : "Grand_Market",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name : "Hoard",
+                set: "Prosperity",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name : "Expand",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: ["Gainer"]
+            },
+            {
+                name : "Forge",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: ["Gainer", "Trasher"]
+            },
+            {
+                name : "King's_Court",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name : "Peddler",
+                set: "Prosperity",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Cage",
+                set: "Plunder",
+                types: ["Treasure", "Duration"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Grotto",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Jewelled_Egg",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name: "Search",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Shaman",
+                set: "Plunder",
+                types: ["Action"],
+                categories: ["Gainer", "Trasher"]
+            },
+            {
+                name: "Secluded_Shrine",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Siren",
+                set: "Plunder",
+                types: ["Action", "Duration", "Attack"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Stowaway",
+                set: "Plunder",
+                types: ["Action", "Duration", "Reaction"],
+                categories: [""]
+            },
+            {
+                name: "Taskmaster",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: ["Village"]
+            },
+            {
+                name: "Abundance",
+                set: "Plunder",
+                types: ["Treasure", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Cabin_Boy",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "Crucible",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Flagship",
+                set: "Plunder",
+                types: ["Action", "Duration", "Command"],
+                categories: ["Village"]
+            },
+            {
+                name: "Fortune_Hunter",
+                set: "Plunder",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Gondola",
+                set: "Plunder",
+                types: ["Treasure", "Duration"],
+                categories: ["Village"]
+            },
+            {
+                name: "Harbor_Village",
+                set: "Plunder",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Landing_Party",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Mapmaker",
+                set: "Plunder",
+                types: ["Action", "Reaction"],
+                categories: [""]
+            },
+            {
+                name: "Maroon",
+                set: "Plunder",
+                types: ["Action"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Rope",
+                set: "Plunder",
+                types: ["Treasure", "Duration"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Swamp_Shacks",
+                set: "Plunder",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Tools",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Buried_Treasure",
+                set: "Plunder",
+                types: ["Treasure", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Crew",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Cutthroat",
+                set: "Plunder",
+                types: ["Action", "Duration", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Enlarge",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Figurine",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name: "First_Mate",
+                set: "Plunder",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Frigate",
+                set: "Plunder",
+                types: ["Action", "Duration", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Longship",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: ["Village"]
+            },
+            {
+                name: "Mining_Road",
+                set: "Plunder",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Pendant",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name: "Pickaxe",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Pilgrim",
+                set: "Plunder",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Quartermaster",
+                set: "Plunder",
+                types: ["Action", "Duration"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Silver_Mine",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Trickster",
+                set: "Plunder",
+                types: ["Action", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Wealthy_Village",
+                set: "Plunder",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Sack_of_Loot",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name: "King's_Cache",
+                set: "Plunder",
+                types: ["Treasure"],
+                categories: [""]
+            },
+            {
+                name: "Mountain_Shrine",
+                set: "Rising Sun",
+                types: ["Action", "Omen"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Daimyo",
+                set: "Rising Sun",
+                types: ["Action", "Command"],
+                categories: ["Village", "Cantrip"]
+            },
+            {
+                name: "Artist",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Fishmonger",
+                set: "Rising Sun",
+                types: ["Action", "Shadow"],
+                categories: [""]
+            },
+            {
+                name: "Snake_Witch",
+                set: "Rising Sun",
+                types: ["Action", "Attack"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "Aristocrat",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Craftsman",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: ["Gainer"]
+            },
+            {
+                name: "Riverboat",
+                set: "Rising Sun",
+                types: ["Action", "Duration"],
+                categories: [""]
+            },
+            {
+                name: "Root_Cellar",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Alley",
+                set: "Rising Sun",
+                types: ["Action", "Shadow"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "Change",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Ninja",
+                set: "Rising Sun",
+                types: ["Action", "Attack", "Shadow"],
+                categories: [""]
+            },
+            {
+                name: "Poet",
+                set: "Rising Sun",
+                types: ["Action", "Omen"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "River_Shrine",
+                set: "Rising Sun",
+                types: ["Action", "Omen"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Rustic_Village",
+                set: "Rising Sun",
+                types: ["Action", "Omen"],
+                categories: ["Village"]
+            },
+            {
+                name: "Gold_Mine",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: ["Cantrip"]
+            },
+            {
+                name: "Imperial_Envoy",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: [""]
+            },
+            {
+                name: "Kitsune",
+                set: "Rising Sun",
+                types: ["Action", "Attack", "Omen"],
+                categories: ["Village"]
+            },
+            {
+                name: "Litter",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: ["Village"]
+            },
+            {
+                name: "Rice_Broker",
+                set: "Rising Sun",
+                types: ["Action"],
+                categories: ["Trasher"]
+            },
+            {
+                name: "Ronin",
+                set: "Rising Sun",
+                types: ["Action", "Shadow"],
+                categories: [""]
+            },
+            {
+                name: "Tanuki",
+                set: "Rising Sun",
+                types: ["Action", "Shadow"],
+                categories: [""]
+            },
+            {
+                name: "Tea_House",
+                set: "Rising Sun",
+                types: ["Action", "Omen"],
+                categories: [""]
+            },
+            {
+                name: "Samurai",
+                set: "Rising Sun",
+                types: ["Action", "Duration", "Attack"],
+                categories: [""]
+            },
+            {
+                name: "Rice",
+                set: "Rising Sun",
+                types: ["Treasure"],
+                categories: [""]
+            },
+]
     }
 }
 </script>
@@ -1021,6 +2084,7 @@ h3{
 
 .btn {
     width: 110px;
+    height: 32px;
     color: #fff !important;
     background-color: #17a2b8;
     border: 2px solid #17a2b8;
@@ -1059,6 +2123,7 @@ h3{
 }
 .btn-outline {
     width: 110px;
+    height: 32px;
     color: #17a2b8 !important;
     background: transparent;
     border: 2px solid #17a2b8;
