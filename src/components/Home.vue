@@ -202,7 +202,7 @@ export default {
             }
         },
         async fetchUserandFollowingGames(user) {
-            axios.get(`https://api.valhallatable.top/userfollowinggames/${user}/${this.recentGamesIndex}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/userfollowinggames/${user}/${this.recentGamesIndex}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -220,7 +220,7 @@ export default {
             });
         },
         async fetchUserGames(user) {
-            axios.get(`http://127.0.0.1:8000/usergames/${user}/${this.recentGamesIndex}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/usergames/${user}/${this.recentGamesIndex}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -235,7 +235,7 @@ export default {
             });
         },
         async fetchUserStats(user) {
-            axios.get(`http://127.0.0.1:8000/getuserstats/${user}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/getuserstats/${user}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ export default {
             });
         },
         async fetchUsersPlayedWith(user) {
-            axios.get(`http://127.0.0.1:8000/getuseruniqueplayers/${user}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/getuseruniqueplayers/${user}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -267,7 +267,7 @@ export default {
             });
         },
         async fetchUsers() {
-            axios.get('http://127.0.0.1:8000/getusers', {
+            axios.get(`${import.meta.env.VITE_API_URL}/getusers`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -282,11 +282,6 @@ export default {
                 console.error("Error fetching data:", error);
             });
         }
-        // async fetchCards(cardType) {
-        //     let res = await fetch(`http://127.0.0.1:5000/type?cardType=${cardType}`);
-        //     let cards = await res.json();
-        //     return cards;
-        // }
     },
     computed: {
         headerWidth() {
@@ -315,6 +310,7 @@ export default {
         }
     },
     created() {
+        console.log("Mode:", import.meta.env.MODE);
         let searchName = this.userName;
         if(searchName == 'Guest') {
             searchName = 'josh'

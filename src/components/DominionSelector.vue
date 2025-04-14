@@ -47,8 +47,8 @@
         </div>
         <!-- add number box to ask how many to filter -->
         <div id="cards" class="show-all">
-            <img v-for="card in filteredCards" :key="card.name" :alt="card.name"
-                :src="'src/assets/dominioncards/200px-' + card.name + '.jpg'" />
+            <img v-for="card in filteredCards" :key="card.name"
+                :src="getCardImage(card.name)" :alt="card.name" />
         </div>
         <div id="selectedCards" >
             <span class="special">Start a Game</span>
@@ -67,8 +67,8 @@
                 <button @click="anyFill()" id="randomFill" class="btn-option btn-dark">Any Filter</button>
             </div>
             <div id="selcards">
-                <img v-for="card in selectedCards" :key="card" :alt="card" class="miniCard"
-                    :src="'src/assets/dominioncards/200px-' + card + '.jpg'" />
+                <img v-for="card in selectedCards" :key="card.name" class="miniCard"
+                    :src="getCardImage(card.name)" :alt="card.name" />
             </div>
         </div>
     </div>
@@ -105,13 +105,13 @@
                 <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
             </div>
             <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 720px;">
-                <img v-for="card in selectedCards" :key="card" :alt="card" class="tinyCard"
-                    :src="'src/assets/dominioncards/200px-' + card + '.jpg'" 
-                    :class="{ traitCards: this.traitCards.includes(card) }" @click="removeCard(card)" />
+                <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
+                    :src="getCardImage(card.name)" :class="{ traitCards: this.traitCards.includes(card) }" 
+                    @click="removeCard(card)" />
             </div>
             <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 660px;">
-                <img v-for="card in selectedAddons" :key="card" :alt="card" class="addonCard"
-                    :src="'src/assets/dominioncards/' + card + '.jpg'" />
+                <img v-for="card in selectedAddons" :key="card.name" class="addonCard"
+                    :src="getLandscapesImage(card.name)" :alt="card.name"/>
             </div>
         </div>
     </div>
@@ -673,6 +673,12 @@ actionCards: [
         }
     },
     methods: {
+        getCardImage(cardName) {
+            return new URL(`../assets/dominioncards/200px-${cardName}.jpg`, import.meta.url).href;
+        },
+        getLandscapesImage(cardName) {
+            return new URL(`../assets/dominioncards/${cardName}.jpg`, import.meta.url).href;
+        },
         toggleExpansion(expansion) {
             // Add or remove the clicked expansion from selectedExpansions
             if (this.selectedExpansions.includes(expansion)) {
@@ -989,7 +995,7 @@ actionCards: [
             console.log('Number of matching traits:', this.traitNumber);
         },
         async fetchUsersPlayedWith(user) {
-            axios.get(`http://127.0.0.1:8000/getuseruniqueplayers/${user}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/getuseruniqueplayers/${user}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -1013,7 +1019,7 @@ actionCards: [
                 name: "Cellar",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Sifter"]
             },
             {
                 name: "Chapel",
@@ -1025,7 +1031,7 @@ actionCards: [
                 name: "Moat",
                 set: "Dominion",
                 types: ["Action, Reaction"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Harbinger",
@@ -1043,7 +1049,7 @@ actionCards: [
                 name: "Vassal",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
             },
             {
                 name: "Village",
@@ -1073,13 +1079,13 @@ actionCards: [
                 name: "Militia",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
             },
             {
                 name: "Moneylender",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher", "Terminal_Silver"]
             },
             {
                 name: "Poacher",
@@ -1097,7 +1103,7 @@ actionCards: [
                 name: "Smithy",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Throne_Room",
@@ -1115,7 +1121,7 @@ actionCards: [
                 name: "Council_Room",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Festival",
@@ -1133,7 +1139,7 @@ actionCards: [
                 name: "Library",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Market",
@@ -1151,13 +1157,13 @@ actionCards: [
                 name: "Sentry",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Cantrip", "Trasher"]
+                categories: ["Cantrip", "Trasher", "Sifter"]
             },
             {
                 name: "Witch",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Artisan",
@@ -1214,7 +1220,7 @@ actionCards: [
                 name: "Lookout",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher", "Sifter"]
                 
             },
             {
@@ -1242,7 +1248,7 @@ actionCards: [
                 name: "Warehouse",
                 set: "Seaside",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Sifter"]
                 
             },
             {
@@ -1263,7 +1269,7 @@ actionCards: [
                 name: "Cutpurse",
                 set: "Seaside",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
                 
             },
             {
@@ -1312,14 +1318,14 @@ actionCards: [
                 name: "Corsair",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
                 
             },
             {
                 name: "Merchant_Ship",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
                 
             },
             {
@@ -1340,7 +1346,7 @@ actionCards: [
                 name: "Sea_Witch",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""]
+                categories: ["Sifter", "Terminal_Draw"]
                 
             },
             {
@@ -1361,14 +1367,14 @@ actionCards: [
                 name: "Wharf",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
                 
             },
             {
                 name: "Courtyard",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
                 
             },
             {
@@ -1389,7 +1395,7 @@ actionCards: [
                 name: "Masquerade",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher", "Trasher"]
+                categories: ["Trasher", "Trasher", "Terminal_Draw"]
                 
             },
             {
@@ -1403,14 +1409,14 @@ actionCards: [
                 name: "Steward",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher", "Terminal_Draw", "Terminal_Silver"]
                 
             },
             {
                 name: "Swindler",
                 set: "Intrigue",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
                 
             },
             {
@@ -1428,17 +1434,24 @@ actionCards: [
                 
             },
             {
+                name: "Bridge",
+                set: "Intrigue",
+                types: ["Action"],
+                categories: ["Terminal_Silver"]
+                
+            },
+            {
                 name: "Conspirator",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
                 
             },
             {
                 name: "Diplomat",
                 set: "Intrigue",
                 types: ["Action", "Reaction"],
-                categories: ["Village"]
+                categories: ["Village", "Sifter", "Terminal_Draw"]
                 
             },
             {
@@ -1466,7 +1479,7 @@ actionCards: [
                 name: "Secret_Passage",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Sifter"]
                 
             },
             {
@@ -1485,13 +1498,13 @@ actionCards: [
                 name: "Minion",
                 set: "Intrigue",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: ["Sifter"]
             },
             {
                 name: "Patrol",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Replace",
@@ -1503,7 +1516,7 @@ actionCards: [
                 name: "Torturer",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Trading_Post",
@@ -1527,7 +1540,7 @@ actionCards: [
                 name: "Nobles",
                 set: "Intrigue",
                 types: ["Action", "Victory"],
-                categories: ["Village"]
+                categories: ["Village", "Terminal_Draw"]
             },
             {
                 name : "Anvil",
@@ -1539,7 +1552,7 @@ actionCards: [
                 name : "Watchtower",
                 set: "Prosperity",
                 types: ["Action", "Reaction"],
-                categories: ["Trasher"]
+                categories: ["Trasher", "Terminal_Draw"]
             },
             {
                 name : "Bishop",
@@ -1551,7 +1564,7 @@ actionCards: [
                 name : "Clerk",
                 set: "Prosperity",
                 types: ["Action", "Reaction", "Attack"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
             },
             {
                 name : "Investment",
@@ -1563,7 +1576,7 @@ actionCards: [
                 name : "Monument",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
             },
             {
                 name : "Quarry",
@@ -1605,13 +1618,13 @@ actionCards: [
                 name : "Crystal_Ball",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: ["Trasher"]
+                categories: ["Trasher", "Sifter"]
             },
             {
                 name : "Magnate",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name : "Mint",
@@ -1623,13 +1636,13 @@ actionCards: [
                 name : "Rabble",
                 set: "Prosperity",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name : "Vault",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name : "War_Chest",
@@ -1683,7 +1696,7 @@ actionCards: [
                 name: "Grotto",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: ["Sifter"]
             },
             {
                 name: "Jewelled_Egg",
@@ -1695,7 +1708,7 @@ actionCards: [
                 name: "Search",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
             },
             {
                 name: "Shaman",
@@ -1749,13 +1762,13 @@ actionCards: [
                 name: "Flagship",
                 set: "Plunder",
                 types: ["Action", "Duration", "Command"],
-                categories: ["Village"]
+                categories: ["Village", "Terminal_Silver"]
             },
             {
                 name: "Fortune_Hunter",
                 set: "Plunder",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Silver"]
             },
             {
                 name: "Gondola",
@@ -1779,13 +1792,13 @@ actionCards: [
                 name: "Mapmaker",
                 set: "Plunder",
                 types: ["Action", "Reaction"],
-                categories: [""]
+                categories: ["Sifter", "Terminal_Draw"]
             },
             {
                 name: "Maroon",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher", "Terminal_Draw"]
             },
             {
                 name: "Rope",
@@ -1815,7 +1828,7 @@ actionCards: [
                 name: "Crew",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Cutthroat",
@@ -1833,7 +1846,7 @@ actionCards: [
                 name: "Figurine",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "First_Mate",
@@ -1875,7 +1888,7 @@ actionCards: [
                 name: "Pilgrim",
                 set: "Plunder",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Quartermaster",
@@ -1917,7 +1930,7 @@ actionCards: [
                 name: "Mountain_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Trasher"]
+                categories: ["Trasher", "Terminal_Draw", "Terminal_Silver"]
             },
             {
                 name: "Daimyo",
@@ -1947,7 +1960,7 @@ actionCards: [
                 name: "Aristocrat",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village", "Terminal_Draw"]
             },
             {
                 name: "Craftsman",
@@ -1971,7 +1984,7 @@ actionCards: [
                 name: "Alley",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip", "Sifter"]
             },
             {
                 name: "Change",
@@ -1983,7 +1996,7 @@ actionCards: [
                 name: "Ninja",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Shadow"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Poet",
@@ -2001,7 +2014,7 @@ actionCards: [
                 name: "Rustic_Village",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Village"]
+                categories: ["Village", "Sifter"]
             },
             {
                 name: "Gold_Mine",
@@ -2013,13 +2026,13 @@ actionCards: [
                 name: "Imperial_Envoy",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Kitsune",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Omen"],
-                categories: ["Village"]
+                categories: ["Village", "Terminal_Silver"]
             },
             {
                 name: "Litter",
@@ -2037,7 +2050,7 @@ actionCards: [
                 name: "Ronin",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: [""]
+                categories: ["Terminal_Draw"]
             },
             {
                 name: "Tanuki",

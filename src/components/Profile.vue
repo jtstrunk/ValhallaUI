@@ -106,7 +106,7 @@ export default {
             event.target.src = new URL('../assets/profilepictures/Guest.png', import.meta.url).href;
         },
         async fetchUsers() {
-            axios.get('http://127.0.0.1:8000/getusers', {
+            axios.get(`${import.meta.env.VITE_API_URL}/getusers`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export default {
             });
         },
         async fetchGames(user) {
-            axios.get(`http://127.0.0.1:8000/usergames/${user}/1`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/usergames/${user}/1`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default {
             });
         },
         async fetchUserStats(user) {
-            axios.get(`http://127.0.0.1:8000/getuserstats/${user}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/getuserstats/${user}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -149,7 +149,7 @@ export default {
             });
         },
         async fetchUsersPlayedWith(user) {
-            axios.get(`http://127.0.0.1:8000/getuseruniqueplayers/${user}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/getuseruniqueplayers/${user}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ export default {
             });
         },
         async fetchUsersFollowers(user) {
-            axios.get(`http://127.0.0.1:8000/getfollowers/${user}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/getfollowers/${user}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ export default {
             });
         },
         async fetchUsersFollowing(user) {
-            axios.get(`http://127.0.0.1:8000/getfollowing/${user}`, {
+            axios.get(`${import.meta.env.VITE_API_URL}/getfollowing/${user}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ export default {
                 "following": user
             }
             console.log(insertObject)
-            fetch('http://127.0.0.1:8000/getuserelationship', {
+            fetch(`${import.meta.env.VITE_API_URL}/getuserelationship`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ export default {
                 "following": user
             }
             console.log(insertObject)
-            fetch('http://127.0.0.1:8000/followuser', {
+            fetch(`${import.meta.env.VITE_API_URL}/followuser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -253,7 +253,7 @@ export default {
                 "following": user
             }
             console.log(insertObject)
-            fetch('http://127.0.0.1:8000/unfollowuser', {
+            fetch(`${import.meta.env.VITE_API_URL}/unfollowuser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
