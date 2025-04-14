@@ -52,7 +52,7 @@
     methods: {
       async loginUser() {
         try {
-          await axios.post('http://127.0.0.1:8000/login', {username: this.username, password: this.password}, {
+          await axios.post('https://api.valhallatable.top/login', {username: this.username, password: this.password}, {
           withCredentials: false,
           headers: {
               'Content-Type': 'application/json',
@@ -84,7 +84,7 @@
       },
       async registerUser() {
         try {
-          await axios.post('http://127.0.0.1:8000/register', {username: this.username, password: this.password}, {
+          await axios.post('https://api.valhallatable.top/register', {username: this.username, password: this.password}, {
           withCredentials: false,
           headers: {
               'Content-Type': 'application/json',

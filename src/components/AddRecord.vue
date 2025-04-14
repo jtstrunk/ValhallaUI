@@ -2,7 +2,7 @@
     <div id="availableGames">
         <div v-for="game in this.supportedGames" class="card" @click="createPopup(game, this.gamePlayerCounts[game])">
             <div class="img">
-                <img :src="`/src/assets/addgame/${game.replace(/\s+/g, '')}.png`">
+                <img :src="getGameImage(game)">
             </div>
             <div class="text">
                 <p style="font-size: 24px;">{{ game }}</p>
@@ -233,6 +233,10 @@ export default {
         RecentGame,
     },
     methods: {
+        getGameImage(game) {
+            const cleanedGameName = game.replace(/\s+/g, '');
+            return new URL(`../assets/addgame/${cleanedGameName}.png`, import.meta.url).href;
+        },
         createMapping(){
             this.gamePlayerCounts = {
                 'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 4 Players', 

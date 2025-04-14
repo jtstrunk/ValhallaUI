@@ -364,8 +364,11 @@ export default {
             return this.users.find(user => user.id === this.gameData.posterid)?.username
         },
         imageSource() {
+            // const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
+            // return `../assets/addgame/${cleanedGameName}.png`;
+
             const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
-            return `/src/assets/addgame/${cleanedGameName}.png`;
+            return new URL(`../assets/addgame/${cleanedGameName}.png`, import.meta.url).href;
         },
         profileImageSrc() {
             if(this.isVisitor == true) {

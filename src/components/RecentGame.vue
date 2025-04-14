@@ -359,8 +359,10 @@ export default {
             }
         },
         imageSource() {
+            // const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
+            // return `/src/assets/homegame/${cleanedGameName}.png`;
             const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
-            return `/src/assets/homegame/${cleanedGameName}.png`;
+            return new URL(`../assets/homegame/${cleanedGameName}.png`, import.meta.url).href;
         },
         isGameShowing() {
             const gameDate = new Date(this.date);

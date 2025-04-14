@@ -202,7 +202,7 @@ export default {
             }
         },
         async fetchUserandFollowingGames(user) {
-            axios.get(`http://127.0.0.1:8000/userfollowinggames/${user}/${this.recentGamesIndex}`, {
+            axios.get(`https://api.valhallatable.top/userfollowinggames/${user}/${this.recentGamesIndex}`, {
             withCredentials: false,
             headers: {
                 'Content-Type': 'application/json',
