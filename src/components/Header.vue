@@ -31,7 +31,6 @@ export default {
     },
     methods: {
         logUserOut(){
-            console.log("logging user out");
             userState.userID = null;
             userState.username = null;
             userState.isLoggedIn = false

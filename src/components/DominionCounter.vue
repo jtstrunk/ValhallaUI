@@ -109,7 +109,7 @@
 
         <button class="btn-outline" @click="startGame" style="margin-top: 8px;">Start Game</button>
     </div>
-    <div v-if="showCounters" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+    <div v-if="showCounters" id="counterList" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
         <div class="playerScore">
             <p :style="{ fontSize: fixedPlayerOneName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerOneName }} - {{ playerOneScore }}</p>
         </div>
@@ -123,11 +123,13 @@
             <p :style="{ fontSize: fixedPlayerFourName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerFourName }} - {{ playerFourScore }}</p>
         </div>
     </div>
-    <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px;" @click="endGame">Submit Current Scores</button>
-    <ScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-    <ScoreCounter v-if="showCounters" :playerName="playerTwoName" :playerNumber="2" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-    <ScoreCounter v-if="showCounters && playerCount > 2" :playerName="playerThreeName" :playerNumber="3" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-    <ScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+        <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px;" @click="endGame">Submit Current Scores</button>
+        <ScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+        <ScoreCounter v-if="showCounters" :playerName="playerTwoName" :playerNumber="2" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+        <ScoreCounter v-if="showCounters && playerCount > 2" :playerName="playerThreeName" :playerNumber="3" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+        <ScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+    </div>
     <div id="overlay" v-if="this.showPopup" @click="this.showPopup=!this.showPopup"></div>
     <InsertRecordPopup :insertPopup="showPopup" :gameInformationObject="insertObject" :gameName="'Dominion'"
         :insertingPlayerCount="playerCount" @gameInserted="resetGameState" ></InsertRecordPopup>
@@ -432,6 +434,15 @@ label {
     margin: 0px;
     padding: 6px 10px;
     /* font-size: 23px; */
+}
+@media (max-width: 	420px) {
+    .section {
+        margin-top: 45px;
+    }
+
+    #counterList {
+        margin-top: 45px;
+    }
 }
 
 /* .counter{

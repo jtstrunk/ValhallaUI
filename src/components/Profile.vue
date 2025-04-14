@@ -426,6 +426,9 @@ export default {
     #profileHeader {
         flex-direction: column;
         width: 385px;
+        margin-left: 17px;
+        margin-top: 45px;
+        overflow-x: hidden;
     }
     #profilePicture {
         width: 90px;
@@ -459,10 +462,11 @@ export default {
 
     #gamesHeader {
         width: 385px;
-        margin-top: 0px;
+        margin-top: 18px !important;
+        margin: 17px;
     }
     #gamesContainter{
-        width: 400px !important;
+        width: 380px !important;
     }
 }
 </style>

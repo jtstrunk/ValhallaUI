@@ -513,6 +513,8 @@ input {
 
     #availableGames{
         width: 385px;
+        margin-left: 17px;
+        margin-top: 45px;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;

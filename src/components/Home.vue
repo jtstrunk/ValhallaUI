@@ -34,15 +34,15 @@
                 <img src="/src/assets/icons/arrow.png" class="arrow">
             </div>
         </div>
-        <div class="section">
-            <div :style="headerWidth" style="display: flex; flex-direction: column; justify-content: space-between;">
-                <div id="recentGamesContainer"style="display: flex; flex-direction: row; justify-content: space-between;">
+        <div class="section" id="recentGamesSection">
+            <div :style="headerWidth" id="mobileContainer" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div id="recentGamesContainer" class="MobileHide" style="display: flex; flex-direction: row; justify-content: space-between;">
                     <h2 style="margin: 0px;">Recent Games</h2>
                     <!-- <div :style="headerMargin">
                         <img src="/src/assets/icons/listblue.png" @click="swapView('list')" id="listView" style="width: 25px; height: 25px; margin-right: 5px;">
                         <img src="/src/assets/icons/gridblue.png" @click="swapView('grid')" id="gridView" style="width: 25px; height: 25px;">
                     </div> -->
-                    <div class="MobileHide" style="display: flex; flex-direction: row;">
+                    <div style="display: flex; flex-direction: row;">
                         <p style="margin: 0px; margin-top: 2px; margin-right: 10px; font-family: 'Manolo Mono', sans-serif !important;">Following Games</p>
                         <VueToggles v-model="followingGames" :width="50" checkedBg="#17a2b8"/>
                     </div>
@@ -55,7 +55,7 @@
                             :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
                     </div>
                 </div> -->
-                <div v-if="showList" style="display: flex; justify-content: center; flex-direction: row; flex-wrap: wrap;">
+                <div v-if="showList" id="showListContainer" style="display: flex; justify-content: center; flex-direction: row; flex-wrap: wrap;">
                     <div v-for="game in recentGames">
                         <RecentGameCard :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" :users="users"/>
                     </div>
@@ -463,5 +463,19 @@ export default {
         margin-left: 5px !important;
     }
 
+    #mobileContainer{
+        width: 100% !important;
+    }
+
+    #showListContainer {
+        width: 100%;
+    }
+    #recentGamesSection {
+        padding: 0px;
+        margin: 0px;
+    }
+    #content {
+        width: 100%;
+    }
 }
 </style>
