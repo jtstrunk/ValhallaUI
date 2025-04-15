@@ -8,15 +8,13 @@ import MobileFooter from './components/MobileFooter.vue'
 <template>
   <div id="app">
     <component 
-      :is="isMobile ? MobileHeader : Header" 
-      v-if="$route.path === '/'" />
+      :is="isMobile ? MobileHeader : Header" />
     <div class="content-wrapper" ref="scrollContainer">
       <RouterView :scrolled-to-bottom="isScrolledToBottom"/>
     </div>
     <MobileFooter v-if="isMobile"/>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -47,39 +45,18 @@ export default {
         this.isScrolledToBottom = false;
       }
     },
-    // handleScroll() {
-    //   console.log("handleScroll")
-    //   const scrollTop = window.scrollY;
-    //   const windowHeight = window.innerHeight;
-    //   const documentHeight = document.documentElement.scrollHeight;
-
-    //   // Check if user has scrolled to the bottom
-    //   if (scrollTop + windowHeight >= documentHeight - 20) {
-    //     if (!this.isScrolledToBottom) {
-    //       this.isScrolledToBottom = true; // Update state
-    //     }
-    //   } else {
-    //     this.isScrolledToBottom = false; // Reset state
-    //   }
-    // },
     handleResize() {
       this.isMobile = window.innerWidth < 420
     }
   },
   mounted() {
-    this.$refs.scrollContainer.addEventListener("scroll", this.debounce(this.handleScroll, 200));
+    console.log('moutned')
+    this.$refs.scrollContainer.addEventListener("scroll", this.debounce(this.handleScroll, 10));
   },
   beforeDestroy() {
-    this.$refs.scrollContainer.removeEventListener("scroll", this.debounce(this.handleScroll, 200));
+    this.$refs.scrollContainer.removeEventListener("scroll", this.debounce(this.handleScroll, 10));
     clearTimeout(this.scrollTimeout);
   },
-  // mounted() {
-  //   window.addEventListener("scroll", this.debounce(this.handleScroll, 200));
-  // },
-  // beforeDestroy() {
-  //   window.removeEventListener("scroll", this.debounce(this.handleScroll, 200));
-  //   clearTimeout(this.scrollTimeout);
-  // },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)
   },
@@ -115,16 +92,6 @@ body, html {
   min-height: 100vh;
 } */
 
-.content-wrapper {
-  flex: 1;
-  width: 100%;
-  height: calc(100vh - [header-height] - [footer-height]);
-  overflow-y: auto;
-  position: relative;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center; */
-}
 
 .mobile-footer {
   position: fixed;
@@ -139,7 +106,18 @@ body, html {
 
 @media (max-width: 	420px) {
   #app {
-    width: 420px;
+    width: 395px;
   }  
+
+  .content-wrapper {
+    flex: 1;
+    width: 100%;
+    height: calc(100vh - [header-height] - [footer-height]);
+    overflow-y: auto;
+    position: relative;
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center; */
+  }
 }
 </style>

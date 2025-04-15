@@ -1,88 +1,90 @@
 <template>
-    <div style="display: flex; flex-direction: row;">
-        <div style="position: sticky; top: 50px; height: 455px;">
+    <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden;">
+        <div style="display: flex; flex-direction: row;">
+            <div style="position: sticky; top: 50px; height: 455px;">
+                <div class="section">
+                    <h3>Search Type</h3>
+                    <div style="display: flex; flex-direction: row; justify-content: space-around;">
+                        <div class="searchType">
+                            <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
+                            <label for="exclusive">Match Every</label>
+                        </div>
+                        <div class="searchType">
+                            <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
+                            <label for="inclusive">Match Any</label>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: row;">
+                    <div class="section games">
+                        <h3>Favorites</h3>
+                        <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame('Dominion')">Dominion</button>
+                        <button :class="['gamebtn', showingGames.includes('Heat') ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame('Heat')">Heat</button>
+                        <button :class="['gamebtn', showingGames.includes('Clank') ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame('Clank')">Clank</button>
+                        <button :class="['gamebtn', showingGames.includes('Lords of Waterdeep') ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame('Lords of Waterdeep')">Lords of Wate</button>
+                        <button :class="['gamebtn', showingGames.includes('Race for the Galaxy') ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame('Race for the Galaxy')">Race for the</button>
+                        <button :class="['gamebtn', showingGames.includes('Moonrakers') ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame('Moonrakers')">Moonrakers</button>
+                        <button :class="['gamebtn', showingGames.includes('Space Base') ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame('Space Base')">Space Base</button>
+                        <button id="clearbtn" @click="resetGames" style="margin-top: 25px;">Clear All</button>
+                    </div>
+                    <div class="section games">
+                        <div class="games">
+                            <h3>Themes</h3>
+                            <button :class="['gamebtn', showingThemes.includes('space') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingTheme('space')">Space</button>
+                            <button :class="['gamebtn', showingThemes.includes('medieval') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingTheme('medieval')">Medieval</button>
+                            <button :class="['gamebtn', showingThemes.includes('fantasy') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingTheme('fantasy')">Fantasy</button>
+                        </div>
+                        <div class="games">
+                            <h3>Mechanics</h3>
+                            <button :class="['gamebtn', showingTypes.includes('deckBuilding') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingType('deckBuilding')">Deck Building</button>
+                            <button :class="['gamebtn', showingTypes.includes('resourceManagement') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingType('resourceManagement')">Resource Management</button>
+                            <button :class="['gamebtn', showingTypes.includes('workerPlacement') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingType('workerPlacement')">Worker Placement</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3>Filter Between</h3>
+                    <div style="display: flex; flex-direction: column; justify-content: space-around;">
+                        <div class="searchDate">
+                            <label for="startDate">Start Date:</label>
+                            <input type="date" id="startDate" class="date-input" v-model="startDate">
+                        </div>
+                        <div class="searchDate">
+                            <label for="endDate">End Date:</label>
+                            <input type="date" id="endDate" class="date-input" v-model="endDate">
+                        </div>
+                        <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top: 8px;">
+                            <button id="monthDates" class="dateFilters" @click="monthDates">This Month</button>
+                            <button id="yearDates" class="dateFilters" @click="yearDates">This Year</button>
+                            <button id="resetDates" class="dateFilters" @click="resetDates">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="section">
-                <h3>Search Type</h3>
-                <div style="display: flex; flex-direction: row; justify-content: space-around;">
-                    <div class="searchType">
-                        <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
-                        <label for="exclusive">Match Every</label>
+                <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h2 id="playerRecordedGames">{{ this.userName}}'s Recorded Games</h2>
                     </div>
-                    <div class="searchType">
-                        <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
-                        <label for="inclusive">Match Any</label>
-                    </div>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: row;">
-                <div class="section games">
-                    <h3>Favorites</h3>
-                    <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"  
-                        @click="toggleShowingGame('Dominion')">Dominion</button>
-                    <button :class="['gamebtn', showingGames.includes('Heat') ? 'btn-main' : 'btn-outline']" 
-                        @click="toggleShowingGame('Heat')">Heat</button>
-                    <button :class="['gamebtn', showingGames.includes('Clank') ? 'btn-main' : 'btn-outline']" 
-                        @click="toggleShowingGame('Clank')">Clank</button>
-                    <button :class="['gamebtn', showingGames.includes('Lords of Waterdeep') ? 'btn-main' : 'btn-outline']" 
-                        @click="toggleShowingGame('Lords of Waterdeep')">Lords of Wate</button>
-                    <button :class="['gamebtn', showingGames.includes('Race for the Galaxy') ? 'btn-main' : 'btn-outline']" 
-                        @click="toggleShowingGame('Race for the Galaxy')">Race for the</button>
-                    <button :class="['gamebtn', showingGames.includes('Moonrakers') ? 'btn-main' : 'btn-outline']" 
-                        @click="toggleShowingGame('Moonrakers')">Moonrakers</button>
-                    <button :class="['gamebtn', showingGames.includes('Space Base') ? 'btn-main' : 'btn-outline']" 
-                        @click="toggleShowingGame('Space Base')">Space Base</button>
-                    <button id="clearbtn" @click="resetGames" style="margin-top: 25px;">Clear All</button>
-                </div>
-                <div class="section games">
-                    <div class="games">
-                        <h3>Themes</h3>
-                        <button :class="['gamebtn', showingThemes.includes('space') ? 'btn-main' : 'btn-outline']"  
-                            @click="toggleShowingTheme('space')">Space</button>
-                        <button :class="['gamebtn', showingThemes.includes('medieval') ? 'btn-main' : 'btn-outline']" 
-                            @click="toggleShowingTheme('medieval')">Medieval</button>
-                        <button :class="['gamebtn', showingThemes.includes('fantasy') ? 'btn-main' : 'btn-outline']" 
-                            @click="toggleShowingTheme('fantasy')">Fantasy</button>                
-                    </div>
-                    <div class="games">
-                        <h3>Mechanics</h3>
-                        <button :class="['gamebtn', showingTypes.includes('deckBuilding') ? 'btn-main' : 'btn-outline']"  
-                            @click="toggleShowingType('deckBuilding')">Deck Building</button>
-                        <button :class="['gamebtn', showingTypes.includes('resourceManagement') ? 'btn-main' : 'btn-outline']" 
-                            @click="toggleShowingType('resourceManagement')">Resource Management</button>
-                        <button :class="['gamebtn', showingTypes.includes('workerPlacement') ? 'btn-main' : 'btn-outline']" 
-                            @click="toggleShowingType('workerPlacement')">Worker Placement</button>                
-                    </div>
-                </div>
-            </div>
-            <div class="section">
-                <h3>Filter Between</h3>
-                <div style="display: flex; flex-direction: column; justify-content: space-around;">
-                    <div class="searchDate">
-                        <label for="startDate">Start Date:</label>
-                        <input type="date" id="startDate" class="date-input" v-model="startDate">
-                    </div>
-                    <div class="searchDate">
-                        <label for="endDate">End Date:</label>
-                        <input type="date" id="endDate" class="date-input" v-model="endDate">
-                    </div>
-                    <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top: 8px;">
-                        <button id="monthDates" class="dateFilters" @click="monthDates">This Month</button>
-                        <button id="yearDates" class="dateFilters" @click="yearDates">This Year</button>
-                        <button id="resetDates" class="dateFilters" @click="resetDates">Reset</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="section">
-            <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                <div>
-                    <h2 id="playerRecordedGames">{{ this.userName}}'s Recorded Games</h2>
-                </div>
-                <div style="margin-right: 5px; display: flex; flex-direction: row; width: 792px; flex-wrap: wrap;">
-                    <div v-for="game in [...recentGames]">
-                        <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" 
-                            :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames" 
-                            :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
+                    <div style="margin-right: 5px; display: flex; flex-direction: row; width: 792px; flex-wrap: wrap;">
+                        <div v-for="game in [...recentGames]">
+                            <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"
+                                :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames"
+                                :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
+                        </div>
                     </div>
                 </div>
             </div>

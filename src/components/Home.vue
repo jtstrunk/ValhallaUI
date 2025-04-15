@@ -70,7 +70,7 @@
                         <p class="gameTitle">Dominion</p>
                         <button id="addDominion" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
-                    <img src="/src/assets/addgame/Dominion.png">
+                    <img src="/src/assets/addgame/Dominion.webp">
                 </div>
 
                 <div class="quickgame">
@@ -78,7 +78,7 @@
                         <p class="gameTitle">Heat</p>
                         <button id="addHeat" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
-                    <img src="/src/assets/addgame/Heat.png">
+                    <img src="/src/assets/addgame/Heat.webp">
                 </div>
 
                 <div class="quickgame">
@@ -86,7 +86,7 @@
                         <p class="gameTitle">Clank</p>
                         <button id="addClank" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
-                    <img src="/src/assets/addgame/Clank.png">
+                    <img src="/src/assets/addgame/Clank.webp">
                 </div>
 
                 <div class="quickgame">
@@ -94,7 +94,7 @@
                         <p class="gameTitle">Lords of Waterdeep</p>
                         <button id="addLords" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
-                    <img src="/src/assets/addgame/LordsofWaterdeep.png">
+                    <img src="/src/assets/addgame/LordsofWaterdeep.webp">
                 </div>
 
                 <div class="quickgame">
@@ -102,7 +102,7 @@
                         <p class="gameTitle">Race for the Galaxy</p>
                         <button id="addRace" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
                     </div>
-                    <img src="/src/assets/addgame/RacefortheGalaxy.png">
+                    <img src="/src/assets/addgame/RacefortheGalaxy.webp">
                 </div>
             </div>
         </div>

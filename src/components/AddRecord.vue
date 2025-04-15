@@ -235,7 +235,7 @@ export default {
     methods: {
         getGameImage(game) {
             const cleanedGameName = game.replace(/\s+/g, '');
-            return new URL(`../assets/addgame/${cleanedGameName}.png`, import.meta.url).href;
+            return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
         },
         createMapping(){
             this.gamePlayerCounts = {
@@ -512,14 +512,15 @@ input {
     }
 
     #availableGames{
-        width: 385px;
-        margin-left: 17px;
-        margin-top: 45px;
+        width: 395px;
+        /* margin-top: 15px; */
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        overflow-y: auto;
     }
     .card {
+        height: 130px;
         margin-top: 12px;
     }
 
@@ -529,5 +530,12 @@ input {
     .popupContainer {
         width: 410px;
     }
+
+    img {
+    width: 100px;
+    height: 100px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
 }
 </style>

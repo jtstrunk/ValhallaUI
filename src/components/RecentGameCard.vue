@@ -368,7 +368,7 @@ export default {
             // return `../assets/addgame/${cleanedGameName}.png`;
 
             const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
-            return new URL(`../assets/addgame/${cleanedGameName}.png`, import.meta.url).href;
+            return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
         },
         profileImageSrc() {
             if(this.isVisitor == true) {

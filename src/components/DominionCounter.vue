@@ -1,138 +1,139 @@
 <template>
-    <div v-if="!showCounters" class="section" style="width: 400px; display: flex; flex-direction: column; align-items: center;">
-        <h2>Dominion Counter</h2>
-        <h3>Select a Player Count</h3>
-        <div style="width: 350px; display: flex; flex-direction: row; justify-content: space-around;">
-            <button @click="this.playerCount = 2"  :class="{ 'btn': playerCount === 2, 'btn-outline': playerCount !== 2 }">Two</button>
-            <button @click="this.playerCount = 3"  :class="{ 'btn': playerCount === 3, 'btn-outline': playerCount !== 3 }">Three</button>
-            <button @click="this.playerCount = 4"  :class="{ 'btn': playerCount === 4, 'btn-outline': playerCount !== 4 }">Four</button>
-        </div>
-        <div>
-            <div style="display: flex; flex-direction: row;">
-                <div style="padding: 8px; display: flex; flex-direction: column;">
-                    <label for="playerOneName">First Name</label>
-                    <AutoComplete v-model="playerOneName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteOne"
-                        @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerOneName" @focus="showSuggestionsOne"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'one')" @keydown="handleKeyDown($event, 'one')"
-                        :pt="{
-                            root: {
-                                class: 'customAutocomplete',
-                            },
-                            option:
-                            {
-                                style: { color: 'white', padding: '4px 8px'}
-                            },
-                            overlay: {
-                                style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
-                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
-                            },
-                            pcInputText: {
-                                style: { '::placeholder': { color: '#2e6da4' } }
-                            }
-                        }"></AutoComplete>
+    <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden;">
+        <div v-if="!showCounters" class="section" style="width: 400px; display: flex; flex-direction: column; align-items: center;">
+            <h2>Dominion Counter</h2>
+            <h3>Select a Player Count</h3>
+            <div style="width: 350px; display: flex; flex-direction: row; justify-content: space-around;">
+                <button @click="this.playerCount = 2"  :class="{ 'btn': playerCount === 2, 'btn-outline': playerCount !== 2 }">Two</button>
+                <button @click="this.playerCount = 3"  :class="{ 'btn': playerCount === 3, 'btn-outline': playerCount !== 3 }">Three</button>
+                <button @click="this.playerCount = 4"  :class="{ 'btn': playerCount === 4, 'btn-outline': playerCount !== 4 }">Four</button>
+            </div>
+            <div>
+                <div style="display: flex; flex-direction: row;">
+                    <div style="padding: 8px; display: flex; flex-direction: column;">
+                        <label for="playerOneName">First Name</label>
+                        <AutoComplete v-model="playerOneName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteOne"
+                            @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerOneName" @focus="showSuggestionsOne"
+                            class="custom-autocomplete" optionValue="name" @change="inputName($event, 'one')" @keydown="handleKeyDown($event, 'one')"
+                            :pt="{
+                                root: {
+                                    class: 'customAutocomplete',
+                                },
+                                option:
+                                {
+                                    style: { color: 'white', padding: '4px 8px'}
+                                },
+                                overlay: {
+                                    style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
+                                    borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                                },
+                                pcInputText: {
+                                    style: { '::placeholder': { color: '#2e6da4' } }
+                                }
+                            }"></AutoComplete>
+                    </div>
+                    <div style="padding: 8px; display: flex; flex-direction: column;">
+                        <label for="playerTwoName">Second Name</label>
+                        <AutoComplete v-model="playerTwoName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteTwo"
+                            @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerTwoName" @focus="showSuggestionsTwo"
+                            class="custom-autocomplete" optionValue="name" @change="inputName($event, 'two')" @keydown="handleKeyDown($event, 'two')"
+                            :pt="{
+                                root: {
+                                    class: 'customAutocomplete',
+                                },
+                                option:
+                                {
+                                    style: { color: 'white', padding: '4px 8px'}
+                                },
+                                overlay: {
+                                    style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
+                                    borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                                },
+                                pcInputText: {
+                                    style: { '::placeholder': { color: '#2e6da4' } }
+                                }
+                            }"></AutoComplete>
+                    </div>
                 </div>
-                <div style="padding: 8px; display: flex; flex-direction: column;">
-                    <label for="playerTwoName">Second Name</label>
-                    <AutoComplete v-model="playerTwoName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteTwo"
-                        @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerTwoName" @focus="showSuggestionsTwo"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'two')" @keydown="handleKeyDown($event, 'two')"
-                        :pt="{
-                            root: {
-                                class: 'customAutocomplete',
-                            },
-                            option:
-                            {
-                                style: { color: 'white', padding: '4px 8px'}
-                            },
-                            overlay: {
-                                style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
-                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
-                            },
-                            pcInputText: {
-                                style: { '::placeholder': { color: '#2e6da4' } }
-                            }
-                        }"></AutoComplete>
+                <div v-if="playerCount > 2" style="display: flex; flex-direction: row;">
+                    <div style="padding: 8px; display: flex; flex-direction: column;">
+                        <label for="playerThreeName">Third Name</label>
+                        <AutoComplete v-model="playerThreeName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteThree"
+                            @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerThreeName" @focus="showSuggestionsThree"
+                            class="custom-autocomplete" optionValue="name" @change="inputName($event, 'three')" @keydown="handleKeyDown($event, 'three')"
+                            :pt="{
+                                root: {
+                                    class: 'customAutocomplete',
+                                },
+                                option:
+                                {
+                                    style: { color: 'white', padding: '4px 8px'}
+                                },
+                                overlay: {
+                                    style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
+                                    borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                                },
+                                pcInputText: {
+                                    style: { '::placeholder': { color: '#2e6da4' } }
+                                }
+                            }"></AutoComplete>
+                    </div>
+                    <div v-if="playerCount > 3" style="padding: 8px; display: flex; flex-direction: column;">
+                        <label for="playerFourName">Fourth Name</label>
+                        <AutoComplete v-model="playerFourName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteFour"
+                            @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerFourName" @focus="showSuggestionsFour"
+                            class="custom-autocomplete" optionValue="name" @change="inputName($event, 'four')" @keydown="handleKeyDown($event, 'four')"
+                            :pt="{
+                                root: {
+                                    class: 'customAutocomplete',
+                                },
+                                option:
+                                {
+                                    style: { color: 'white', padding: '4px 8px'}
+                                },
+                                overlay: {
+                                    style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
+                                    borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                                },
+                                pcInputText: {
+                                    style: { '::placeholder': { color: '#2e6da4' } }
+                                }
+                            }"></AutoComplete>
+                    </div>
                 </div>
             </div>
-            <div v-if="playerCount > 2" style="display: flex; flex-direction: row;">
-                <div style="padding: 8px; display: flex; flex-direction: column;">
-                    <label for="playerThreeName">Third Name</label>
-                    <AutoComplete v-model="playerThreeName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteThree"
-                        @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerThreeName" @focus="showSuggestionsThree"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'three')" @keydown="handleKeyDown($event, 'three')"
-                        :pt="{
-                            root: {
-                                class: 'customAutocomplete',
-                            },
-                            option:
-                            {
-                                style: { color: 'white', padding: '4px 8px'}
-                            },
-                            overlay: {
-                                style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
-                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
-                            },
-                            pcInputText: {
-                                style: { '::placeholder': { color: '#2e6da4' } }
-                            }
-                        }"></AutoComplete>
+            <h3>Select altername VP cards present</h3>
+                <div style="width: 380px; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+                    <button :class="{'btn': selectedAltVPCards.includes(button), 'btn-dark': !selectedAltVPCards.includes(button)}"
+                        v-for="button in altVPCards" @click="addCard(button)" style="margin: 4px;">{{ button }}</button>
                 </div>
-                <div v-if="playerCount > 3" style="padding: 8px; display: flex; flex-direction: column;">
-                    <label for="playerFourName">Fourth Name</label>
-                    <AutoComplete v-model="playerFourName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteFour"
-                        @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerFourName" @focus="showSuggestionsFour"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'four')" @keydown="handleKeyDown($event, 'four')"
-                        :pt="{
-                            root: {
-                                class: 'customAutocomplete',
-                            },
-                            option:
-                            {
-                                style: { color: 'white', padding: '4px 8px'}
-                            },
-                            overlay: {
-                                style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
-                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
-                            },
-                            pcInputText: {
-                                style: { '::placeholder': { color: '#2e6da4' } }
-                            }
-                        }"></AutoComplete>
-                </div>
+            <button class="btn-outline" @click="startGame" style="margin-top: 8px;">Start Game</button>
+        </div>
+        <div v-if="showCounters" id="counterList" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+            <div class="playerScore">
+                <p :style="{ fontSize: fixedPlayerOneName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerOneName }} - {{ playerOneScore }}</p>
+            </div>
+            <div class="playerScore">
+                <p :style="{ fontSize: fixedPlayerTwoName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerTwoName }} - {{ playerTwoScore }}</p>
+            </div>
+            <div v-if="playerCount > 2" class="playerScore">
+                <p :style="{ fontSize: fixedPlayerThreeName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerThreeName }} - {{ playerThreeScore }}</p>
+            </div>
+            <div v-if="playerCount > 3" class="playerScore">
+                <p :style="{ fontSize: fixedPlayerFourName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerFourName }} - {{ playerFourScore }}</p>
             </div>
         </div>
-        <h3>Select altername VP cards present</h3>
-            <div style="width: 380px; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-                <button :class="{'btn': selectedAltVPCards.includes(button), 'btn-dark': !selectedAltVPCards.includes(button)}"
-                    v-for="button in altVPCards" @click="addCard(button)" style="margin: 4px;">{{ button }}</button>
-            </div>
-
-        <button class="btn-outline" @click="startGame" style="margin-top: 8px;">Start Game</button>
+        <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px; margin-bottom: 10px;" @click="endGame">Submit Current Scores</button>
+        <div id="counterContainer">
+            <ScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+            <ScoreCounter v-if="showCounters" :playerName="playerTwoName" :playerNumber="2" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+            <ScoreCounter v-if="showCounters && playerCount > 2" :playerName="playerThreeName" :playerNumber="3" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+            <ScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+        </div>
+        <div id="overlay" v-if="this.showPopup" @click="this.showPopup=!this.showPopup"></div>
+        <InsertRecordPopup :insertPopup="showPopup" :gameInformationObject="insertObject" :gameName="'Dominion'"
+            :insertingPlayerCount="playerCount" @gameInserted="resetGameState" ></InsertRecordPopup>
     </div>
-    <div v-if="showCounters" id="counterList" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-        <div class="playerScore">
-            <p :style="{ fontSize: fixedPlayerOneName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerOneName }} - {{ playerOneScore }}</p>
-        </div>
-        <div class="playerScore">
-            <p :style="{ fontSize: fixedPlayerTwoName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerTwoName }} - {{ playerTwoScore }}</p>
-        </div>
-        <div v-if="playerCount > 2" class="playerScore">
-            <p :style="{ fontSize: fixedPlayerThreeName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerThreeName }} - {{ playerThreeScore }}</p>
-        </div>
-        <div v-if="playerCount > 3" class="playerScore">
-            <p :style="{ fontSize: fixedPlayerFourName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerFourName }} - {{ playerFourScore }}</p>
-        </div>
-    </div>
-    <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-        <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px;" @click="endGame">Submit Current Scores</button>
-        <ScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-        <ScoreCounter v-if="showCounters" :playerName="playerTwoName" :playerNumber="2" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-        <ScoreCounter v-if="showCounters && playerCount > 2" :playerName="playerThreeName" :playerNumber="3" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-        <ScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-    </div>
-    <div id="overlay" v-if="this.showPopup" @click="this.showPopup=!this.showPopup"></div>
-    <InsertRecordPopup :insertPopup="showPopup" :gameInformationObject="insertObject" :gameName="'Dominion'"
-        :insertingPlayerCount="playerCount" @gameInserted="resetGameState" ></InsertRecordPopup>
 </template>
 
 <script>
@@ -422,6 +423,14 @@ label {
     width: 175px;
 }
 
+#counterContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 50%;
+}
+
 .playerScore {
     width: 180px;
     background-color: #242526;
@@ -436,10 +445,16 @@ label {
     /* font-size: 23px; */
 }
 @media (max-width: 	420px) {
-    .section {
+    /* .section {
         margin-top: 45px;
-    }
+    } */
 
+    #counterContainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
     #counterList {
         margin-top: 45px;
     }

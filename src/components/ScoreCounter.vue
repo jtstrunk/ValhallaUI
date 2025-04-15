@@ -1,5 +1,5 @@
 <template>
-    <div class="section">
+    <div class="section" id="counter">
         <div class="counter">
             <div style="display: flex; flex-direction: row; justify-content: space-between;">
                 <p style="font-size: 26px; margin-left: 5px;">{{ typeof playerName === 'string' ? playerName : playerName.name }}</p>
@@ -110,6 +110,9 @@ export default {
 </script>
 
 <style scoped>
+#counter {
+    margin-top: 0px;
+}
 .counter{
     display: flex;
     flex-direction: column;

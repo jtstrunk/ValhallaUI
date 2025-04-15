@@ -1,53 +1,57 @@
 <template>
-    <div>
-        <div class="section" id="profileHeader">
-            <div id="profileInformation">
-                <img id="profilePicture" :src="profileImageSrc" @error="setDefaultImage" onclick="location.href='/profile?name=current'">
-                <div id="profileDetails">
-                    <p id="profileName">{{ this.userName }}</p>
-                    <p v-if="this.users.includes(userName)" id="profileLocation">{{ this.userStats.location }}</p>
-                    <div v-if="logginUser != userName && this.users.includes(userName)">
-                        <button v-if="userRelationship === 'Follow'" id="follow" @click="FollowUser(userName)">Follow</button>
-                        <button v-else-if="userRelationship === 'Unfollow'" id="unfollow" @click="UnfollowUser(userName)">Unfollow</button>
-                    </div>
-                </div>
-            </div>
-            <div id="statHolder" style="margin-right: 10px;">
-                <div class="stat">
-                    <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
-                        <div style="display: flex; flex-direction: column; align-items: center;">
-                            <p class="statHeader">Followers</p>
-                            <p class="statDetail">{{ this.followers.length }}</p>
+    <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden;">
+        <div>
+            <div class="section" id="profileHeader">
+                <div id="profileInformation">
+                    <img id="profilePicture" :src="profileImageSrc" @error="setDefaultImage" onclick="location.href='/profile?name=current'">
+                    <div id="profileDetails">
+                        <div>
+                            <p id="profileName">{{ this.userName }}</p>
+                            <p v-if="this.users.includes(userName)" id="profileLocation">{{ this.userStats.location }}</p>
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: center;">
-                            <p class="statHeader">Following</p>
-                            <p class="statDetail">{{ this.following.length }}</p>
+                        <div v-if="logginUser != userName && this.users.includes(userName)">
+                            <button v-if="userRelationship === 'Follow'" id="follow" @click="FollowUser(userName)">Follow</button>
+                            <button v-else-if="userRelationship === 'Unfollow'" id="unfollow" @click="UnfollowUser(userName)">Unfollow</button>
                         </div>
                     </div>
                 </div>
-                <div class="stat" style="margin-top: 15px">
-                    <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
-                        <div style="display: flex; flex-direction: column; align-items: center;">
-                            <p class="statHeader">Games Played</p>
-                            <p class="statDetail">{{ this.userStats.gamesplayed }}</p>
+                <div id="statHolder" style="margin-right: 10px;">
+                    <div class="stat">
+                        <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <p class="statHeader">Followers</p>
+                                <p class="statDetail">{{ this.followers.length }}</p>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <p class="statHeader">Following</p>
+                                <p class="statDetail">{{ this.following.length }}</p>
+                            </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: center;">
-                            <p class="statHeader">Games Won</p>
-                            <p class="statDetail">{{ this.userStats.gameswon }}</p>
+                    </div>
+                    <div class="stat" style="margin-top: 15px">
+                        <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <p class="statHeader">Games Played</p>
+                                <p class="statDetail">{{ this.userStats.gamesplayed }}</p>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <p class="statHeader">Games Won</p>
+                                <p class="statDetail">{{ this.userStats.gameswon }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="section" id="gamesHeader">
-        <div :style="headerWidth" id="gamesContainter">
-            <h2 style="margin: 0px; ">Recent Games</h2>
-            <div style="display: flex; flex-direction: row; flex-wrap: wrap;" :key="refeshGames">
-                <div v-for="game in recentGames.slice(0, 8)">
-                    <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" 
-                        :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames" 
-                        :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
+        <div class="section" id="gamesHeader" >
+            <div :style="headerWidth" id="gamesContainter">
+                <h2 style="margin: 0px; ">Recent Games</h2>
+                <div style="display: flex; flex-direction: row; flex-wrap: wrap;" :key="refeshGames">
+                    <div v-for="game in recentGames.slice(0, 8)">
+                        <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"
+                            :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames"
+                            :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -332,7 +336,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-left: 10px;
+    margin-left: 8px;
 }
 #profilePicture {
     width: 140px;
@@ -426,16 +430,28 @@ export default {
     #profileHeader {
         flex-direction: column;
         width: 385px;
-        margin-left: 17px;
-        margin-top: 45px;
+        margin-left: 10px;
+        /* margin-top: 45px; */
         overflow-x: hidden;
     }
     #profilePicture {
-        width: 90px;
-        height: 90px;
+        width: 80px;
+        height: 80px;
+        margin-bottom: 10px;
+        margin-top: 5px;
     }
     #profileDetails {
+        margin-top: 8px;
         padding-bottom: 20px;
+        display: flex;
+        flex-direction: row;
+    }
+    #profileName {
+        font-size: x-large;
+        width: 185px;
+    }
+    #profileLocation {
+        width: 185px;
     }
     #statHolder {
         display: flex;
@@ -461,8 +477,8 @@ export default {
     }
 
     #gamesHeader {
-        width: 385px;
-        margin-top: 18px !important;
+        width: 385px !important;
+        margin-top: 8px !important;
         margin: 17px;
     }
     #gamesContainter{
