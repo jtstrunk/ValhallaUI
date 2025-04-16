@@ -9,6 +9,7 @@ import MobileFooter from './components/MobileFooter.vue'
   <div id="app">
     <component 
       :is="isMobile ? MobileHeader : Header" />
+    <Toast />
     <div class="content-wrapper" ref="scrollContainer">
       <RouterView :scrolled-to-bottom="isScrolledToBottom"/>
     </div>
@@ -17,6 +18,8 @@ import MobileFooter from './components/MobileFooter.vue'
 </template>
 
 <script>
+import Toast from 'primevue/toast';
+
 export default {
   data() {
     return {
@@ -103,6 +106,25 @@ body, html {
   z-index: 100;
   box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
 }
+
+/* Override the info toast background and text color */
+.p-toast-message-info {
+  background-color: #242526 !important; /* Bootstrap blue or your preferred blue */
+  color: red !important;
+  border: red !important;
+  padding: 12px !important;
+  border-radius: 2% !important;
+  border: 1px solid red !important;
+}
+
+/* Optional: override icon color */
+.p-toast-message-icon {
+  color: red !important;
+  margin-right: 8px !important;
+}
+
+
+
 
 @media (max-width: 	420px) {
   #app {

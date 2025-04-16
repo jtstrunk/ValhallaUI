@@ -1,5 +1,5 @@
 <template>
-    <div class="section" style="background-color: #18191A;">
+    <div class="section" id="dominionSelector" style="background-color: #18191A;">
         <div id="filters">
             <div id="expansions">
                 <button id="Set" class="btn btn-main btn-outline" style="outline: none;" onclick="toggleCollapse('collapsibleSets', 'Set')">Expansions</button>
@@ -76,7 +76,7 @@
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
-            <p>Advanced Settings</p>
+            <p>Dominion Kingdom Creation</p>
             <div style="display: flex; flex-direction: row; justify-content: space-between; width: 710px;">
                 <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 112.5px; justify-content: space-between;">
                     <button
@@ -103,15 +103,17 @@
             </div>
             <div>
                 <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
+                <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Missing Cards</button>
+                <!-- <button @click="console.clear()">clear console</button> -->
             </div>
             <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 720px;">
                 <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
                     :src="getCardImage(card.name)" :class="{ traitCards: this.traitCards.includes(card) }" 
                     @click="removeCard(card)" />
             </div>
-            <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 660px;">
-                <img v-for="card in selectedAddons" :key="card.name" class="addonCard"
-                    :src="getLandscapesImage(card.name)" :alt="card.name"/>
+            <div style="margin-top: 10px; display: flex; flex-direction: row; justify-content: center; width: 875px; margin-left: 15px;">
+                <img v-for="card in selectedAddons" :key="card" class="addonCard"
+                    :src="getLandscapesImage(card)" :alt="card"/>
             </div>
         </div>
     </div>
@@ -120,9 +122,6 @@
 <script>
 import axios from "axios"
 import { userState } from '/src/state/userState'
-import ScoreCounter from './ScoreCounter.vue'
-import InsertRecordPopup from './InsertRecordPopup.vue'
-const importAll = (requireContext) => requireContext.keys().map(requireContext);
 
 export default {
     inheritAttrs: false,
@@ -133,526 +132,18 @@ export default {
     data(){
         return{
             userName: userState.username,
-            showDialog: false,
+            showDialog: true,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             cardTypes: ['Treasure', 'Victory', 'Shadow', 'Debt', 'Loot', 'Col & Plat', 'Prophecy', 'Event', 'Trait'],
-            categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver', '', '', '', '', '', '', '', '', '', '', ''],
-            selectedAdvancedExpansions: [],
+            categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
+            selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             selectedAdvancedCardTypes: [],
-            selectedExpansions: [],
+            selectedExpansions: ['Dominion'],
             selectedTypes: [],
             selectedCategories: [],
             selectedCards: [],
             selectedAddons: [],
             traitCards: [],
-            cardList:[
-                "Cellar",
-                "Chapel",
-                "Moat",
-                "Harbinger",
-                "Merchant",
-                "Vassal",
-                "Village",
-                "Workshop",
-                "Bureaucrat",
-                "Gardens",
-                "Militia",
-                "Moneylender",
-                "Poacher",
-                "Remodel",
-                "Smithy",
-                "Throne_Room",
-                "Bandit",
-                "Council_Room",
-                "Festival",
-                "Laboratory",
-                "Library",
-                "Market",
-                "Mine",
-                "Sentry",
-                "Witch",
-                "Artisan",
-                "Haven",
-                "Lighthouse",
-                "Native_Village",
-                "Astrolabe",
-                "Fishing_Village",
-                "Lookout",
-                "Monkey",
-                "Sea_Chart",
-                "Smugglers",
-                "Warehouse",
-                "Blockade",
-                "Caravan",
-                "Cutpurse",
-                "Island",
-                "Sailor",
-                "Salvager",
-                "Tide_Pools",
-                "Treasure_Map",
-                "Bazaar",
-                "Corsair",
-                "Merchant_Ship",
-                "Outpost",
-                "Pirate",
-                "Sea_Witch",
-                "Tactician",
-                "Treasury",
-                "Wharf",
-                "Courtyard",
-                "Lurker",
-                "Pawn",
-                "Masquerade",
-                "Shanty_Town",
-                "Steward",
-                "Swindler",
-                "Wishing_Well",
-                "Baron",
-                "Bridge",
-                "Conspirator",
-                "Diplomat",
-                "Ironworks",
-                "Mill",
-                "Mining_Village",
-                "Secret_Passage",
-                "Courtier",
-                "Duke",
-                "Minion",
-                "Patrol",
-                "Replace",
-                "Torturer",
-                "Trading_Post",
-                "Upgrade",
-                "Harem",
-                "Nobles",
-                "Anvil",
-                "Watchtower",
-                "Bishop",
-                "Clerk",
-                "Investment",
-                "Monument",
-                "Quarry",
-                "Tiara",
-                "Worker's_Village",
-                "Charlatan",
-                "City",
-                "Collection",
-                "Crystal_Ball",
-                "Magnate",
-                "Mint",
-                "Rabble",
-                "Vault",
-                "War_Chest",
-                "Grand_Market",
-                "Hoard",
-                "Expand",
-                "Forge",
-                "King's_Court",
-                "Peddler",
-                "Cage",
-                "Grotto",
-                "Jewelled_Egg",
-                "Search",
-                "Shaman",
-                "Secluded_Shrine",
-                "Siren",
-                "Stowaway",
-                "Taskmaster",
-                "Abundance",
-                "Cabin_Boy",
-                "Crucible",
-                "Flagship",
-                "Fortune_Hunter",
-                "Gondola",
-                "Harbor_Village",
-                "Landing_Party",
-                "Mapmaker",
-                "Maroon",
-                "Rope",
-                "Swamp_Shacks",
-                "Tools",
-                "Buried_Treasure",
-                "Crew",
-                "Cutthroat",
-                "Enlarge",
-                "Figurine",
-                "First_Mate",
-                "Frigate",
-                "Longship",
-                "Mining_Road",
-                "Pendant",
-                "Pickaxe",
-                "Pilgrim",
-                "Quartermaster",
-                "Silver_Mine",
-                "Trickster",
-                "Wealthy_Village",
-                "Sack_of_Loot",
-                "King's_Cache",
-                "Mountain_Shrine",
-                "Daimyo",
-                "Artist",
-                "Fishmonger",
-                "Snake_Witch",
-                "Aristocrat",
-                "Craftsman",
-                "Riverboat",
-                "Root_Cellar",
-                "Alley",
-                "Change",
-                "Ninja",
-                "Poet",
-                "River_Shrine",
-                "Rustic_Village",
-                "Gold_Mine",
-                "Imperial_Envoy",
-                "Kitsune",
-                "Litter",
-                "Rice_Broker",
-                "Ronin",
-                "Tanuki",
-                "Tea_House",
-                "Samurai",
-                "Rice"
-            ],
-
-actionCards: [
-                "Artisan",
-                "Bandit",
-                "Bureaucrat",
-                "Cellar",
-                "Chapel",
-                "Council_Room",
-                "Festival",
-                "Harbinger",
-                "Laboratory",
-                "Library",
-                "Market",
-                "Merchant",
-                "Militia",
-                "Mine",
-                "Moat",
-                "Moneylender",
-                "Poacher",
-                "Remodel",
-                "Sentry",
-                "Smithy",
-                "Throne_Room",
-                "Vassal",
-                "Village",
-                "Witch",
-                "Workshop",
-                "Bazaar",
-                "Blockade",
-                "Caravan",
-                "Corsair",
-                "Cutpurse",
-                "Fishing_Village",
-                "Haven",
-                "Island",
-                "Lighthouse",
-                "Lookout",
-                "Merchant_Ship",
-                "Monkey",
-                "Native_Village",
-                "Outpost",
-                "Pirate",
-                "Sailor",
-                "Salvager",
-                "Sea_Chart",
-                "Sea_Witch",
-                "Smugglers",
-                "Tactician",
-                "Tide_Pools",
-                "Treasure_Map",
-                "Treasury",
-                "Warehouse",
-                "Wharf",
-                "Baron",
-                "Bridge",
-                "Conspirator",
-                "Courtier",
-                "Courtyard",
-                "Diplomat",
-                "Ironworks",
-                "Lurker",
-                "Masquerade",
-                "Mill",
-                "Mining_Village",
-                "Minion",
-                "Nobles",
-                "Pawn",
-                "Patrol",
-                "Replace",
-                "Secret_Passage", 
-                "Shanty_Town", 
-                "Steward", 
-                "Swindler", 
-                "Torturer", 
-                "Trading_Post", 
-                "Upgrade", 
-                "Wishing_Well",
-                "Cabin_Boy",
-                "Crew",
-                "Cutthroat",
-                "Enlarge",
-                "First_Mate",
-                "Flagship",
-                "Fortune_Hunter",
-                "Frigate",
-                "Grotto",
-                "Harbor_Village",
-                "Landing_Party",
-                "Longship",
-                "Mapmaker",
-                "Maroon",
-                "Mining_Road",
-                "Pilgrim",
-                "Quartermaster",
-                "Search",
-                "Secluded_Shrine",
-                "Shaman",
-                "Siren",
-                "Stowaway",
-                "Swamp_Shacks",
-                "Taskmaster",
-                "Trickster",
-                "Wealthy_Village",
-                "Alley",
-                "Aristocrat",
-                "Artist",
-                "Change",
-                "Craftsman",
-                "Daimyo",
-                "Fishmonger",
-                "Gold_Minte",
-                "Imperial_Envoy",
-                "Kitsune",
-                "Litter",
-                "Mountain_Shrine",
-                "Ninja",
-                "Poet",
-                "Rice_Broker",
-                "River_Shrine",
-                "Riverboat",
-                "Ronin",
-                "Root_Cellar",
-                "Rustic_Village",
-                "Samurai",
-                "Snake_Witch",
-                "Tanuki",
-                "Tea_House",
-                "Captain",
-                "Church"
-            ],
-            victoryCards: [
-                "Gardens",
-                "Island",
-                "Duke",
-                "Nobles",
-                "Harem",
-                "Mill"
-            ],
-            treasureCards: [
-                "Astrolabe",
-                "Harem",
-                "Anvil",
-                "Bank",
-                "Collection",
-                "Crystal_Ball",
-                "Hoard",
-                "Investment",
-                "Quarry",
-                "Tiara",
-                "War_Chest",
-                "Abundance",
-                "Buried_Treasure",
-                "Cage",
-                "Crucible",
-                "Figurine",
-                "Gondola",
-                "Jewelled_Egg",
-                "King's_Cache",
-                "Pendant",
-                "Pickaxe",
-                "Rope",
-                "Sack_of_Loot",
-                "Silver_Mine",
-                "Tools",
-            ],
-            attackCards: [
-                "Bandit",
-                "Bureaucrat",
-                "Militia",
-                "Witch",
-                "Blockade",
-                "Corsair",
-                "Cutpurse",
-                "Sea_Witch",
-                "Swindler",
-                "Minion",
-                "Replace",
-                "Torturer",
-                "Cutthroat",
-                "Attack",
-                "Siren",
-                "Trickster",
-                "Kitsune",
-                "Ninja",
-                "Samurai",
-                "Snake_Witch",
-            ],
-            reactionCards: [
-                "Moat",
-                "Pirate",
-                "Diplomat",
-                "Watchtower",
-                "Clerk",
-                "Stowaway",
-                "Mapmaker",
-            ],
-            durationCards: [
-                "Caravan",
-                "Fishing_Village",
-                "Haven",
-                "Lighthouse",
-                "Merchant_Ship",
-                "Monkey",
-                "Outpost",
-                "Sailor",
-                "Tactician",
-                "Tide_Pools",
-                "Wharf",
-                "Blockade",
-                "Sea_Witch",
-                "Corsair",
-                "Pirate",
-                "Captain",
-                "Abundance",
-                "Buried_Treasure",
-                "Cabin_Boy",
-                "Cage",
-                "Crew",
-                "Cutthroat",
-                "Enlarge",
-                "Flagship",
-                "Frigate",
-                "Gondola",
-                "Grotto",
-                "Landing_Party",
-                "Longship",
-                "Quartermaster",
-                "Rope",
-                "Search",
-                "Secluded_Shrine",
-                "Siren",
-                "Stowaway",
-                "Taskmaster",
-                "Riverboat",
-                "Samurai"
-            ],
-            commandCards: [
-                "Captain",
-                "Flagship",
-                "Daimyo"
-            ],
-            shadowCards: [
-                "Alley",
-                "Fishmonger",
-                "Ninja",
-                "Ronin",
-                "Tanuki",  
-            ],
-            omenCards: [
-                "Kitsune",
-                "Mountain_Shrine",
-                "Poet",
-                "River_Shrine",
-                "Rustic_Village",
-                "Tea_House"
-            ],
-            debtCards: [
-                "Artist",
-                "Change",
-                "Craftsman",
-                "Daimyo",
-                "Gold_Mine",
-                "Imperial_Envoy",
-                "Litter",
-                "Mountain_Shrine",
-                "Root_Cellar"
-            ],
-            lootCards: [
-                "Cutthroat",
-                "Jewelled_Egg",
-                "Pickaxe",
-                "Sack_of_Loot",
-                "Search",
-                "Wealthy_Village"
-            ],
-            events: [
-                "Summon",
-                "Continue",
-                "Amass",
-                "Asceticism",
-                "Credit",
-                "Foresight",
-                "Kintsugi",
-                "Practice",
-                "Sea_Trade",
-                "Receive_Tribute",
-                "Gather",
-                "Bury",
-                "Avoid",
-                "Deliver",
-                "Peril",
-                "Rush",
-                "Foray",
-                "Launch",
-                "Mirror",
-                "Prepare",
-                "Scrounge",
-                "Journey",
-                "Maelstrom",
-                "Looting",
-                "Invasion",
-                "Prosper"
-            ],
-            traits: [
-                "Cheap",
-                "Cursed",
-                "Fated",
-                "Fawning",
-                "Friendly",
-                "Hasty",
-                "Inherited",
-                "Inspiring",
-                "Nearby",
-                "Patient",
-                "Pious",
-                "Reckless",
-                "Rich",
-                "Shy",
-                "Tireless"
-            ],
-            prophecies: [
-                "Approaching_Army",
-                "Biding_Time",
-                "Bureaucracy",
-                "Divine_Wind",
-                "Enlightenment",
-                "Flourishing_Trade",
-                "Good_Harvest",
-                "Great_Leader",
-                "Growth",
-                "Harsh_Winter",
-                "Kind_Emperor",
-                "Panic",
-                "Progress",
-                "Rapid_Expansion",
-                "Sickness"
-            ],
-            
         }
     },
     components: {
@@ -673,6 +164,30 @@ actionCards: [
         }
     },
     methods: {
+        showRemovedLandscape(landscape) {
+            this.$toast.add({
+                severity: 'info',
+                summary: 'Selected Unavailable Landscape',
+                detail: `${landscape} are not available in selected Expansions.`,
+                life: 7000
+            });
+        },
+        showRemovedCard(type) {
+            this.$toast.add({
+                severity: 'info',
+                summary: 'Selected Unavailable Card Type',
+                detail: `There are no ${type} cards in selected Expansions.`,
+                life: 7000
+            });
+        },
+        showRemovedMechanic(mechanic) {
+            this.$toast.add({
+                severity: 'info',
+                summary: 'Selected Unavailable Mechanic',
+                detail: `${mechanic} is not available in selected Expansions.`,
+                life: 7000
+            });
+        },
         getCardImage(cardName) {
             return new URL(`../assets/dominioncards/200px-${cardName}.jpg`, import.meta.url).href;
         },
@@ -703,9 +218,11 @@ actionCards: [
             }
         },
         removeCard(card) {
-            console.log('remove this card', card)
-            let index = this.selectedCards[card]
-            this.selectedCards.splice(index, 1);
+            console.log('removing ', card);
+            const index = this.selectedCards.indexOf(card);
+            if (index > -1) {
+                this.selectedCards.splice(index, 1);
+            }
         },
         startGame() {
             console.log('starting game')
@@ -717,7 +234,7 @@ actionCards: [
             console.log('getting cards from this list')
         },
         anyFill() {
-            let tempCardList = JSON.parse(JSON.stringify(this.cardList));
+            let tempCardList = JSON.parse(JSON.stringify(this.cards));
             let loopCount = 10 - this.selectedCards.length;
             loopCount = Math.max(loopCount, 0);
             let addedCount = 0;
@@ -735,188 +252,224 @@ actionCards: [
                 }
             }
         },
+        addCard(cardType) {
+            let attempts = 0;
+            let added = false;
+            while (!added && attempts < 20) {
+                attempts++;
+                const randomIndex = Math.floor(Math.random() * cardType.length);
+                const cardName = cardType[randomIndex];
+
+                if (!this.selectedCards.includes(cardName)) {
+                    this.selectedCards.push(cardName);
+                    added = true;
+                    console.log(cardName);
+                }
+            }
+        },
+        fillFromExpansions(){
+            this.selectedExpansionsCardList = [...this.cards];
+            if (this.selectedAdvancedExpansions.length > 0) {
+                this.selectedExpansionsCardList = this.selectedExpansionsCardList.filter(card =>
+                    this.selectedAdvancedExpansions.includes(card.set)
+                );
+            }
+
+            console.log('selected expansion', this.selectedExpansions)
+            let addedCount = 0, restAttempts = 0;
+            let loopCount = 10 - this.selectedCards.length;
+            loopCount = Math.max(loopCount, 0);
+
+            while (addedCount < loopCount && restAttempts < 100) {
+                restAttempts++;
+                let randomIndex = Math.floor(Math.random() * this.selectedExpansionsCardList.length);
+                let cardName = this.selectedExpansionsCardList[randomIndex];
+
+                if (!this.selectedCards.includes(cardName)) {
+                    this.selectedCards.push(cardName);
+                    this.selectedExpansionsCardList.splice(randomIndex, 1);
+                    addedCount++;
+                }
+            }
+        },
         generateAdvancedKingdom(){
+            let maxEffectCount = false;
+            this.selectedExpansionsCardList = [...this.cards];
+            this.selectedExpansionsLandscapeList = [...this.landScapes];
             this.selectedCards = [];
             this.selectedAddons = [];
             this.traitCards = [];
-            console.log(this.selectedAdvancedExpansions)
-            console.log(this.selectedAdvancedCardTypes)
+            if (this.selectedAdvancedExpansions.length > 0) {
+                this.selectedExpansionsCardList = this.selectedExpansionsCardList.filter(card => 
+                    this.selectedAdvancedExpansions.includes(card.set)
+                );
+                this.selectedExpansionsLandscapeList = this.selectedExpansionsLandscapeList.filter(card => 
+                    this.selectedAdvancedExpansions.includes(card.set)
+                );
+            }
 
-            if(this.selectedAdvancedCardTypes.includes('Treasure')) {
-                let numTreasure = 0;
-                let addedCount = 0;
-                let attempts = 0;
-                let randomChance = Math.floor(Math.random() * 100);
+            let treasureCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Treasure'))
+            let victoryCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Victory') || card.tags?.includes('Victory_Token'))
+            let shadowCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Shadow'))
+            let debtCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Debt'))
+            let lootCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Loot'))
+            let omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
+            let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
+            let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
 
-                if(this.selectedAdvancedCardTypes.includes('Col & Plat')) {
-                    console.log('change them joints fr')
-                    if(randomChance <= 60) {
-                        numTreasure = 1;
-                    } else if(60 < randomChance <= 95) {
-                        numTreasure = 2;
+            const countEffectingTypes = ["Treasure", "Debt", "Prophecy", "Loot", "Victory", "Shadow"];
+            if (countEffectingTypes.every(type => this.selectedAdvancedCardTypes.includes(type))) {
+                maxEffectCount = true;
+            }
+            console.log('all six: ', maxEffectCount);
+
+            if (this.selectedAdvancedCardTypes.includes('Treasure') && !this.selectedAdvancedExpansions.includes('Intrigue')
+                && !this.selectedAdvancedExpansions.includes('Seaside') && !this.selectedAdvancedExpansions.includes('Prospertity')
+                && !this.selectedAdvancedExpansions.includes('Plunder')  && !this.selectedAdvancedExpansions.includes('Rising Sun') ) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Treasure');
+                this.showRemovedCard('Treasure')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Victory') && !this.selectedAdvancedExpansions.includes('Dominion') 
+                && !this.selectedAdvancedExpansions.includes('Intrigue') && !this.selectedAdvancedExpansions.includes('Seaside')
+                && !this.selectedAdvancedExpansions.includes('Prospertity')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Victory');
+                this.showRemovedCard('Victory')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Shadow') && !this.selectedAdvancedExpansions.includes('Rising Sun')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Shadow');
+                this.showRemovedCard('Shadow')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Debt') && !this.selectedAdvancedExpansions.includes('Rising Sun')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Debt');
+                this.showRemovedMechanic('Debt')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Loot') && !this.selectedAdvancedExpansions.includes('Plunder')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Loot');
+                this.showRemovedMechanic('Loot')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Col & Plat') && !this.selectedAdvancedExpansions.includes('Prosperity')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Col & Plat');
+                this.showRemovedMechanic('Col & Plat')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Prophecy') && !this.selectedAdvancedExpansions.includes('Rising Sun')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Prophecy');
+                this.showRemovedLandscape('Prophecies')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Event') &&
+                !this.selectedAdvancedExpansions.includes('Rising Sun') && !this.selectedAdvancedExpansions.includes('Plunder')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Event');
+                this.showRemovedLandscape('Events')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Trait') && !this.selectedAdvancedExpansions.includes('Plunder')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Trait');
+                this.showRemovedLandscape('Traits')
+            }
+
+            
+            for(let loopCount = 1; loopCount < 4; loopCount++) {
+                if(this.selectedAdvancedCardTypes.includes('Treasure')) {
+                    if(loopCount == 1) {
+                        this.addCard(treasureCards)
+                    } else if(loopCount == 2) {
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 20 ||
+                            !this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 32) {
+                            this.addCard(treasureCards)
+                        }
                     } else {
-                        numTreasure = 3;
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 5 ||
+                            !this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 12) {
+                            this.addCard(treasureCards)
+                        }
                     }
-                } else {
-                    if(randomChance <= 40) {
-                        numTreasure = 1;
-                    } else if(45 < randomChance <= 85) {
-                        numTreasure = 2;
+                }
+
+                if(this.selectedAdvancedCardTypes.includes('Victory')) {
+                    if(loopCount == 1) {
+                        this.addCard(victoryCards)
+                    } else if (loopCount == 2){
+                        let randomChance = Math.floor(Math.random() * 100)
+                        if(randomChance <= 40) {
+                            this.addCard(victoryCards)
+                        }
                     } else {
-                        numTreasure = 3;
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 5) {
+                            this.addCard(victoryCards)
+                        }
                     }
                 }
 
-                while (addedCount < numTreasure && attempts < 20) {
-                    attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.treasureCards.length);
-                    let cardName = this.treasureCards[randomIndex];
-
-                    if (!this.selectedCards.includes(cardName)) {
-                        this.selectedCards.push(cardName);
-                        addedCount++;
+                if(this.selectedAdvancedCardTypes.includes('Shadow')) {
+                    if(loopCount == 1) {
+                        this.addCard(shadowCards)
+                    } else if (loopCount == 2){
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 8) {
+                            this.addCard(shadowCards)
+                        }
                     }
                 }
-            }
 
-            if(this.selectedAdvancedCardTypes.includes('Victory')) {
-                let numVictory = 0;
-                let addedCount = 0;
-                let attempts = 0;
-                let randomChance = Math.floor(Math.random() * 100);
-
-                if(randomChance <= 55) {
-                    numVictory = 1;
-                } else if(55 < randomChance <= 95) {
-                    numVictory = 2;
-                } else {
-                    numVictory = 3;
-                }
-
-                while (addedCount < numVictory && attempts < 20) {
-                    attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.victoryCards.length);
-                    let cardName = this.victoryCards[randomIndex];
-
-                    if (!this.selectedCards.includes(cardName)) {
-                        this.selectedCards.push(cardName);
-                        addedCount++;
+                if(this.selectedAdvancedCardTypes.includes('Debt')) {
+                    if(loopCount == 1) {
+                        this.addCard(debtCards)
+                    } else if (loopCount == 2){
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 32) {
+                            this.addCard(debtCards)
+                        }
+                    } else {
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 10) {
+                            this.addCard(debtCards)
+                        }
                     }
                 }
-            }
-
-            if(this.selectedAdvancedCardTypes.includes('Shadow')) {
-                let numShadow = 0;
-                let addedCount = 0;
-                let attempts = 0;
-                let randomChance = Math.floor(Math.random() * 100);
-
-                if(randomChance <= 92) {
-                    numShadow = 1;
-                } else {
-                    numShadow = 2;
-                }
-
-                while (addedCount < numShadow && attempts < 20) {
-                    attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.shadowCards.length);
-                    let cardName = this.shadowCards[randomIndex];
-
-                    if (!this.selectedCards.includes(cardName)) {
-                        this.selectedCards.push(cardName);
-                        addedCount++;
+            
+                if(this.selectedAdvancedCardTypes.includes('Loot')) {
+                    if(loopCount == 1) {
+                        this.addCard(lootCards)
+                    } else if (loopCount == 2){
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 32) {
+                            this.addCard(lootCards)
+                        }
                     }
-                }
-            }
-
-            if(this.selectedAdvancedCardTypes.includes('Debt')) {
-                let numDebt = 0;
-                let addedCount = 0;
-                let attempts = 0;
-                let randomChance = Math.floor(Math.random() * 100);
-
-                if(randomChance <= 45) {
-                    numDebt = 1;
-                } else if(45 < randomChance <= 80) {
-                    numDebt = 2;
-                } else {
-                    numDebt = 3;
                 }
                 
-                while (addedCount < numDebt && attempts < 20) {
-                    attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.debtCards.length);
-                    let cardName = this.debtCards[randomIndex];
-
-                    if (!this.selectedCards.includes(cardName)) {
-                        this.selectedCards.push(cardName);
-                        addedCount++;
+                
+                if(this.selectedAdvancedCardTypes.includes('Prophecy')) {
+                    if(loopCount == 1) {
+                        this.addCard(omenCards)
+                    } else if (loopCount == 2){
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 20) {
+                            this.addCard(omenCards)
+                        }
                     }
+                }
+
+                if((this.selectedCards.length > 7 || maxEffectCount == true) && loopCount == 2) {
+                    break;
                 }
             }
 
-            if(this.selectedAdvancedCardTypes.includes('Loot')) {
-                let numLoot = 0;
-                let addedCount = 0;
-                let attempts = 0;
-                let randomChance = Math.floor(Math.random() * 100);
-
-                if(randomChance <= 65) {
-                    numLoot = 1;
-                } else{
-                    numLoot = 2;
-                } 
-
-                while (addedCount < numLoot && attempts < 20) {
-                    attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.lootCards.length);
-                    let cardName = this.lootCards[randomIndex];
-
-                    if (!this.selectedCards.includes(cardName)) {
-                        this.selectedCards.push(cardName);
-                        addedCount++;
-                    }
-                }
-            }
-
-            if(this.selectedAdvancedCardTypes.includes('Prophecy')) {
-                let numOmen = 0;
-                let addedCount = 0;
-                let attempts = 0;
-                let randomChance = Math.floor(Math.random() * 100);
-
-                if(randomChance < 71) {
-                    numOmen = 1
-                } else {
-                    numOmen = 2
-                }
-
-                while (addedCount < numOmen && attempts < 20) {
-                    attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.omenCards.length);
-                    let cardName = this.omenCards[randomIndex];
-
-                    if (!this.selectedCards.includes(cardName)) {
-                        this.selectedCards.push(cardName);
-                        addedCount++;
-                    }
-                }
-
-                let prophecyRandomIndex = Math.floor(Math.random() * this.prophecies.length);
-                let cardName = this.prophecies[prophecyRandomIndex];
-                console.log('prophecy', cardName)
+            if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy)) 
+                && omenCards.some(omen => this.selectedCards.includes(omen))) {
+                let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                let cardName = prophecies[prophecyRandomIndex].name;
                 if (!this.selectedAddons.includes(cardName)) {
                     this.selectedAddons.push(cardName);
                 }
             }
 
             if(this.selectedAdvancedCardTypes.includes('Event')) {
-                let numEvent = 0;
-                let addedCount = 0;
-                let attempts = 0;
+                let numEvent = 0, addedCount = 0, attempts = 0;
                 let randomChance = Math.floor(Math.random() * 100);
-
-                if (this.prophecies.some(prophecy => this.selectedAddons.includes(prophecy))) {
+                if (this.selectedAdvancedCardTypes.includes('Prophecy')) {
                     numEvent = 1;
                 } else {
                     if(randomChance < 81) {
@@ -928,23 +481,19 @@ actionCards: [
 
                 while (addedCount < numEvent && attempts < 20) {
                     attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.events.length);
-                    let eventName = this.events[randomIndex];
+                    let randomIndex = Math.floor(Math.random() * events.length);
+                    let eventName = events[randomIndex].name;
 
                     if (!this.selectedAddons.includes(eventName)) {
                         this.selectedAddons.push(eventName);
                         addedCount++;
-                        console.log('event', eventName)
                     }
                 }
             }
 
             if(this.selectedAdvancedCardTypes.includes('Trait')) {
-                let numTrait = 0;
-                let addedCount = 0;
-                let attempts = 0;
+                let numTrait = 0, addedCount = 0, attempts = 0;
                 let randomChance = Math.floor(Math.random() * 100);
-
                 if(randomChance < 71) {
                     numTrait = 1
                 } else {
@@ -953,46 +502,46 @@ actionCards: [
 
                 while (addedCount < numTrait && attempts < 20) {
                     attempts++;
-                    let randomIndex = Math.floor(Math.random() * this.traits.length);
-                    let traitName = this.traits[randomIndex];
-
+                    let randomIndex = Math.floor(Math.random() * traits.length);
+                    let traitName = traits[randomIndex].name;
                     if (!this.selectedAddons.includes(traitName)) {
                         this.selectedAddons.push(traitName);
                         addedCount++;
                     }
                 }
             }
+            
+            let addedCount = 0, restAttempts = 0;
+            let loopCount = 10 - this.selectedCards.length;
+            loopCount = Math.max(loopCount, 0);
 
-            console.log(this.selectedCards)
-            this.anyFill()
-            if(!this.prophecies.some(prophecy => this.selectedAddons.includes(prophecy)) 
-                && this.omenCards.some(omen => this.selectedCards.includes(omen))) {
-                let prophecyRandomIndex = Math.floor(Math.random() * this.prophecies.length);
-                let cardName = this.prophecies[prophecyRandomIndex];
-                if (!this.selectedAddons.includes(cardName)) {
-                    this.selectedAddons.push(cardName);
+            while (addedCount < loopCount && restAttempts < 100) {
+                restAttempts++;
+                let randomIndex = Math.floor(Math.random() * this.selectedExpansionsCardList.length);
+                let cardName = this.selectedExpansionsCardList[randomIndex];
+
+                if (!this.selectedCards.includes(cardName)) {
+                    this.selectedCards.push(cardName);
+                    this.selectedExpansionsCardList.splice(randomIndex, 1);
+                    addedCount++;
                 }
             }
 
-            let traitNumber = 0;
-            let traitCount = 0;
-            let attempts = 0;
-            this.traits.forEach(trait => {
-                if (this.selectedAddons.includes(trait)) {
+            let traitNumber = 0, traitCount = 0, attempts = 0;
+            traits.forEach(trait => {
+                if (this.selectedAddons.includes(trait.name)) {
                     traitNumber++;
                 }
             });
             while (traitCount < traitNumber && attempts < 20) {
                 let randomNumber = Math.floor(Math.random() * 10);
-                console.log('randomNumber', randomNumber)
-                console.log('card', this.selectedCards[randomNumber])
+
                 if(!this.traitCards.includes(this.selectedCards[randomNumber])) {
                     this.traitCards.push(this.selectedCards[randomNumber])
                     traitCount++;
                 }
                 attempts++
             }
-            console.log('Number of matching traits:', this.traitNumber);
         },
         async fetchUsersPlayedWith(user) {
             axios.get(`${import.meta.env.VITE_API_URL}/getuseruniqueplayers/${user}`, {
@@ -1558,7 +1107,8 @@ actionCards: [
                 name : "Bishop",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                tags: ["Victory_Token"]
             },
             {
                 name : "Clerk",
@@ -1576,7 +1126,8 @@ actionCards: [
                 name : "Monument",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal_Silver"]
+                categories: ["Terminal_Silver"],
+                tags: ["Victory_Token"]
             },
             {
                 name : "Quarry",
@@ -1702,13 +1253,15 @@ actionCards: [
                 name: "Jewelled_Egg",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                tags: ["Loot"]
             },
             {
                 name: "Search",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Terminal_Silver"]
+                categories: ["Terminal_Silver"],
+                tags: ["Loot"]
             },
             {
                 name: "Shaman",
@@ -1834,7 +1387,8 @@ actionCards: [
                 name: "Cutthroat",
                 set: "Plunder",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""]
+                categories: [""],
+                tags: ["Loot"]
             },
             {
                 name: "Enlarge",
@@ -1882,7 +1436,8 @@ actionCards: [
                 name: "Pickaxe",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                tags: ["Loot"]
             },
             {
                 name: "Pilgrim",
@@ -1912,13 +1467,15 @@ actionCards: [
                 name: "Wealthy_Village",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                tags: ["Loot"]
             },
             {
                 name: "Sack_of_Loot",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                tags: ["Loot"]
             },
             {
                 name: "King's_Cache",
@@ -1930,19 +1487,22 @@ actionCards: [
                 name: "Mountain_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Trasher", "Terminal_Draw", "Terminal_Silver"]
+                categories: ["Trasher", "Terminal_Draw", "Terminal_Silver"],
+                tags: ["Debt"]
             },
             {
                 name: "Daimyo",
                 set: "Rising Sun",
                 types: ["Action", "Command"],
-                categories: ["Village", "Cantrip"]
+                categories: ["Village", "Cantrip"],
+                tags: ["Debt"]
             },
             {
                 name: "Artist",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                tags: ["Debt"]
             },
             {
                 name: "Fishmonger",
@@ -1966,7 +1526,8 @@ actionCards: [
                 name: "Craftsman",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                tags: ["Debt"]
             },
             {
                 name: "Riverboat",
@@ -1978,7 +1539,8 @@ actionCards: [
                 name: "Root_Cellar",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                tags: ["Debt"]
             },
             {
                 name: "Alley",
@@ -1990,7 +1552,8 @@ actionCards: [
                 name: "Change",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                tags: ["Debt"]
             },
             {
                 name: "Ninja",
@@ -2020,13 +1583,15 @@ actionCards: [
                 name: "Gold_Mine",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                tags: ["Debt"]
             },
             {
                 name: "Imperial_Envoy",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal_Draw"],
+                tags: ["Debt"]
             },
             {
                 name: "Kitsune",
@@ -2038,7 +1603,8 @@ actionCards: [
                 name: "Litter",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                tags: ["Debt"]
             },
             {
                 name: "Rice_Broker",
@@ -2076,7 +1642,289 @@ actionCards: [
                 types: ["Treasure"],
                 categories: [""]
             },
-]
+        ]
+        this.landScapes = [
+            {
+                name: "Avoid",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Bury",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Deliver",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Foray",
+                set: "Plunder",
+                types: ["Event"],
+                tags: ["Loot"]
+            },
+            {
+                name: "Invasion",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Journey",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Launch",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Looting",
+                set: "Plunder",
+                types: ["Event"],
+                tags: ["Loot"]
+            },
+            {
+                name: "Maelstrom",
+                set: "Plunder",
+                types: ["Event"],
+                tags: ["Loot"]
+            },
+            {
+                name: "Mirror",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Peril",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Prepare",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Prosper",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Rush",
+                set: "Plunder",
+                types: ["Event"],
+                tags: ["Loot"]
+            },
+            {
+                name: "Scrounge",
+                set: "Plunder",
+                types: ["Event"]
+            },
+            {
+                name: "Cheap",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Cursed",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Fated",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Fawning",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Friendly",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Hasty",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Inherited",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Inspiring",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Nearby",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Patient",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Pious",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Reckless",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Rich",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Shy",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Tireless",
+                set: "Plunder",
+                types: ["Trait"]
+            },
+            {
+                name: "Amass",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Asceticism",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Continue",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Credit",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Foresight",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Gather",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Kintsugi",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Practice",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Receive_Tribute",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Sea_Trade",
+                set: "Rising Sun",
+                types: ["Event"]
+            },
+            {
+                name: "Approaching_Army",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Biding_Time",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Bureaucracy",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Divine_Wind",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Enlightenment",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+
+            {
+                name: "Flourishing_Trade",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Good_Harvest",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Great_Leader",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Growth",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Harsh_Winter",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Kind_Emperor",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Panic",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Progress",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Rapid_Expansion",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Sickness",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+        ]
     }
 }
 </script>
@@ -2085,6 +1933,11 @@ actionCards: [
 .section {
     display: flex;
     flex-direction: row !important;
+}
+#dominionSelector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 h2 {
@@ -2288,7 +2141,8 @@ img {
 }
 
 .gamepopup {
-    width: 820px;
+    width: 950px;
+    height: 820px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 50%;
@@ -2298,13 +2152,13 @@ img {
     border-radius: 2%;
     text-align: center;
     z-index: 1001;
-    height: 680px;
+    /* height: 680px;
     overflow-y: scroll;
     scrollbar-width: thin;
-    scrollbar-color: #888 #242526;
+    scrollbar-color: #888 #242526; */
 }
 .gamepopup::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
 }
 .gamepopup::-webkit-scrollbar-track {
     background: #242526;
@@ -2317,11 +2171,16 @@ img {
     background-color: #555;
 }
 .popupContainer {
-    width: 800px;
+    width: 930px;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 25px;
+}
+.popupContainer p {
+    font-size: 22px;
+    font-family: 'Manolo Mono', sans-serif !important;
+    margin: 14px 0;
 }
 .traitCards {
     border: 3.5px solid purple;

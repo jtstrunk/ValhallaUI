@@ -7,6 +7,7 @@ import router from './router'
 import Dialog from 'primevue/dialog'
 import './assets/styles.css';
 import { AutoComplete, InputText } from 'primevue';
+import ToastService from 'primevue/toastservice';
 
 const app = createApp(App)
 
@@ -15,4 +16,5 @@ app.use(PrimeVue);
 app.component('Dialog', Dialog);
 app.component('AutoComplete', AutoComplete);
 app.component('Input', InputText);
+app.use(ToastService);
 app.mount('#app');
