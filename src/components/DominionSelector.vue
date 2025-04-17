@@ -20,33 +20,58 @@
                 <div id="types">
                     <button id="Type" class="btn btn-main btn-outline" style="outline: none;" onclick="toggleCollapse('collapsibleButtons', 'Type')">Types</button>
                     <div id="collapsibleButtons" class="">
-                        <button class="btn-dark" id="action">Action</button>
-                        <button class="btn-dark" id="victory">Victory</button>
-                        <button class="btn-dark" id="treasure">Treasure</button>
-                        <button class="btn-dark" id="attack">Attack</button>
-                        <button class="btn-dark" id="reaction">Reaction</button>
-                        <button class="btn-dark" id="duration">Duration</button>
-                        <button class="btn-dark" id="command">Command</button>
-                        <button class="btn-dark" id="shadow">Shadow</button>
-                        <button class="btn-dark" id="omen">Omen</button>
+                        <button
+                            v-for="type in types"
+                            style="margin: 2px 0"
+                            :key="type"
+                            @click="toggleType(type)"
+                            :class="{
+                                'btn-dark': !selectedTypes.includes(type),
+                                'btn-seleced': selectedTypes.includes(type)
+                            }" > {{ type }}
+                        </button>
                     </div>
                 </div>
                 <div id="categories">
                     <button id="Category" class="btn btn-main" style="outline: none;" onclick="toggleCollapse('collapsibleCategories', 'Category')">Categories</button>
                     <div id="collapsibleCategories" class="Hide">
-                        <button class="btn-dark" id="village">Village</button>
-                        <button class="btn-dark" id="cantrip">Cantrip</button>
-                        <button class="btn-dark" id="gainer">Gainer</button>
-                        <button class="btn-dark" id="trasher">Trasher</button>
-                        <button class="btn-dark" id="sifter">Sifter</button>
-                        <button class="btn-dark" id="terminalDraw">Terminal Draw</button>
-                        <button class="btn-dark" id="terminalSilver">Terminal Silver</button>
+                        <button
+                            v-for="category in categories"
+                            style="margin: 2px 0"
+                            :key="category"
+                            @click="toggleCategory(category)"
+                            :class="{
+                                'btn-dark': !selectedCategories.includes(category),
+                                'btn-seleced': selectedCategories.includes(category)
+                            }" > {{ category }}
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- add number box to ask how many to filter -->
         <div id="cards" class="show-all">
+            <!-- <button @click="console.clear()">clear console</button> -->
+            <div style="display: flex; flex-direction: row; justify-content: space-around; margin-bottom: 5px;">
+                <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                    <div class="searchType">
+                        <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
+                        <label for="exclusive">Match Every</label>
+                    </div>
+                    <div class="searchType" style="margin-left: 12px;">
+                        <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
+                        <label for="inclusive">Match Any</label>
+                    </div>
+                </div>
+                <!-- <div>
+                    <label id="numCardsLabel">Generate Cards</label>
+                    <input v-model.number="numGenerateCards" id="numGenerateCards">
+                </div> -->
+                <div>
+                    <button class="btn-start" id="advancedKingdom" @click="this.showDialog=!this.showDialog" >Generate Advanced Kingdom</button>
+                    
+                </div>
+            </div>
+           
             <img v-for="card in filteredCards" :key="card.name"
                 :src="getCardImage(card.name)" :alt="card.name" />
         </div>
@@ -58,9 +83,8 @@
             </div>
             <div class="buttons">
                 <span class="special" style="margin-top: 15px !important;">Select Random Cards From</span>
-                <span class="special" style="margin-left: 50px;" @click="this.showDialog=!this.showDialog">Advanced</span>
             </div>
-            
+
             <span id="alert"></span>
             <div class="buttons">
                 <button @click="selectedFill()" id="selectedFill" class="btn-option btn-dark">Selected Filters</button>
@@ -104,7 +128,6 @@
             <div>
                 <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
                 <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Missing Cards</button>
-                <!-- <button @click="console.clear()">clear console</button> -->
             </div>
             <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 720px;">
                 <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
@@ -132,10 +155,13 @@ export default {
     data(){
         return{
             userName: userState.username,
-            showDialog: true,
+            numGenerateCards: 10,
+            searchType: 'exclusive',
+            showDialog: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
-            cardTypes: ['Treasure', 'Victory', 'Shadow', 'Debt', 'Loot', 'Col & Plat', 'Prophecy', 'Event', 'Trait'],
+            types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
+            cardTypes: ['Treasure', 'Victory', 'Shadow', 'Debt', 'Loot', 'Col & Plat', 'Prophecy', 'Event', 'Trait'],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             selectedAdvancedCardTypes: [],
             selectedExpansions: ['Dominion'],
@@ -151,16 +177,30 @@ export default {
     },
     computed: {
         filteredCards() {
-            // Filter cards based on selectedExpansions
-            if (this.selectedExpansions.length === 0) {
-                console.log("No expansions selected, showing all cards.");
-                return this.cards;
+            let expansionCards = [...this.cards];
+            if (this.selectedExpansions.length === 0 && this.selectedTypes.length === 0 && this.selectedCategories.length === 0) {
+                console.log("No filter selected, showing all cards.");
+                return expansionCards;
+            } 
+            if(this.selectedExpansions.length > 0) {
+                expansionCards = [...this.cards].filter(card =>
+                    this.selectedExpansions.includes(card.set)
+                );
+            }
+            
+            if(this.searchType == 'inclusive') {
+                console.log('matching any filter')
+            } else if(this.searchType == 'exclusive') {
+                console.log('matching every filter')
+                expansionCards = expansionCards.filter(card => {
+                    return this.selectedTypes.every(selectedType => card.types.includes(selectedType));
+                });
+                expansionCards = expansionCards.filter(card => {
+                    return this.selectedCategories.every(selectedCategory => card.categories.includes(selectedCategory));
+                });
             }
 
-            console.log("Filtering cards..."); // Debugging output
-            return this.cards.filter(card =>
-                this.selectedExpansions.includes(card.set)
-            );
+            return expansionCards
         }
     },
     methods: {
@@ -195,13 +235,34 @@ export default {
             return new URL(`../assets/dominioncards/${cardName}.jpg`, import.meta.url).href;
         },
         toggleExpansion(expansion) {
-            // Add or remove the clicked expansion from selectedExpansions
-            if (this.selectedExpansions.includes(expansion)) {
-                this.selectedExpansions = this.selectedExpansions.filter(item => item !== expansion);
-            } else {
+            if(this.searchType == 'inclusive') {
+                if (this.selectedExpansions.includes(expansion)) {
+                    this.selectedExpansions = this.selectedExpansions.filter(item => item !== expansion);
+                } else {
+                    this.selectedExpansions.push(expansion);
+                }
+            } else if(this.searchType == 'exclusive') {
+                if(this.selectedExpansions[0] == expansion) {
+                    this.selectedExpansions = [];
+                } else {
+                    this.selectedExpansions = [];
                 this.selectedExpansions.push(expansion);
+                }
             }
-            console.log("Selected Expansions:", this.selectedExpansions); // Debugging output
+        },
+        toggleType(cardType) {
+            if (this.selectedTypes.includes(cardType)) {
+                this.selectedTypes = this.selectedTypes.filter(item => item !== cardType);
+            } else {
+                this.selectedTypes.push(cardType);
+            }
+        },
+        toggleCategory(category) {
+            if (this.selectedCategories.includes(category)) {
+                this.selectedCategories = this.selectedCategories.filter(item => item !== category);
+            } else {
+                this.selectedCategories.push(category);
+            }
         },
         toggleAdvancedExpansion(expansion){
             if (this.selectedAdvancedExpansions.includes(expansion)) {
@@ -218,7 +279,6 @@ export default {
             }
         },
         removeCard(card) {
-            console.log('removing ', card);
             const index = this.selectedCards.indexOf(card);
             if (index > -1) {
                 this.selectedCards.splice(index, 1);
@@ -275,7 +335,6 @@ export default {
                 );
             }
 
-            console.log('selected expansion', this.selectedExpansions)
             let addedCount = 0, restAttempts = 0;
             let loopCount = 10 - this.selectedCards.length;
             loopCount = Math.max(loopCount, 0);
@@ -322,7 +381,6 @@ export default {
             if (countEffectingTypes.every(type => this.selectedAdvancedCardTypes.includes(type))) {
                 maxEffectCount = true;
             }
-            console.log('all six: ', maxEffectCount);
 
             if (this.selectedAdvancedCardTypes.includes('Treasure') && !this.selectedAdvancedExpansions.includes('Intrigue')
                 && !this.selectedAdvancedExpansions.includes('Seaside') && !this.selectedAdvancedExpansions.includes('Prospertity')
@@ -365,7 +423,6 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Trait');
                 this.showRemovedLandscape('Traits')
             }
-
             
             for(let loopCount = 1; loopCount < 4; loopCount++) {
                 if(this.selectedAdvancedCardTypes.includes('Treasure')) {
@@ -439,7 +496,6 @@ export default {
                         }
                     }
                 }
-                
                 
                 if(this.selectedAdvancedCardTypes.includes('Prophecy')) {
                     if(loopCount == 1) {
@@ -562,6 +618,17 @@ export default {
             });
         },
     },
+    watch: {
+        numGenerateCards(val) {
+            if (val > 10) {
+            this.numGenerateCards = 10;
+            }
+            if (val < 1) {
+            this.numGenerateCards = 1;
+            }
+        }
+    },
+
     created() {
         this.cards = [
             {
@@ -579,8 +646,8 @@ export default {
             {
                 name: "Moat",
                 set: "Dominion",
-                types: ["Action, Reaction"],
-                categories: ["Terminal_Draw"]
+                types: ["Action", "Reaction"],
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Harbinger",
@@ -598,7 +665,7 @@ export default {
                 name: "Vassal",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal_Silver"]
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Village",
@@ -628,13 +695,13 @@ export default {
                 name: "Militia",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: ["Terminal_Silver"]
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Moneylender",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal_Silver"]
+                categories: ["Trasher", "Terminal Silver"]
             },
             {
                 name: "Poacher",
@@ -652,7 +719,7 @@ export default {
                 name: "Smithy",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Throne_Room",
@@ -670,7 +737,7 @@ export default {
                 name: "Council_Room",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Festival",
@@ -688,7 +755,7 @@ export default {
                 name: "Library",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Market",
@@ -712,7 +779,7 @@ export default {
                 name: "Witch",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Artisan",
@@ -749,287 +816,246 @@ export default {
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Village", "Trasher"]
-                
             },
             {
                 name: "Astrolabe",
                 set: "Seaside",
                 types: ["Treasure", "Duration"],
                 categories: [""]
-                
             },
             {
                 name: "Fishing_Village",
                 set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: ["Village"]
-                
             },
             {
                 name: "Lookout",
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Trasher", "Sifter"]
-                
             },
             {
                 name: "Monkey",
                 set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: [""]
-                
             },
             {
                 name: "Sea_Chart",
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Cantrip"]
-                
             },
             {
                 name: "Smugglers",
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Gainer"]
-                
             },
             {
                 name: "Warehouse",
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Sifter"]
-                
             },
             {
                 name: "Blockade",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
                 categories: ["Gainer"]
-                
             },
             {
                 name: "Caravan",
                 set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: ["Cantrip"]
-                
             },
             {
                 name: "Cutpurse",
                 set: "Seaside",
                 types: ["Action", "Attack"],
-                categories: ["Terminal_Silver"]
-                
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Island",
                 set: "Seaside",
                 types: ["Action", "Victory"],
                 categories: ["Trasher"]
-                
             },
             {
                 name: "Sailor",
                 set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: ["Trasher"]
-                
             },
             {
                 name: "Salvager",
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Trasher"]
-                
             },
             {
                 name: "Tide_Pools",
                 set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: [""]
-                
             },
             {
                 name: "Treasure_Map",
                 set: "Seaside",
                 types: ["Action"],
                 categories: [""]
-                
             },
             {
                 name: "Bazaar",
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Village"]
-                
             },
             {
                 name: "Corsair",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Terminal_Silver"]
-                
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Merchant_Ship",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Terminal_Silver"]
-                
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Outpost",
                 set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: [""]
-                
             },
             {
                 name: "Pirate",
                 set: "Seaside",
                 types: ["Action", "Duration", "Reaction"],
                 categories: ["Gainer"]
-                
             },
             {
                 name: "Sea_Witch",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Sifter", "Terminal_Draw"]
-                
+                categories: ["Sifter", "Terminal Draw"]
             },
             {
                 name: "Tactician",
                 set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: ["Village"]
-                
             },
             {
                 name: "Treasury",
                 set: "Seaside",
                 types: ["Action"],
                 categories: [""]
-                
             },
             {
                 name: "Wharf",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Terminal_Draw"]
-                
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Courtyard",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
-                
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Lurker",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Gainer", "Trasher"]
-                
             },
             {
                 name: "Pawn",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Cantrip"]
-                
             },
             {
                 name: "Masquerade",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher", "Trasher", "Terminal_Draw"]
-                
+                categories: ["Trasher", "Trasher", "Terminal Draw"]
             },
             {
                 name: "Shanty_Town",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Village"]
-                
             },
             {
                 name: "Steward",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal_Draw", "Terminal_Silver"]
-                
+                categories: ["Trasher", "Terminal Draw", "Terminal Silver"]
             },
             {
                 name: "Swindler",
                 set: "Intrigue",
                 types: ["Action", "Attack"],
-                categories: ["Terminal_Silver"]
-                
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Wishing_Well",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Cantrip"]
-                
             },
             {
                 name: "Baron",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: [""]
-                
             },
             {
                 name: "Bridge",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal_Silver"]
-                
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Conspirator",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal_Silver"]
-                
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Diplomat",
                 set: "Intrigue",
                 types: ["Action", "Reaction"],
-                categories: ["Village", "Sifter", "Terminal_Draw"]
-                
+                categories: ["Village", "Sifter", "Terminal Draw"]
             },
             {
                 name: "Ironworks",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Cantrip", "Gainer"]
-                
             },
             {
                 name: "Mill",
                 set: "Intrigue",
                 types: ["Action", "Victory"],
                 categories: ["Cantrip"]
-                
             },
             {
                 name: "Mining_Village",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Village"]
-                
             },
             {
                 name: "Secret_Passage",
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Sifter"]
-                
             },
             {
                 name: "Courtier",
@@ -1053,7 +1079,7 @@ export default {
                 name: "Patrol",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Replace",
@@ -1065,7 +1091,7 @@ export default {
                 name: "Torturer",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Trading_Post",
@@ -1089,7 +1115,7 @@ export default {
                 name: "Nobles",
                 set: "Intrigue",
                 types: ["Action", "Victory"],
-                categories: ["Village", "Terminal_Draw"]
+                categories: ["Village", "Terminal Draw"]
             },
             {
                 name : "Anvil",
@@ -1101,7 +1127,7 @@ export default {
                 name : "Watchtower",
                 set: "Prosperity",
                 types: ["Action", "Reaction"],
-                categories: ["Trasher", "Terminal_Draw"]
+                categories: ["Trasher", "Terminal Draw"]
             },
             {
                 name : "Bishop",
@@ -1114,7 +1140,7 @@ export default {
                 name : "Clerk",
                 set: "Prosperity",
                 types: ["Action", "Reaction", "Attack"],
-                categories: ["Terminal_Silver"]
+                categories: ["Terminal Silver"]
             },
             {
                 name : "Investment",
@@ -1126,7 +1152,7 @@ export default {
                 name : "Monument",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal_Silver"],
+                categories: ["Terminal Silver"],
                 tags: ["Victory_Token"]
             },
             {
@@ -1175,7 +1201,7 @@ export default {
                 name : "Magnate",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name : "Mint",
@@ -1187,13 +1213,13 @@ export default {
                 name : "Rabble",
                 set: "Prosperity",
                 types: ["Action", "Attack"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name : "Vault",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name : "War_Chest",
@@ -1260,7 +1286,7 @@ export default {
                 name: "Search",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Terminal_Silver"],
+                categories: ["Terminal Silver"],
                 tags: ["Loot"]
             },
             {
@@ -1315,13 +1341,13 @@ export default {
                 name: "Flagship",
                 set: "Plunder",
                 types: ["Action", "Duration", "Command"],
-                categories: ["Village", "Terminal_Silver"]
+                categories: ["Village", "Terminal Silver"]
             },
             {
                 name: "Fortune_Hunter",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Terminal_Silver"]
+                categories: ["Terminal Silver"]
             },
             {
                 name: "Gondola",
@@ -1345,13 +1371,13 @@ export default {
                 name: "Mapmaker",
                 set: "Plunder",
                 types: ["Action", "Reaction"],
-                categories: ["Sifter", "Terminal_Draw"]
+                categories: ["Sifter", "Terminal Draw"]
             },
             {
                 name: "Maroon",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal_Draw"]
+                categories: ["Trasher", "Terminal Draw"]
             },
             {
                 name: "Rope",
@@ -1381,7 +1407,7 @@ export default {
                 name: "Crew",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Cutthroat",
@@ -1400,7 +1426,7 @@ export default {
                 name: "Figurine",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "First_Mate",
@@ -1443,7 +1469,7 @@ export default {
                 name: "Pilgrim",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Quartermaster",
@@ -1487,7 +1513,7 @@ export default {
                 name: "Mountain_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Trasher", "Terminal_Draw", "Terminal_Silver"],
+                categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
                 tags: ["Debt"]
             },
             {
@@ -1520,7 +1546,7 @@ export default {
                 name: "Aristocrat",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Village", "Terminal_Draw"]
+                categories: ["Village", "Terminal Draw"]
             },
             {
                 name: "Craftsman",
@@ -1559,7 +1585,7 @@ export default {
                 name: "Ninja",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Shadow"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Poet",
@@ -1590,14 +1616,14 @@ export default {
                 name: "Imperial_Envoy",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Terminal_Draw"],
+                categories: ["Terminal Draw"],
                 tags: ["Debt"]
             },
             {
                 name: "Kitsune",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Omen"],
-                categories: ["Village", "Terminal_Silver"]
+                categories: ["Village", "Terminal Silver"]
             },
             {
                 name: "Litter",
@@ -1616,7 +1642,7 @@ export default {
                 name: "Ronin",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: ["Terminal_Draw"]
+                categories: ["Terminal Draw"]
             },
             {
                 name: "Tanuki",
@@ -1938,6 +1964,30 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: center;
+}
+.searchType label {
+    color: #fff;
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+.searchType input {
+    margin-right: 5px;
+}
+#numGenerateCards {
+    width: 29px;
+    background-color: #404040;
+    border: 1px solid #404040;
+    border-radius: 5px;
+    color: white;
+    padding: 3px 5px;
+    margin-left: 8px;
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+#numCardsLabel {
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+#advancedKingdom{
+    margin-top: 0px;
+    font-family: 'Manolo Mono', sans-serif !important;
 }
 
 h2 {
