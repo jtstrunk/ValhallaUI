@@ -50,37 +50,80 @@
             </div>
         </div>
         <div id="cards" class="show-all">
-            <!-- <button @click="console.clear()">clear console</button> -->
-            <div style="display: flex; flex-direction: row; justify-content: space-around; margin-bottom: 5px;">
-                <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                    <div class="searchType">
-                        <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
-                        <label for="exclusive">Match Every</label>
+            <!-- <button @click="console.clear()">clear console</button>
+            <button @click="testfunction()">test func</button> -->
+
+            <div style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 5px;">
+                <div style="margin-left: 8px;">
+                    <p style="margin: 4px 0; font-family: 'Manolo Mono', sans-serif !important;">Filter By</p>
+                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <div class="searchType">
+                            <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
+                            <label for="exclusive">Match Every</label>
+                        </div>
+                        <div class="searchType" style="margin-left: 12px;">
+                            <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
+                            <label for="inclusive">Match Any</label>
+                        </div>
                     </div>
-                    <div class="searchType" style="margin-left: 12px;">
-                        <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
-                        <label for="inclusive">Match Any</label>
-                    </div>
+                </div>
+                <div style="margin-top: 21px; margin-right: 5px;">
+                    <label id="numCardsLabel" style="font-size: 18px; margin-left: 8px;">Generate Cards</label>
+                    <input v-model.number="numGenerateCards" id="numGenerateCards">
                 </div>
                 <!-- <div>
-                    <label id="numCardsLabel">Generate Cards</label>
-                    <input v-model.number="numGenerateCards" id="numGenerateCards">
-                </div> -->
-                <div>
-                    <button class="btn-start" id="advancedKingdom" @click="this.showDialog=!this.showDialog" >Generate Advanced Kingdom</button>
-                    
+                    <p style="margin: 4px 0; font-family: 'Manolo Mono', sans-serif !important;">Sort By</p>
+                    <div style="display: flex; flex-direction: row; justify-content: left;">
+                        <div class="sortMethod">
+                            <input type="radio" id="expansion" value="expansion" v-model="sortMethod">
+                            <label for="expansion">Expansion</label>
+                        </div>
+                        <div class="sortMethod" style="margin-left: 12px;">
+                            <input type="radio" id="cost" value="cost" v-model="sortMethod">
+                            <label for="cost">Cost</label>
+                        </div>
+                        <div class="sortMethod" style="margin-left: 12px;">
+                            <input type="radio" id="alphabetical" value="alphabetical" v-model="sortMethod">
+                            <label for="alphabetical">Alphabetical</label>
+                        </div>
+                    </div>
                 </div>
+                <div>
+                    <p style="margin: 4px 0; font-family: 'Manolo Mono', sans-serif !important;">Order</p>
+                    <div style="display: flex; flex-direction: row; justify-content: left;">
+                        <div class="sortOrder">
+                            <input type="radio" id="ASC" value="ASC" v-model="sortOrder">
+                            <label for="ASC">ASC</label>
+                        </div>
+                        <div class="sortOrder" style="margin-left: 12px;">
+                            <input type="radio" id="DESC" value="DESC" v-model="sortOrder">
+                            <label for="DESC">DESC</label>
+                        </div>
+
+                    </div>
+                </div> -->
             </div>
-           
-            <img v-for="card in filteredCards" :key="card.name"
-                :src="getCardImage(card.name)" :alt="card.name" />
+            
+            <img v-for="card in filteredCards" :key="card.name" :alt="card.name"
+                :src="getCardImage(card.name)" @click="addCard(card)" />
         </div>
         <div id="selectedCards" >
             <span class="special">Start a Game</span>
-            <div class="buttons" style="margin-bottom: 15px;">
+            <div class="buttons" style="margin-bottom: 8px;">
                 <button @click="startGame()" id="selectedCardsbtn" class="btn-option btn-dark">Use Selected Cards</button>
                 <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button>
+                <!-- <button @click="this.showDialog=!this.showDialog" id="advancedKingdom" class="btn-option btn-dark">Generate Kingdom</button> -->
+                <!-- <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button> -->
             </div>
+            <button @click="this.showDialog=!this.showDialog" id="advancedKingdom" 
+                class="btn-option btn-dark" style="width: 302px !important; margin-bottom: 10px;">Generate Advanced Kingdom</button>
+            <!-- <div class="buttons" style="margin-bottom: 15px; display: flex; flex-direction: row;">
+                <div style="margin-top: 4px;">
+                    <label id="numCardsLabel" style="font-size: 15px; margin-left: 8px;">Generate Cards</label>
+                    <input v-model.number="numGenerateCards" id="numGenerateCards">
+                </div>
+                <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button>
+            </div> -->
             <div class="buttons">
                 <span class="special" style="margin-top: 15px !important;">Select Random Cards From</span>
             </div>
@@ -92,7 +135,7 @@
             </div>
             <div id="selcards">
                 <img v-for="card in selectedCards" :key="card.name" class="miniCard"
-                    :src="getCardImage(card.name)" :alt="card.name" />
+                    :src="getCardImage(card.name)" @click="removeCard(card)" :alt="card.name" />
             </div>
         </div>
     </div>
@@ -157,6 +200,8 @@ export default {
             userName: userState.username,
             numGenerateCards: 10,
             searchType: 'exclusive',
+            sortMethod: 'expansion',
+            sortOrder: 'ASC',
             showDialog: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen'],
@@ -181,16 +226,24 @@ export default {
             if (this.selectedExpansions.length === 0 && this.selectedTypes.length === 0 && this.selectedCategories.length === 0) {
                 console.log("No filter selected, showing all cards.");
                 return expansionCards;
-            } 
-            if(this.selectedExpansions.length > 0) {
-                expansionCards = [...this.cards].filter(card =>
-                    this.selectedExpansions.includes(card.set)
-                );
-            }
+            }            
             
-            if(this.searchType == 'inclusive') {
+            if (this.searchType == 'inclusive') {
                 console.log('matching any filter')
+
+                expansionCards = expansionCards.filter(card => {
+                    let expansionMatch = this.selectedExpansions.includes(card.set);
+                    let typeMatch = this.selectedTypes.some(selectedType => card.types.includes(selectedType));
+                    let categoryMatch = this.selectedCategories.some(selectedCategory => card.categories.includes(selectedCategory));
+
+                    return expansionMatch || typeMatch || categoryMatch;
+                });
             } else if(this.searchType == 'exclusive') {
+                if(this.selectedExpansions.length > 0) {
+                    expansionCards = [...this.cards].filter(card =>
+                        this.selectedExpansions.includes(card.set)
+                    );
+                }
                 console.log('matching every filter')
                 expansionCards = expansionCards.filter(card => {
                     return this.selectedTypes.every(selectedType => card.types.includes(selectedType));
@@ -200,10 +253,26 @@ export default {
                 });
             }
 
+            if(this.sortMethod == 'cost') {
+                console.log('cost lol')
+                expansionCards.sort((a, b) => {
+                    if (a.costType === 'Debt' && b.costType !== 'Debt') {
+                        return -1;
+                    }
+                    if (a.costType !== 'Debt' && b.costType === 'Debt') {
+                        return 1;
+                    }
+                    return a.cost - b.cost;
+                });
+            }
+
             return expansionCards
         }
     },
     methods: {
+        testfunction(){
+            console.log('test function')
+        },
         showRemovedLandscape(landscape) {
             this.$toast.add({
                 severity: 'info',
@@ -278,6 +347,11 @@ export default {
                 this.selectedAdvancedCardTypes.push(cardType);
             }
         },
+        addCard(card){
+            if (!this.selectedCards.includes(card)) {
+                this.selectedCards.push(card);
+            }
+        },
         removeCard(card) {
             const index = this.selectedCards.indexOf(card);
             if (index > -1) {
@@ -285,13 +359,34 @@ export default {
             }
         },
         startGame() {
-            console.log('starting game')
+            console.log('starting game to dominion counter')
         },
         clearSelections() {
             this.selectedCards = [];
         },
         selectedFill() {
-            console.log('getting cards from this list')
+            let tempCardList = [...this.filteredCards];
+            let loopCount = this.numGenerateCards;
+            if(this.numGenerateCards > 10 - this.selectedCards.length) {
+                loopCount = 10 - this.selectedCards.length
+            }
+
+            let addedCount = 0;
+            let attempts = 0;
+            while (addedCount < loopCount && attempts < 100) {
+                if (tempCardList.length == 0) {
+                    break;
+                }
+
+                attempts++;
+                let randomIndex = Math.floor(Math.random() * tempCardList.length);
+                let cardName = tempCardList[randomIndex];
+                if (!this.selectedCards.includes(cardName)) {
+                    this.selectedCards.push(cardName);
+                    tempCardList.splice(randomIndex, 1);
+                    addedCount++;
+                }
+            }
         },
         anyFill() {
             let tempCardList = JSON.parse(JSON.stringify(this.cards));
@@ -312,7 +407,7 @@ export default {
                 }
             }
         },
-        addCard(cardType) {
+        addRandomCard(cardType) {
             let attempts = 0;
             let added = false;
             while (!added && attempts < 20) {
@@ -427,83 +522,83 @@ export default {
             for(let loopCount = 1; loopCount < 4; loopCount++) {
                 if(this.selectedAdvancedCardTypes.includes('Treasure')) {
                     if(loopCount == 1) {
-                        this.addCard(treasureCards)
+                        this.addRandomCard(treasureCards)
                     } else if(loopCount == 2) {
                         let randomChance = Math.floor(Math.random() * 100);
                         if(this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 20 ||
                             !this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 32) {
-                            this.addCard(treasureCards)
+                            this.addRandomCard(treasureCards)
                         }
                     } else {
                         let randomChance = Math.floor(Math.random() * 100);
                         if(this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 5 ||
                             !this.selectedAdvancedCardTypes.includes('Col & Plat') && randomChance <= 12) {
-                            this.addCard(treasureCards)
+                            this.addRandomCard(treasureCards)
                         }
                     }
                 }
 
                 if(this.selectedAdvancedCardTypes.includes('Victory')) {
                     if(loopCount == 1) {
-                        this.addCard(victoryCards)
+                        this.addRandomCard(victoryCards)
                     } else if (loopCount == 2){
                         let randomChance = Math.floor(Math.random() * 100)
                         if(randomChance <= 40) {
-                            this.addCard(victoryCards)
+                            this.addRandomCard(victoryCards)
                         }
                     } else {
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 5) {
-                            this.addCard(victoryCards)
+                            this.addRandomCard(victoryCards)
                         }
                     }
                 }
 
                 if(this.selectedAdvancedCardTypes.includes('Shadow')) {
                     if(loopCount == 1) {
-                        this.addCard(shadowCards)
+                        this.addRandomCard(shadowCards)
                     } else if (loopCount == 2){
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 8) {
-                            this.addCard(shadowCards)
+                            this.addRandomCard(shadowCards)
                         }
                     }
                 }
 
                 if(this.selectedAdvancedCardTypes.includes('Debt')) {
                     if(loopCount == 1) {
-                        this.addCard(debtCards)
+                        this.addRandomCard(debtCards)
                     } else if (loopCount == 2){
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 32) {
-                            this.addCard(debtCards)
+                            this.addRandomCard(debtCards)
                         }
                     } else {
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 10) {
-                            this.addCard(debtCards)
+                            this.addRandomCard(debtCards)
                         }
                     }
                 }
             
                 if(this.selectedAdvancedCardTypes.includes('Loot')) {
                     if(loopCount == 1) {
-                        this.addCard(lootCards)
+                        this.addRandomCard(lootCards)
                     } else if (loopCount == 2){
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 32) {
-                            this.addCard(lootCards)
+                            this.addRandomCard(lootCards)
                         }
                     }
                 }
                 
                 if(this.selectedAdvancedCardTypes.includes('Prophecy')) {
                     if(loopCount == 1) {
-                        this.addCard(omenCards)
+                        this.addRandomCard(omenCards)
                     } else if (loopCount == 2){
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 20) {
-                            this.addCard(omenCards)
+                            this.addRandomCard(omenCards)
                         }
                     }
                 }
@@ -621,1052 +716,1406 @@ export default {
     watch: {
         numGenerateCards(val) {
             if (val > 10) {
-            this.numGenerateCards = 10;
+                this.numGenerateCards = 10;
             }
-            if (val < 1) {
-            this.numGenerateCards = 1;
+        },
+        searchType(type) {
+            if(type === 'exclusive' && this.selectedExpansions.length > 1) {
+                this.selectedExpansions.length = [];
+            }
+        },
+        sortMethod(method) {
+            if(method == 'cost') {
+                this.filteredCards.sort((a, b) => {
+                    if (a.costType === 'Debt' && b.costType !== 'Debt') {
+                        return -1;
+                    }
+                    if (a.costType !== 'Debt' && b.costType === 'Debt') {
+                        return 1;
+                    }
+                    return a.cost - b.cost;
+                });
             }
         }
     },
-
     created() {
         this.cards = [
             {
                 name: "Cellar",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Sifter"]
+                categories: ["Sifter"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Chapel",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Moat",
                 set: "Dominion",
                 types: ["Action", "Reaction"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Harbinger",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Merchant",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Vassal",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Village",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Workshop",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Bureaucrat",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Gardens",
                 set: "Dominion",
                 types: ["Victory"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Militia",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Moneylender",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"]
+                categories: ["Trasher", "Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Poacher",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Remodel",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Smithy",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Throne_Room",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Bandit",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Council_Room",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Festival",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Laboratory",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Library",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Market",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Mine",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Sentry",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Cantrip", "Trasher", "Sifter"]
+                categories: ["Cantrip", "Trasher", "Sifter"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Witch",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Artisan",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 6
             },
             {
                 name: "Captain",
                 set: "Promo",
                 types: ["Action", "Duration", "Command"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Church",
                 set: "Promo",
                 types: ["Action", "Duration"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Haven",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Lighthouse",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Native_Village",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Village", "Trasher"]
+                categories: ["Village", "Trasher"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Astrolabe",
                 set: "Seaside",
                 types: ["Treasure", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Fishing_Village",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Lookout",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Trasher", "Sifter"]
+                categories: ["Trasher", "Sifter"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Monkey",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Sea_Chart",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Smugglers",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Warehouse",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Sifter"]
+                categories: ["Sifter"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Blockade",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Caravan",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Cutpurse",
                 set: "Seaside",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Island",
                 set: "Seaside",
                 types: ["Action", "Victory"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Sailor",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Salvager",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Tide_Pools",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Treasure_Map",
                 set: "Seaside",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Bazaar",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Corsair",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Merchant_Ship",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Outpost",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Pirate",
                 set: "Seaside",
                 types: ["Action", "Duration", "Reaction"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Sea_Witch",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Sifter", "Terminal Draw"]
+                categories: ["Sifter", "Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Tactician",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Treasury",
                 set: "Seaside",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Wharf",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Courtyard",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Lurker",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Gainer", "Trasher"]
+                categories: ["Gainer", "Trasher"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Pawn",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Masquerade",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher", "Trasher", "Terminal Draw"]
+                categories: ["Trasher", "Trasher", "Terminal Draw"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Shanty_Town",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Steward",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Draw", "Terminal Silver"]
+                categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Swindler",
                 set: "Intrigue",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Wishing_Well",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Baron",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Bridge",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Conspirator",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Diplomat",
                 set: "Intrigue",
                 types: ["Action", "Reaction"],
-                categories: ["Village", "Sifter", "Terminal Draw"]
+                categories: ["Village", "Sifter", "Terminal Draw"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Ironworks",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip", "Gainer"]
+                categories: ["Cantrip", "Gainer"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Mill",
                 set: "Intrigue",
                 types: ["Action", "Victory"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Mining_Village",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Secret_Passage",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Sifter"]
+                categories: ["Sifter"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Courtier",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Duke",
                 set: "Intrigue",
                 types: ["Victory"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Minion",
                 set: "Intrigue",
                 types: ["Action", "Attack"],
-                categories: ["Sifter"]
+                categories: ["Sifter"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Patrol",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Replace",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Torturer",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Trading_Post",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Upgrade",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip", "Gainer"]
+                categories: ["Cantrip", "Gainer"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Harem",
                 set: "Intrigue",
                 types: ["Treasure", "Victory"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 6
             },
             {
                 name: "Nobles",
                 set: "Intrigue",
                 types: ["Action", "Victory"],
-                categories: ["Village", "Terminal Draw"]
+                categories: ["Village", "Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Anvil",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name : "Watchtower",
                 set: "Prosperity",
                 types: ["Action", "Reaction"],
-                categories: ["Trasher", "Terminal Draw"]
+                categories: ["Trasher", "Terminal Draw"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name : "Bishop",
                 set: "Prosperity",
                 types: ["Action"],
                 categories: ["Trasher"],
-                tags: ["Victory_Token"]
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name : "Clerk",
                 set: "Prosperity",
                 types: ["Action", "Reaction", "Attack"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name : "Investment",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name : "Monument",
                 set: "Prosperity",
                 types: ["Action"],
                 categories: ["Terminal Silver"],
-                tags: ["Victory_Token"]
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name : "Quarry",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name : "Tiara",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name : "Worker's_Village",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name : "Charlatan",
                 set: "Prosperity",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "City",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Collection",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Crystal_Ball",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: ["Trasher", "Sifter"]
+                categories: ["Trasher", "Sifter"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Magnate",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Mint",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Gainer", "Trasher"]
+                categories: ["Gainer", "Trasher"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Rabble",
                 set: "Prosperity",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Vault",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "War_Chest",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name : "Grand_Market",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 6
             },
             {
                 name : "Hoard",
                 set: "Prosperity",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 6
             },
             {
                 name : "Expand",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 7
             },
             {
                 name : "Forge",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Gainer", "Trasher"]
+                categories: ["Gainer", "Trasher"],
+                costType: "Money",
+                cost: 7
             },
             {
                 name : "King's_Court",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 7
             },
             {
                 name : "Peddler",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 8
             },
             {
                 name: "Cage",
                 set: "Plunder",
                 types: ["Treasure", "Duration"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Grotto",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Sifter"]
+                categories: ["Sifter"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Jewelled_Egg",
                 set: "Plunder",
                 types: ["Treasure"],
                 categories: [""],
-                tags: ["Loot"]
+                tags: ["Loot"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Search",
                 set: "Plunder",
                 types: ["Action", "Duration"],
                 categories: ["Terminal Silver"],
-                tags: ["Loot"]
+                tags: ["Loot"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Shaman",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Gainer", "Trasher"]
+                categories: ["Gainer", "Trasher"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Secluded_Shrine",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Siren",
                 set: "Plunder",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Stowaway",
                 set: "Plunder",
                 types: ["Action", "Duration", "Reaction"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Taskmaster",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Abundance",
                 set: "Plunder",
                 types: ["Treasure", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Cabin_Boy",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Crucible",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Flagship",
                 set: "Plunder",
                 types: ["Action", "Duration", "Command"],
-                categories: ["Village", "Terminal Silver"]
+                categories: ["Village", "Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Fortune_Hunter",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Terminal Silver"]
+                categories: ["Terminal Silver"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Gondola",
                 set: "Plunder",
                 types: ["Treasure", "Duration"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Harbor_Village",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Landing_Party",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Mapmaker",
                 set: "Plunder",
                 types: ["Action", "Reaction"],
-                categories: ["Sifter", "Terminal Draw"]
+                categories: ["Sifter", "Terminal Draw"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Maroon",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Draw"]
+                categories: ["Trasher", "Terminal Draw"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Rope",
                 set: "Plunder",
                 types: ["Treasure", "Duration"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Swamp_Shacks",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Tools",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Buried_Treasure",
                 set: "Plunder",
                 types: ["Treasure", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Crew",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Cutthroat",
                 set: "Plunder",
                 types: ["Action", "Duration", "Attack"],
                 categories: [""],
-                tags: ["Loot"]
+                tags: ["Loot"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Enlarge",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Figurine",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "First_Mate",
                 set: "Plunder",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Frigate",
                 set: "Plunder",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Longship",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Village"]
+                categories: ["Village"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Mining_Road",
                 set: "Plunder",
                 types: ["Action"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Pendant",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Pickaxe",
                 set: "Plunder",
                 types: ["Treasure"],
                 categories: ["Trasher"],
-                tags: ["Loot"]
+                tags: ["Loot"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Pilgrim",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Quartermaster",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Silver_Mine",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: ["Gainer"]
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Trickster",
                 set: "Plunder",
                 types: ["Action", "Attack"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Wealthy_Village",
                 set: "Plunder",
                 types: ["Action"],
                 categories: ["Village"],
-                tags: ["Loot"]
+                tags: ["Loot"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Sack_of_Loot",
                 set: "Plunder",
                 types: ["Treasure"],
                 categories: [""],
-                tags: ["Loot"]
+                tags: ["Loot"],
+                costType: "Money",
+                cost: 6
             },
             {
                 name: "King's_Cache",
                 set: "Plunder",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 7
             },
             {
                 name: "Mountain_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
                 categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Debt",
+                cost: 5
             },
             {
                 name: "Daimyo",
                 set: "Rising Sun",
                 types: ["Action", "Command"],
                 categories: ["Village", "Cantrip"],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Debt",
+                cost: 6
             },
             {
                 name: "Artist",
                 set: "Rising Sun",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Debt",
+                cost: 8
             },
             {
                 name: "Fishmonger",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Snake_Witch",
                 set: "Rising Sun",
                 types: ["Action", "Attack"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 2
             },
             {
                 name: "Aristocrat",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Village", "Terminal Draw"]
+                categories: ["Village", "Terminal Draw"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Craftsman",
                 set: "Rising Sun",
                 types: ["Action"],
                 categories: ["Gainer"],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Riverboat",
                 set: "Rising Sun",
                 types: ["Action", "Duration"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Root_Cellar",
                 set: "Rising Sun",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 3
             },
             {
                 name: "Alley",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: ["Cantrip", "Sifter"]
+                categories: ["Cantrip", "Sifter"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Change",
                 set: "Rising Sun",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Ninja",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Shadow"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Poet",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Cantrip"]
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "River_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Rustic_Village",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Village", "Sifter"]
+                categories: ["Village", "Sifter"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Gold_Mine",
                 set: "Rising Sun",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Imperial_Envoy",
                 set: "Rising Sun",
                 types: ["Action"],
                 categories: ["Terminal Draw"],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Kitsune",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Omen"],
-                categories: ["Village", "Terminal Silver"]
+                categories: ["Village", "Terminal Silver"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Litter",
                 set: "Rising Sun",
                 types: ["Action"],
                 categories: ["Village"],
-                tags: ["Debt"]
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Rice_Broker",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Trasher"]
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Ronin",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: ["Terminal Draw"]
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Tanuki",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Tea_House",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Samurai",
                 set: "Rising Sun",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 6
             },
             {
                 name: "Rice",
                 set: "Rising Sun",
                 types: ["Treasure"],
-                categories: [""]
+                categories: [""],
+                costType: "Money",
+                cost: 7
             },
         ]
         this.landScapes = [
@@ -1972,8 +2421,16 @@ export default {
 .searchType input {
     margin-right: 5px;
 }
+.sortMethod label {
+    color: #fff;
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+.sortMethod input {
+    margin-right: 5px;
+}
 #numGenerateCards {
-    width: 29px;
+    font-size: 17px;
+    width: 33px;
     background-color: #404040;
     border: 1px solid #404040;
     border-radius: 5px;
@@ -1987,6 +2444,10 @@ export default {
 }
 #advancedKingdom{
     margin-top: 0px;
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+
+.buttons button {
     font-family: 'Manolo Mono', sans-serif !important;
 }
 
@@ -2120,7 +2581,7 @@ label {
 }
 
 #cards {
-    width: 700px;
+    width: 685px;
     margin-left: 10px;
     margin-right: 60px;
     position: sticky;
