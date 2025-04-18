@@ -92,6 +92,8 @@
           .then(response => {
               console.log(response.data)
               this.userID = response.data.userid
+              userState.userID = this.userID;
+              userState.username = this.username;
           })
           .catch(error => {
               console.error("Error fetching data:", error);

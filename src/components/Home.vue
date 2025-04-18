@@ -296,6 +296,11 @@ export default {
             }
         },
         profileImageSrc() {
+            let profilePictures = ['josh', 'john', 'ethangambles']
+            if(!profilePictures.includes(this.userName)) {
+                let name = 'Guest'
+                return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href
+            }
             return new URL(`../assets/profilepictures/${this.userName}.png`, import.meta.url).href
         },
         formattedDate(){

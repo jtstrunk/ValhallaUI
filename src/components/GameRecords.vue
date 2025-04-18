@@ -1,7 +1,135 @@
 <template>
     <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden;">
-        <div style="display: flex; flex-direction: row;">
-            <div style="position: sticky; top: 50px; height: 455px;">
+        <div style="display: flex; flex-direction: row;" class="mobileContainer">
+            <!-- mobile -->
+            <div v-if="isMobile">
+                <div class="section mobileHeader" style="display: flex; flex-direction: column;">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <h4>Search Type</h4>
+                        <div style="display: flex; flex-direction: row; justify-content: space-around; width: 250px;">
+                            <div class="searchType">
+                                <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
+                                <label for="exclusive">Match Every</label>
+                            </div>
+                            <div class="searchType">
+                                <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
+                                <label for="inclusive">Match Any</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="">
+                        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                            <h4 style="margin-top: 8px;">Filter Between</h4>
+                            <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top: 8px; margin-right: 5px; width: 230px;">
+                                <button id="monthDates" class="dateFilters" @click="monthDates">This Month</button>
+                                <button id="yearDates" class="dateFilters" @click="yearDates">This Year</button>
+                                <button id="resetDates" class="dateFilters" @click="resetDates">Reset</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; justify-content: space-around;">
+                            <div class="searchDate">
+                                <label for="startDate">Start:</label>
+                                <input type="date" id="startDate" class="date-input" v-model="startDate">
+                            </div>
+                            <div class="searchDate">
+                                <label for="endDate">End:</label>
+                                <input type="date" id="endDate" class="date-input" v-model="endDate">
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="filterContainer" style="display: flex; flex-direction: row;">
+                        <div class="games filterSection">
+                            <h4>Favorites</h4>
+                            <div class="test">
+                                <button id="clearbtn" @click="resetGames">Clear All</button>
+                                <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame('Dominion')">Dominion</button>
+                                <button :class="['gamebtn', showingGames.includes('Heat') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame('Heat')">Heat</button>
+                                <button :class="['gamebtn', showingGames.includes('Clank') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame('Clank')">Clank</button>
+                                <button :class="['gamebtn', showingGames.includes('Lords of Waterdeep') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame('Lords of Waterdeep')">Lords of Wate</button>
+                                <button :class="['gamebtn', showingGames.includes('Race for the Galaxy') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame('Race for the Galaxy')">Race for the</button>
+                                <button :class="['gamebtn', showingGames.includes('Moonrakers') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame('Moonrakers')">Moonrakers</button>
+                                <button :class="['gamebtn', showingGames.includes('Space Base') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame('Space Base')">Space Base</button>
+                            </div>
+                        </div>
+                        <div class="games filterSection">
+                            <h3>Themes</h3>
+                            <div class="test">
+                                <button :class="['gamebtn', showingThemes.includes('space') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingTheme('space')">Space</button>
+                                <button :class="['gamebtn', showingThemes.includes('medieval') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingTheme('medieval')">Medieval</button>
+                                <button :class="['gamebtn', showingThemes.includes('fantasy') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingTheme('fantasy')">Fantasy</button>
+                            </div>
+                        </div>
+                        <div class="games filterSection">
+                            <h3>Mechanics</h3>
+                            <div class="test Mechanics">
+                                <button :class="['gamebtn', showingTypes.includes('deckBuilding') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingType('deckBuilding')">Deck Building</button>
+                                <button :class="['gamebtn', showingTypes.includes('resourceManagement') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingType('resourceManagement')">Resource Management</button>
+                                <button :class="['gamebtn', showingTypes.includes('workerPlacement') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingType('workerPlacement')">Worker Placement</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="filterContainer" style="display: flex; flex-direction: row;">
+                    <div class="games filterSection">
+                        <h3>Favorites</h3>
+                        <div class="test">
+                            <button id="clearbtn" @click="resetGames">Clear All</button>
+                            <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingGame('Dominion')">Dominion</button>
+                            <button :class="['gamebtn', showingGames.includes('Heat') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingGame('Heat')">Heat</button>
+                            <button :class="['gamebtn', showingGames.includes('Clank') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingGame('Clank')">Clank</button>
+                            <button :class="['gamebtn', showingGames.includes('Lords of Waterdeep') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingGame('Lords of Waterdeep')">Lords of Wate</button>
+                            <button :class="['gamebtn', showingGames.includes('Race for the Galaxy') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingGame('Race for the Galaxy')">Race for the</button>
+                            <button :class="['gamebtn', showingGames.includes('Moonrakers') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingGame('Moonrakers')">Moonrakers</button>
+                            <button :class="['gamebtn', showingGames.includes('Space Base') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingGame('Space Base')">Space Base</button>
+                        </div>
+                    </div>
+                    <div class="games filterSection">
+                        <h3>Themes</h3>
+                        <div class="test">
+                            <button :class="['gamebtn', showingThemes.includes('space') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingTheme('space')">Space</button>
+                            <button :class="['gamebtn', showingThemes.includes('medieval') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingTheme('medieval')">Medieval</button>
+                            <button :class="['gamebtn', showingThemes.includes('fantasy') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingTheme('fantasy')">Fantasy</button>
+                        </div>
+                    </div>
+                    <div class="games filterSection">
+                        <h3>Mechanics</h3>
+                        <div class="test Mechanics">
+                            <button :class="['gamebtn', showingTypes.includes('deckBuilding') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingType('deckBuilding')">Deck Building</button>
+                            <button :class="['gamebtn', showingTypes.includes('resourceManagement') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingType('resourceManagement')">Resource Management</button>
+                            <button :class="['gamebtn', showingTypes.includes('workerPlacement') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingType('workerPlacement')">Worker Placement</button>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <!-- desktop -->
+            <div v-if="!isMobile" style="position: sticky; top: 50px; height: 455px;" >
                 <div class="section">
                     <h3>Search Type</h3>
                     <div style="display: flex; flex-direction: row; justify-content: space-around;">
@@ -15,7 +143,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="display: flex; flex-direction: row;">
+                <div class="mobileHide" style="display: flex; flex-direction: row;">
                     <div class="section games">
                         <h3>Favorites</h3>
                         <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"
@@ -74,12 +202,12 @@
                     </div>
                 </div>
             </div>
-            <div class="section">
+            <div class="section mobileSection">
                 <div style="display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <h2 id="playerRecordedGames">{{ this.userName}}'s Recorded Games</h2>
                     </div>
-                    <div style="margin-right: 5px; display: flex; flex-direction: row; width: 792px; flex-wrap: wrap;">
+                    <div class="mobileCards" style="margin-right: 5px; display: flex; flex-direction: row; width: 792px; flex-wrap: wrap;">
                         <div v-for="game in [...recentGames]">
                             <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"
                                 :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames"
@@ -102,6 +230,7 @@ export default {
     data(){
         return{
             userName: userState.username,
+            isMobile: window.innerWidth < 440,
             deckBuilding: ['fakegame', 'Dominion', 'Moonrakers', 'Clank', 'Dune Imperium'],
             workerPlacement : ['fakegame', 'Puerto Rico', 'Dune Imperium', 'Lords of Waterdeep'],
             resourceManagement : ['fakegame', 'Catan', 'Space Base', 'Puerto Rico'],
@@ -366,5 +495,69 @@ h3 {
 #playerRecordedGames{
     margin: 0px;
     margin-left: 10px;
+}
+
+@media (max-width: 	420px) {
+    h4 {
+        color: white;
+        margin: 0px 0px 5px 0px;
+        font-family: 'Manolo Mono', sans-serif !important;
+    }
+    .mobileHide {
+        display: none !important;
+    }
+    .mobileContainer {
+        flex-direction: column !important;
+    }
+    .mobileSection {
+        width: 395px !important;
+    }
+    .mobileCards {
+        width: 375px !important;
+        margin: 0px !important;
+    }
+    .mobileHeader {
+        width: 395px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+        padding: 10px !important;
+        margin: 0px 10px !important;
+        background-color: #242526;
+    }
+
+    .filterContainer {
+        width: 395px !important;
+        overflow-x: scroll;
+        flex-direction: row !important;
+    }
+    .filterSection {
+        display: flex;
+        flex-direction: column !important;
+    }
+    .games {
+        display: flex;
+        flex-direction: row;
+        height: 70px;
+        margin-right: 15px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    .test {
+        display: flex;
+        flex-direction: row;
+    }
+    .test button {
+        padding: 5px 4px;
+        border-radius: 5px;
+        margin-top: 7px;
+        width: 100px !important;
+        height: 32px;
+        margin: 0 3px;
+        white-space: nowrap !important;
+    }
+    .Mechanics button {
+        width: 150px !important;
+    }
+
 }
 </style>
