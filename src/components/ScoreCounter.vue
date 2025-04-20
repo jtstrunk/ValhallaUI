@@ -55,12 +55,12 @@ export default {
                 Gardens: 0,
                 Cards: 10,
                 Duke: 0,
-                Farm: 0,
+                Harem: 0,
                 Mill: 0,
                 Nobles: 0,
                 Island: 0
             },
-            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Farm', 'Mill', 'Nobles', 'Island']
+            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Harem', 'Mill', 'Nobles', 'Island']
         }
     },
     methods: {
@@ -91,7 +91,7 @@ export default {
         victoryPoints() {
             let playerScore = this.cardCounts['Estate'] + (this.cardCounts['Duchy'] * 3) + (this.cardCounts['Province'] * 6) + (this.cardCounts['Colony'] * 10)
                 + this.cardCounts['Tokens'] + (this.cardCounts['Gardens'] * Math.floor(this.cardCounts['Cards'] / 10)) + (this.cardCounts['Duke'] * this.cardCounts['Duchy'])
-                + ((this.cardCounts['Farm'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill'] - this.cardCounts['Curse']
+                + ((this.cardCounts['Harem'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill'] - this.cardCounts['Curse']
             this.$emit('updateScore', playerScore, this.playerNumber)
             return playerScore
         }

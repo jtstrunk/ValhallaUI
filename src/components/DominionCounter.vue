@@ -164,7 +164,7 @@ export default {
             playerThreeScore: 3,
             playerFourName: null,
             playerFourScore: 3,
-            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Farm', 'Mill', 'Nobles', 'Island'],
+            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Harem', 'Mill', 'Nobles', 'Island'],
             selectedAltVPCards: [],
             regularArray: [],
             insertObject: {
