@@ -2,7 +2,9 @@
     <div class="section" id="dominionSelector" style="background-color: #18191A;">
         <div id="filters">
             <div id="expansions">
-                <button id="Set" class="btn btn-main btn-outline" style="outline: none;" onclick="toggleCollapse('collapsibleSets', 'Set')">Expansions</button>
+                <button class="btn btn-main" :class="filterMode === 'favorites' ? 'btn-customlist' : 'btn-outline'"
+                    style="outline: none; margin-bottom: 2.5px;" @click="showFavorites()">Favorites</button>
+                <button id="Set" class="btn btn-main btn-outline" style="outline: none; margin-bottom: 2px;" onclick="toggleCollapse('collapsibleSets', 'Set')">Expansions</button>
                 <div id="collapsibleSets" class="">
                     <button
                         v-for="expansion in expansions"
@@ -17,8 +19,11 @@
                 </div>
             </div>
             <div>
+                <!-- <button id="Set" class="btn btn-main btn-outline" style="outline: none; margin-bottom: 2.5px;" @click="showBanned()">Banned</button> -->
+                <button class="btn btn-main" :class="filterMode === 'banned' ? 'btn-customlist' : 'btn-outline'"
+                    style="outline: none; margin-bottom: 2.5px;" @click="showBanned()">Banned</button>
                 <div id="types">
-                    <button id="Type" class="btn btn-main btn-outline" style="outline: none;" onclick="toggleCollapse('collapsibleButtons', 'Type')">Types</button>
+                    <button id="Type" class="btn btn-main btn-outline" style="outline: none; margin-bottom: 2px;" onclick="toggleCollapse('collapsibleButtons', 'Type')">Types</button>
                     <div id="collapsibleButtons" class="">
                         <button
                             v-for="type in types"
@@ -67,45 +72,66 @@
                         </div>
                     </div>
                 </div>
+                <div v-if="this.filterMode=='favorites'">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <label for="favoriteSuggestions">Add a Favorite Card</label>
+                        <AutoComplete :suggestions="favoriteSuggestions" optionLabel="name" ref="favoritesAutocomplete"
+                            @complete="searchFavorites" @item-select="addFavorite($event)" id="favoriteSuggestions" @focus="showFavoriteSuggestions"
+                            class="custom-autocomplete" optionValue="name"
+                            :pt="{
+                                root: {
+                                    class: 'customAutocomplete',
+                                },
+                                option:
+                                {
+                                    style: { color: 'white', padding: '4px 8px'}
+                                },
+                                overlay: {
+                                    style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
+                                    borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                                },
+                                pcInputText: {
+                                    style: { '::placeholder': { color: '#2e6da4' } }
+                                }
+                        }"></AutoComplete>
+                    </div>
+                </div>
+                <div v-if="this.filterMode=='banned'">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <label for="bannedSuggestions">Add a Banned Card</label>
+                        <AutoComplete :suggestions="bannedSuggestions" optionLabel="name" ref="bannedAutocomplete"
+                            @complete="searchBanned" @item-select="addBanned($event)" id="bannedSuggestions" @focus="showBannedSuggestions"
+                            class="custom-autocomplete" optionValue="name"
+                            :pt="{
+                                root: {
+                                    class: 'customAutocomplete',
+                                },
+                                option:
+                                {
+                                    style: { color: 'white', padding: '4px 8px'}
+                                },
+                                overlay: {
+                                    style: { backgroundColor: '#404040', transform: 'translateY(8px) translateX(-6px)',
+                                    borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                                },
+                                pcInputText: {
+                                    style: { '::placeholder': { color: '#2e6da4' } }
+                                }
+                        }"></AutoComplete>
+                    </div>
+                </div>
                 <div style="margin-top: 21px; margin-right: 5px;">
                     <label id="numCardsLabel" style="font-size: 18px; margin-left: 8px;">Generate Cards</label>
                     <input v-model.number="numGenerateCards" id="numGenerateCards">
                 </div>
-                <!-- <div>
-                    <p style="margin: 4px 0; font-family: 'Manolo Mono', sans-serif !important;">Sort By</p>
-                    <div style="display: flex; flex-direction: row; justify-content: left;">
-                        <div class="sortMethod">
-                            <input type="radio" id="expansion" value="expansion" v-model="sortMethod">
-                            <label for="expansion">Expansion</label>
-                        </div>
-                        <div class="sortMethod" style="margin-left: 12px;">
-                            <input type="radio" id="cost" value="cost" v-model="sortMethod">
-                            <label for="cost">Cost</label>
-                        </div>
-                        <div class="sortMethod" style="margin-left: 12px;">
-                            <input type="radio" id="alphabetical" value="alphabetical" v-model="sortMethod">
-                            <label for="alphabetical">Alphabetical</label>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <p style="margin: 4px 0; font-family: 'Manolo Mono', sans-serif !important;">Order</p>
-                    <div style="display: flex; flex-direction: row; justify-content: left;">
-                        <div class="sortOrder">
-                            <input type="radio" id="ASC" value="ASC" v-model="sortOrder">
-                            <label for="ASC">ASC</label>
-                        </div>
-                        <div class="sortOrder" style="margin-left: 12px;">
-                            <input type="radio" id="DESC" value="DESC" v-model="sortOrder">
-                            <label for="DESC">DESC</label>
-                        </div>
-
-                    </div>
-                </div> -->
             </div>
-            
-            <img v-for="card in filteredCards" :key="card.name" :alt="card.name"
-                :src="getCardImage(card.name)" @click="addCard(card)" />
+            <div class="card-wrapper" v-for="card in filteredCards" :key="card.name">
+                <img :alt="card.name" :src="getCardImage(card.name)" @click="addCard(card)" />
+                <span  v-if="filterMode === 'favorites'" class="delete-icon" 
+                    @click.stop="removeFavorite(card)" >×</span>
+                <span v-if="filterMode === 'banned'" class="delete-icon"
+                    @click.stop="removeBanned(card)" >×</span>
+                </div>
         </div>
         <div id="selectedCards" >
             <span class="special">Start a Game</span>
@@ -197,11 +223,14 @@ export default {
     },
     data(){
         return{
+            favorites: ['Village', 'Laboratory', 'Council_Room', 'Market', 'Captain', 'Fishing_Village', 'Caravan', 'Nobles'],
+            favoriteSuggestions: [],
+            banned: ['Masquerade', 'Swindler', 'Ninja'],
+            bannedSuggestions: [],
+            filterMode: null,
             userName: userState.username,
             numGenerateCards: 10,
             searchType: 'exclusive',
-            sortMethod: 'expansion',
-            sortOrder: 'ASC',
             showDialog: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen'],
@@ -222,6 +251,17 @@ export default {
     },
     computed: {
         filteredCards() {
+            if (this.filterMode === 'favorites') {
+                return [...this.cards].filter(card =>
+                    this.favorites.includes(card.name)
+                );
+            }
+            if (this.filterMode === 'banned') {
+                return [...this.cards].filter(card =>
+                    this.banned.includes(card.name)
+                );
+            }
+
             let expansionCards = [...this.cards];
             if (this.selectedExpansions.length === 0 && this.selectedTypes.length === 0 && this.selectedCategories.length === 0) {
                 console.log("No filter selected, showing all cards.");
@@ -253,25 +293,64 @@ export default {
                 });
             }
 
-            if(this.sortMethod == 'cost') {
-                console.log('cost lol')
-                expansionCards.sort((a, b) => {
-                    if (a.costType === 'Debt' && b.costType !== 'Debt') {
-                        return -1;
-                    }
-                    if (a.costType !== 'Debt' && b.costType === 'Debt') {
-                        return 1;
-                    }
-                    return a.cost - b.cost;
-                });
-            }
-
             return expansionCards
         }
     },
     methods: {
         testfunction(){
             console.log('test function')
+        },
+        showFavoriteSuggestions() {
+            this.$refs.favoritesAutocomplete.search(null, '');
+        },
+        searchFavorites(event) {
+            const searchTerm = event.query.toLowerCase();
+            this.favoriteSuggestions = this.cards
+                .filter(card => {
+                    const cardName = String(card.name).toLowerCase();
+                    const isMatch = cardName.includes(searchTerm);
+                    const alreadyExists = this.favorites.some(
+                        fav => fav.toLowerCase() === card.name.toLowerCase()
+                    );
+                    
+                    return isMatch && !alreadyExists;
+                })
+                .map(card => ({
+                    name: card.name.replace(/_/g, ' '),
+                    value: card.name
+            }));
+        },
+        addFavorite(selectedName) {
+            this.favorites.push(selectedName.value.name)
+        },
+        removeFavorite(name){
+            this.favorites = this.favorites.filter(card => card != name.name);
+        },
+        showBannedSuggestions(){
+            this.$refs.bannedAutocomplete.search(null, '');
+        },
+        searchBanned(event) {
+            const searchTerm = event.query.toLowerCase();
+            this.bannedSuggestions = this.cards
+                .filter(card => {
+                    const cardName = String(card.name).toLowerCase();
+                    const isMatch = cardName.includes(searchTerm);
+                    const alreadyExists = this.banned.some(
+                        fav => fav.toLowerCase() === card.name.toLowerCase()
+                    );
+                    
+                    return isMatch && !alreadyExists;
+                })
+                .map(card => ({
+                    name: card.name.replace(/_/g, ' '),
+                    value: card.name
+            }));
+        },
+        addBanned(selectedName) {
+            this.banned.push(selectedName.value.name)
+        },
+        removeBanned(name){
+            this.banned = this.banned.filter(card => card != name.name);
         },
         showRemovedLandscape(landscape) {
             this.$toast.add({
@@ -303,7 +382,28 @@ export default {
         getLandscapesImage(cardName) {
             return new URL(`../assets/dominioncards/${cardName}.jpg`, import.meta.url).href;
         },
+        showFavorites(){
+            this.selectedExpansions = [];
+            this.selectedTypes = [];
+            this.selectedCategories = [];
+            if(this.filterMode === 'favorites') {
+                this.filterMode = null;
+            } else {
+                this.filterMode = 'favorites';
+            }
+        },
+        showBanned(){
+            this.selectedExpansions = [];
+            this.selectedTypes = [];
+            this.selectedCategories = [];
+            if(this.filterMode === 'banned') {
+                this.filterMode = null;
+            } else {
+                this.filterMode = 'banned';
+            }
+        },
         toggleExpansion(expansion) {
+            this.filterMode = null;
             if(this.searchType == 'inclusive') {
                 if (this.selectedExpansions.includes(expansion)) {
                     this.selectedExpansions = this.selectedExpansions.filter(item => item !== expansion);
@@ -320,6 +420,7 @@ export default {
             }
         },
         toggleType(cardType) {
+            this.filterMode = null;
             if (this.selectedTypes.includes(cardType)) {
                 this.selectedTypes = this.selectedTypes.filter(item => item !== cardType);
             } else {
@@ -327,6 +428,7 @@ export default {
             }
         },
         toggleCategory(category) {
+            this.filterMode = null;
             if (this.selectedCategories.includes(category)) {
                 this.selectedCategories = this.selectedCategories.filter(item => item !== category);
             } else {
@@ -722,19 +824,6 @@ export default {
         searchType(type) {
             if(type === 'exclusive' && this.selectedExpansions.length > 1) {
                 this.selectedExpansions.length = [];
-            }
-        },
-        sortMethod(method) {
-            if(method == 'cost') {
-                this.filteredCards.sort((a, b) => {
-                    if (a.costType === 'Debt' && b.costType !== 'Debt') {
-                        return -1;
-                    }
-                    if (a.costType !== 'Debt' && b.costType === 'Debt') {
-                        return 1;
-                    }
-                    return a.cost - b.cost;
-                });
             }
         }
     },
@@ -2421,13 +2510,7 @@ export default {
 .searchType input {
     margin-right: 5px;
 }
-.sortMethod label {
-    color: #fff;
-    font-family: 'Manolo Mono', sans-serif !important;
-}
-.sortMethod input {
-    margin-right: 5px;
-}
+
 #numGenerateCards {
     font-size: 17px;
     width: 33px;
@@ -2485,6 +2568,19 @@ h3{
 .btn-dark:hover {
     cursor: pointer;
 }
+.btn-customlist {
+    width: 110px;
+    height: 32px;
+    color: #618B4A !important;
+    background-color: #404040;
+    border: 2px solid #618B4A;
+    outline: none;
+    padding: 4px 7px;
+    border-radius: 5px;
+}
+.btn-customlist:hover {
+    cursor: pointer;
+}
 .btn-seleced {
     width: 110px;
     height: 32px;
@@ -2535,6 +2631,9 @@ label {
     padding: 6px;
     border-radius: 5px;
     width: 175px;
+}
+.p-autocomplete-panel {
+    z-index: 1101 !important;
 }
 
 .playerScore {
@@ -2595,12 +2694,33 @@ img {
     margin: 3.5px;
 }
 
+.card-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.delete-icon {
+    position: absolute;
+    right: 0px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    cursor: pointer;
+    z-index: 2;
+    font-weight: bold;
+}
+
+.delete-icon:hover {
+    background: darkred;
+}
+
 #selectedCards {
     position: sticky;
     top: 65px;
-    /* set initial overflow to hidden */
-    /* overflow-y: scroll;
-    scrollbar-width: thin; */
 }
 
 .special {
@@ -2631,9 +2751,6 @@ img {
     width: 316px;
     margin-left: 2px;
 }
-/* .scroll {
-    height: 760px;
-} */
 
 .selected {
     border: 2.5px solid #5cc0e4;
@@ -2663,10 +2780,6 @@ img {
     border-radius: 2%;
     text-align: center;
     z-index: 1001;
-    /* height: 680px;
-    overflow-y: scroll;
-    scrollbar-width: thin;
-    scrollbar-color: #888 #242526; */
 }
 .gamepopup::-webkit-scrollbar {
     width: 5px;
