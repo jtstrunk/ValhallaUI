@@ -223,12 +223,13 @@ export default {
     },
     data(){
         return{
-            favorites: ['Village', 'Laboratory', 'Council_Room', 'Market', 'Captain', 'Fishing_Village', 'Caravan', 'Nobles'],
+            favorites: [],
             favoriteSuggestions: [],
-            banned: ['Masquerade', 'Swindler', 'Ninja'],
+            banned: [],
             bannedSuggestions: [],
             filterMode: null,
             userName: userState.username,
+            userID: userState.userID,
             numGenerateCards: 10,
             searchType: 'exclusive',
             showDialog: false,
@@ -294,6 +295,12 @@ export default {
             }
 
             return expansionCards
+        },
+        selectedCards() {
+            return [...this.selectedCards].sort((a, b) => {
+                const debtPriority = (b.costType === 'Debt') - (a.costType === 'Debt')
+                return debtPriority || b.cost - a.cost
+            })
         }
     },
     methods: {
@@ -321,10 +328,12 @@ export default {
             }));
         },
         addFavorite(selectedName) {
-            this.favorites.push(selectedName.value.name)
+            this.favorites.push(selectedName.value.name);
+            this.insertIntoCustomList(this.userID, selectedName.value.name, 'Favorite');
         },
         removeFavorite(name){
             this.favorites = this.favorites.filter(card => card != name.name);
+            this.deleteFromCustomList(this.userID, name.name, 'Favorite');
         },
         showBannedSuggestions(){
             this.$refs.bannedAutocomplete.search(null, '');
@@ -347,10 +356,12 @@ export default {
             }));
         },
         addBanned(selectedName) {
-            this.banned.push(selectedName.value.name)
+            this.banned.push(selectedName.value.name);
+            this.insertIntoCustomList(this.userID, selectedName.value.name, 'Banned');
         },
         removeBanned(name){
             this.banned = this.banned.filter(card => card != name.name);
+            this.deleteFromCustomList(this.userID, name.name, 'Banned');
         },
         showRemovedLandscape(landscape) {
             this.$toast.add({
@@ -550,7 +561,9 @@ export default {
         },
         generateAdvancedKingdom(){
             let maxEffectCount = false;
-            this.selectedExpansionsCardList = [...this.cards];
+            this.selectedExpansionsCardList  = [...this.cards].filter(card => {
+                return !this.banned.includes(card.name);
+            });
             this.selectedExpansionsLandscapeList = [...this.landScapes];
             this.selectedCards = [];
             this.selectedAddons = [];
@@ -814,6 +827,69 @@ export default {
                 console.error("Error fetching data:", error);
             });
         },
+        async fetchUsersCustomLists(user) {
+            axios.get(`${import.meta.env.VITE_API_URL}/getusercustomlists/${user}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                this.favorites = response.data
+                    .filter(item => item.list === 'Favorite')
+                    .map(item => item.cardname);
+                    
+                this.banned = response.data
+                    .filter(item => item.list === 'Banned')
+                    .map(item => item.cardname);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async insertIntoCustomList(user, cardName, listName) {
+            let insertObject = {
+                "id": user,
+                "cardname": cardName.replace(/\s+/g, '_'),
+                "list": listName
+            };
+            console.log('inserting', insertObject)
+            fetch(`${import.meta.env.VITE_API_URL}/addtocustomlist`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                console.log('Success:', insertObject);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        },
+        async deleteFromCustomList(user, cardName, listName) {
+            let insertObject = {
+                "id": user,
+                "cardname": cardName.replace(/\s+/g, '_'),
+                "list": listName
+            }
+            console.log('inserting', insertObject)
+            fetch(`${import.meta.env.VITE_API_URL}/removefromcustomlist`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                console.log('Success:', insertObject);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     },
     watch: {
         numGenerateCards(val) {
@@ -828,6 +904,7 @@ export default {
         }
     },
     created() {
+        this.fetchUsersCustomLists(this.userName);
         this.cards = [
             {
                 name: "Cellar",
