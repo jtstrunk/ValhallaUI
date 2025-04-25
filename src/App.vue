@@ -7,13 +7,13 @@ import MobileFooter from './components/MobileFooter.vue'
 
 <template>
   <div id="app">
-    <component 
+    <component v-if="!isAuthRoute"
       :is="isMobile ? MobileHeader : Header" />
     <Toast />
     <div class="content-wrapper" ref="scrollContainer">
       <RouterView :scrolled-to-bottom="isScrolledToBottom"/>
     </div>
-    <MobileFooter v-if="isMobile"/>
+    <MobileFooter v-if="isMobile && !isAuthRoute"/>
   </div>
 </template>
 
@@ -26,6 +26,11 @@ export default {
       isMobile: window.innerWidth < 420,
       isScrolledToBottom: false,
     };
+  },
+  computed: {
+    isAuthRoute() {
+      return ['/login', '/register'].includes(this.$route.path)
+    }
   },
   methods: {
     debounce(func, wait) {

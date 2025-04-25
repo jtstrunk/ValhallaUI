@@ -1,7 +1,7 @@
 <template>
     <div id="mobileHeader">
         <div style="display: flex; flex-direction: row;">
-            <img :src="profileImageSrc" id="profile" onclick="location.href='/profile?name=current'">
+            <img :src="profileImageSrc" id="profile" @click="navigateToProfile(follower.username)">
             <p>{{ this.userName }}</p>
         </div>
         <img src="/src/assets/icons/logout-512.webp" id="logout" @click="logUserOut">
@@ -20,6 +20,11 @@ export default {
     },
     computed: {
         profileImageSrc() {
+            let profilePictures = ['josh', 'john', 'ethangambles', 'Hibby']
+            if(!profilePictures.includes(this.userName)) {
+                let name = 'Guest'
+                return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href
+            }
             return new URL(`../assets/profilepictures/${this.userName}.png`, import.meta.url).href
         },
         scrolling() {
@@ -30,7 +35,21 @@ export default {
         logUserOut(){
             userState.userID = null;
             userState.username = null;
-            userState.isLoggedIn = false
+            userState.isLoggedIn = false;
+            this.$router.push(`/login`);
+        },
+        navigateToProfile(name) {
+            this.$router.push(`/profile/${name}`);
+            let searchName = name;
+            if(searchName == 'Guest') {
+                searchName = 'josh'
+                this.isVisitor = true;
+            }
+            this.recentGames = [];
+            this.fetchGames(searchName);
+            this.fetchUserStats(searchName);
+            this.userName = name;
+            this.showDialog = false;
         },
     },
 }

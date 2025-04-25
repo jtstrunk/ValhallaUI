@@ -2,7 +2,7 @@
     <div id="content" @scroll="handleScroll">
         <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
             <div>
-                <img :src="profileImageSrc" id="profile" onclick="location.href='/profile?name=current'">
+                <img :src="profileImageSrc" id="profile" @click="navigateToProfile(follower.username)">
             </div>
             <p style="color: white; margin-top: 5px; margin-bottom: 8px;">{{ this.userName }}</p>
             <div>
@@ -195,6 +195,19 @@ export default {
                 }
             }
         },
+        navigateToProfile(name) {
+            this.$router.push(`/profile/${name}`);
+            let searchName = name;
+            if(searchName == 'Guest') {
+                searchName = 'josh'
+                this.isVisitor = true;
+            }
+            this.recentGames = [];
+            this.fetchGames(searchName);
+            this.fetchUserStats(searchName);
+            this.userName = name;
+            this.showDialog = false;
+        },
         handleScroll() {
             const content = document.getElementById('content');
             if (content.scrollTop + content.clientHeight >= content.scrollHeight - 10) {
@@ -296,7 +309,7 @@ export default {
             }
         },
         profileImageSrc() {
-            let profilePictures = ['josh', 'john', 'ethangambles']
+            let profilePictures = ['josh', 'john', 'ethangambles', 'Hibby']
             if(!profilePictures.includes(this.userName)) {
                 let name = 'Guest'
                 return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href

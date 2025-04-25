@@ -6,8 +6,8 @@
                     <img id="profilePicture" :src="profileImageSrc" @error="setDefaultImage" onclick="location.href='/profile?name=current'">
                     <div id="profileDetails">
                         <div>
-                            <p id="profileName">{{ this.userName }}</p>
-                            <p v-if="this.users.includes(userName)" id="profileLocation">{{ this.userStats.location }}</p>
+                            <p id="profileName" :style="nameStyle">{{ this.userName }}</p>
+                            <p v-if="this.users.includes(userName) && this.userStats.location != 'None'" id="profileLocation">{{ this.userStats.location }}</p>
                         </div>
                         <div v-if="logginUser != userName && this.users.includes(userName)">
                             <button v-if="userRelationship === 'Follow'" id="follow" @click="FollowUser(userName)">Follow</button>
@@ -18,11 +18,11 @@
                 <div id="statHolder" style="margin-right: 10px;">
                     <div class="stat">
                         <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
-                            <div style="display: flex; flex-direction: column; align-items: center;">
+                            <div class="followHeader" @click="showpopup('Followers')">
                                 <p class="statHeader">Followers</p>
                                 <p class="statDetail">{{ this.followers.length }}</p>
                             </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
+                            <div  class="followHeader" @click="showpopup('Following')">
                                 <p class="statHeader">Following</p>
                                 <p class="statDetail">{{ this.following.length }}</p>
                             </div>
@@ -56,6 +56,29 @@
             </div>
         </div>
     </div>
+    <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
+    <div id="popups" class="gamepopup" v-if="this.showDialog"> 
+        <p>{{ showingList }}</p>
+        <div class="popupContainer">
+            <div class="followListContainer" v-if="showingList == 'Followers'" v-for="follower in this.followers">
+                <div class="followList" @click="navigateToProfile(follower.username)">
+                    <img class="followImg" :src="userProfileImage(follower.username)">
+                    <p> {{ follower.username }}</p>
+                </div>
+                <button v-if="userRelationship === 'Follow'" id="follow" @click="FollowUser(userName)">Follow</button>
+                <button v-else-if="userRelationship === 'Unfollow'" id="unfollow" @click="UnfollowUser(userName)">Unfollow</button>
+            </div>
+
+            <div class="followListContainer" v-if="showingList == 'Following'" v-for="followed in this.following">
+                <div class="followList" @click="navigateToProfile(followed.username)">
+                    <img class="followImg" :src="userProfileImage(followed.username)">
+                    <p> {{ followed.username }}</p>
+                </div>
+                <button v-if="userRelationship === 'Follow'" id="follow" @click="FollowUser(userName)">Follow</button>
+                <button v-else-if="userRelationship === 'Unfollow'" id="unfollow" @click="UnfollowUser(userName)">Unfollow</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -71,6 +94,7 @@ export default {
             logginUser: userState.username,
             logginUserID: userState.userID,
             isVisitor: false,
+            showDialog: false,
             refeshGames: 0,
             recentGames: [],
             showingGames: [],
@@ -82,6 +106,7 @@ export default {
             users: [],
             followers: [],
             following: [],
+            showingList: null,
             userRelationship: 'Follow',
             startDate: '2023-06-13',
             searchType: 'exclusive',
@@ -94,6 +119,19 @@ export default {
         RecentGame
     },
     methods: {
+        showpopup(term) {
+            console.log(term)
+            this.showingList = term;
+            this.showDialog = true;
+        },
+        userProfileImage(user) {
+            let profilePictures = ['josh', 'john', 'ethangambles', 'Hibby']
+            if(!profilePictures.includes(user)) {
+                let name = 'Guest'
+                return new URL(`../assets/profilepictures/${name}.png`, import.meta.url).href
+            }
+            return new URL(`../assets/profilepictures/${user}.png`, import.meta.url).href
+        },
         navigateToProfile(name) {
             this.$router.push(`/profile/${name}`);
             let searchName = name;
@@ -105,6 +143,7 @@ export default {
             this.fetchGames(searchName);
             this.fetchUserStats(searchName);
             this.userName = name;
+            this.showDialog = false;
         },
         setDefaultImage(event) {
             event.target.src = new URL('../assets/profilepictures/Guest.png', import.meta.url).href;
@@ -288,8 +327,12 @@ export default {
         profileImageSrc() {
             return new URL(`../assets/profilepictures/${this.userName}.png`, import.meta.url).href
         },
+        nameStyle() {
+            return {
+                fontSize: this.userName.length > 14 && window.innerWidth < 430 ? '18px' : 'x-large'
+            }
+        },
         buttonText() {
-            console.log('button text changing')
             return this.userRelationship;
         },
         formattedDate(){
@@ -394,6 +437,14 @@ export default {
     border-radius: 8px;
 
 }
+.followHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.followHeader:hover {
+    cursor: pointer;    
+}
 .statHeader {
     color: white;
     font-size: larger;
@@ -416,6 +467,89 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+}
+
+.gamepopup {
+    width: 500px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background-color: #242526;
+    border-radius: 2%;
+    text-align: center;
+    z-index: 1001;
+}
+
+.popupContainer{
+    width: 370px;
+    height: 500px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #242526;
+}
+
+.followListContainer {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 15px;
+    width: 350px;
+}
+.followList {
+    display: flex;
+    flex-direction: row;
+}
+.followList:hover {
+    cursor: pointer;
+}
+.followList p {
+    font-size: 22px;
+    margin-top: 18px;
+    margin-left: 8px;
+    width: 200px;
+    text-align: start;
+}
+.followListContainer button {
+    margin-top: 18px !important;
+    height: 32px !important;
+}
+.followListContainer button:hover {
+    cursor: pointer;
+}
+.followImg {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+}
+
+.popupContainer::-webkit-scrollbar {
+    width: 5px;
+}
+.popupContainer::-webkit-scrollbar-track {
+    background: #242526;
+}
+.popupContainer::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+.popupContainer::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
 }
 
 @media (max-width: 	420px) {

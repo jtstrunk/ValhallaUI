@@ -33,7 +33,8 @@ export default {
         logUserOut(){
             userState.userID = null;
             userState.username = null;
-            userState.isLoggedIn = false
+            userState.isLoggedIn = false;
+            this.$router.push(`/login`);
         },
     },
 }

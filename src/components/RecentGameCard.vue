@@ -245,7 +245,7 @@ export default {
             sixthName: this.gameData.sixthname || null,
             sixthScore: this.gameData.sixthscore || null,
             date: this.gameData.date,
-            userMapping: { 1: 'josh', 2: 'john', 3: 'thetwinmeister', 4: 'ethangambles'}
+            userMapping: { 1: 'josh', 2: 'john', 3: 'thetwinmeister', 4: 'ethangambles', 13: 'Hibby'}
         }
     },
     methods: {
