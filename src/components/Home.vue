@@ -2,19 +2,21 @@
     <div id="content" @scroll="handleScroll">
         <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
             <div>
-                <img :src="profileImageSrc" id="profile" @click="navigateToProfile(follower.username)">
+                <img :src="profileImageSrc" id="profile" @click="navigateToProfile(this.userName)">
             </div>
             <p style="color: white; margin-top: 5px; margin-bottom: 8px;">{{ this.userName }}</p>
             <div>
                 <div class="stat">
                     <img class="icon" src="/src/assets/icons/mostplayed.png">
                     <p style="margin-top: 14px;">Most Played Game</p>
-                    <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostplayed }}</p>
+                    <p v-if="this.userStats.mostplayed" style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostplayed }}</p>
+                    <p v-if="!this.userStats.mostplayed" style="font-family: 'Manolo Mono', sans-serif !important;">No Games Played</p>
                 </div>
                 <div class="stat">
                     <img class="icon" src="/src/assets/icons/mostwon.png" style="width: 35px;">
                     <p style="margin-top: 14px;">Most Won Game</p>
-                    <p style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostwon }}</p>
+                    <p v-if="this.userStats.mostwon" style="font-family: 'Manolo Mono', sans-serif !important;">{{ this.userStats.mostwon }}</p>
+                    <p v-if="!this.userStats.mostwon" style="font-family: 'Manolo Mono', sans-serif !important;">No Games Won</p>
                 </div>
             </div>
             <div>
@@ -23,6 +25,10 @@
                     <span style="font-size: large;">{{ game.gamename.slice(0, 13) }}{{ game.gamename.length > 14 ? '...' : '' }}</span>
                     <span style="color: white;"> - </span>
                     <span style="font-size: medium;">{{ formattedDate }}</span>
+                </div>
+                <div id="latestGame" v-if="recentGames.length == 0">
+                    <p>Latest Game</p>
+                    <span style="color: white; font-family: 'Manolo Mono', sans-serif !important;"> None </span>
                 </div>
             </div>
             <div @click="$router.push('/gamerecords')" class="quickLink">
@@ -59,6 +65,11 @@
                     <div v-for="game in recentGames">
                         <RecentGameCard :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames" :users="users"/>
                     </div>
+                </div>
+                <div v-if="recentGames.length == 0" style="display: flex; flex-direction: column; align-items: center; margin-top: 100px;">
+                    <h2 style="margin: 0px !important; padding: 16px; font-size: 18px;">It looks like you havent played a game yet</h2>
+                    <p>Click below to add your first game</p>
+                    <img id="addRecordImg" src="/src/assets/icons/add.webp" @click="this.$router.push('addrecord');">
                 </div>
             </div>
         </div>
@@ -196,6 +207,7 @@ export default {
             }
         },
         navigateToProfile(name) {
+            console.log('navigatign')
             this.$router.push(`/profile/${name}`);
             let searchName = name;
             if(searchName == 'Guest') {
@@ -203,9 +215,6 @@ export default {
                 this.isVisitor = true;
             }
             this.recentGames = [];
-            this.fetchGames(searchName);
-            this.fetchUserStats(searchName);
-            this.userName = name;
             this.showDialog = false;
         },
         handleScroll() {
@@ -467,6 +476,16 @@ export default {
     cursor: pointer;
 }
 
+#addRecordImg {
+    width: 120px;
+    height: 120px;
+    margin-top: 10px;
+    margin-bottom: 150px;
+}
+#addRecordImg:hover {
+    cursor: pointer !important;
+}
+
 @media (max-width: 	420px) {
     .MobileHide {
         display: none !important;
@@ -494,6 +513,10 @@ export default {
     }
     #content {
         width: 100%;
+    }
+
+    #addRecordImg {
+        margin-bottom: 360px !important;
     }
 }
 </style>

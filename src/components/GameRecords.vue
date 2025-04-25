@@ -83,50 +83,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="filterContainer" style="display: flex; flex-direction: row;">
-                    <div class="games filterSection">
-                        <h3>Favorites</h3>
-                        <div class="test">
-                            <button id="clearbtn" @click="resetGames">Clear All</button>
-                            <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingGame('Dominion')">Dominion</button>
-                            <button :class="['gamebtn', showingGames.includes('Heat') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingGame('Heat')">Heat</button>
-                            <button :class="['gamebtn', showingGames.includes('Clank') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingGame('Clank')">Clank</button>
-                            <button :class="['gamebtn', showingGames.includes('Lords of Waterdeep') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingGame('Lords of Waterdeep')">Lords of Wate</button>
-                            <button :class="['gamebtn', showingGames.includes('Race for the Galaxy') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingGame('Race for the Galaxy')">Race for the</button>
-                            <button :class="['gamebtn', showingGames.includes('Moonrakers') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingGame('Moonrakers')">Moonrakers</button>
-                            <button :class="['gamebtn', showingGames.includes('Space Base') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingGame('Space Base')">Space Base</button>
-                        </div>
-                    </div>
-                    <div class="games filterSection">
-                        <h3>Themes</h3>
-                        <div class="test">
-                            <button :class="['gamebtn', showingThemes.includes('space') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingTheme('space')">Space</button>
-                            <button :class="['gamebtn', showingThemes.includes('medieval') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingTheme('medieval')">Medieval</button>
-                            <button :class="['gamebtn', showingThemes.includes('fantasy') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingTheme('fantasy')">Fantasy</button>
-                        </div>
-                    </div>
-                    <div class="games filterSection">
-                        <h3>Mechanics</h3>
-                        <div class="test Mechanics">
-                            <button :class="['gamebtn', showingTypes.includes('deckBuilding') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingType('deckBuilding')">Deck Building</button>
-                            <button :class="['gamebtn', showingTypes.includes('resourceManagement') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingType('resourceManagement')">Resource Management</button>
-                            <button :class="['gamebtn', showingTypes.includes('workerPlacement') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingType('workerPlacement')">Worker Placement</button>
-                        </div>
-                    </div>
-                </div> -->
             </div>
             <!-- desktop -->
             <div v-if="!isMobile" style="position: sticky; top: 50px; height: 455px;" >
@@ -212,6 +168,11 @@
                             <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"
                                 :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames"
                                 :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
+                        </div>
+                        <div v-if="recentGames.length == 0" id="addRecord">
+                            <h2 style="margin: 0px !important; padding-left: 10px; font-size: 18px;">It looks like you havent played a game yet</h2>
+                            <p>Click below to add your first game</p>
+                            <img id="addRecordImg" src="/src/assets/icons/add.webp" @click="this.$router.push('addrecord');">
                         </div>
                     </div>
                 </div>
@@ -491,10 +452,27 @@ h3 {
     transition: .5s;
 }
 
-
 #playerRecordedGames{
     margin: 0px;
     margin-left: 10px;
+}
+
+#addRecord {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 150px;
+    margin-bottom: 265px;
+    margin-left: 200px;
+}
+
+#addRecordImg {
+    width: 120px;
+    height: 120px;
+    margin-top: 10px;
+}
+#addRecordImg:hover {
+    cursor: pointer !important;
 }
 
 @media (max-width: 	420px) {
@@ -559,5 +537,11 @@ h3 {
         width: 150px !important;
     }
 
+    #addRecord {
+        margin-left: 0px;
+    }
+    #addRecordImg {
+        margin-bottom: 120px !important;
+    }
 }
 </style>

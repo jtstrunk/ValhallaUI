@@ -32,11 +32,11 @@
                         <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <p class="statHeader">Games Played</p>
-                                <p class="statDetail">{{ this.userStats.gamesplayed }}</p>
+                                <p class="statDetail">{{ userStats.gamesplayed ?? 0 }}</p>
                             </div>
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <p class="statHeader">Games Won</p>
-                                <p class="statDetail">{{ this.userStats.gameswon }}</p>
+                                <p class="statDetail">{{ userStats.gameswon ?? 0 }}</p>
                             </div>
                         </div>
                     </div>
@@ -45,12 +45,17 @@
         </div>
         <div class="section" id="gamesHeader" >
             <div :style="headerWidth" id="gamesContainter">
-                <h2 style="margin: 0px; ">Recent Games</h2>
+                <h2 style="margin: 0px;">Recent Games</h2>
                 <div style="display: flex; flex-direction: row; flex-wrap: wrap;" :key="refeshGames">
                     <div v-for="game in recentGames.slice(0, 8)">
                         <RecentGame :gameData="game" :isVisitor="isVisitor" :suggestedNames="suggestedNames"
                             :showingGames="showingGames" :themeGames="themeGames" :typeGames="typeGames"
                             :searchType="searchType" :startDate="startDate" :endDate="endDate"/>
+                    </div>
+                    <div v-if="recentGames.length == 0" id="addRecord">
+                        <h2 style="margin: 0px !important; padding-left: 10px; font-size: 18px;">It looks like you havent played a game yet</h2>
+                        <p>Click below to add your first game</p>
+                        <img id="addRecordImg" src="/src/assets/icons/add.webp" @click="this.$router.push('addrecord');">
                     </div>
                 </div>
             </div>
@@ -538,6 +543,23 @@ export default {
     border-radius: 50%;
 }
 
+#addRecord {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+    margin-left: 200px;
+}
+
+#addRecordImg {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 50px;
+}
+#addRecordImg:hover {
+    cursor: pointer !important;
+}
+
 .popupContainer::-webkit-scrollbar {
     width: 5px;
 }
@@ -617,6 +639,10 @@ export default {
     }
     #gamesContainter{
         width: 380px !important;
+    }
+
+    #addRecord {
+        margin-left: 0px;
     }
 }
 </style>

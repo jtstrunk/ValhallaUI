@@ -1,7 +1,7 @@
 <template>
     <div id="mobileHeader">
         <div style="display: flex; flex-direction: row;">
-            <img :src="profileImageSrc" id="profile" @click="navigateToProfile(follower.username)">
+            <img :src="profileImageSrc" id="profile" @click="navigateToProfile(this.userName)">
             <p>{{ this.userName }}</p>
         </div>
         <img src="/src/assets/icons/logout-512.webp" id="logout" @click="logUserOut">
@@ -46,9 +46,6 @@ export default {
                 this.isVisitor = true;
             }
             this.recentGames = [];
-            this.fetchGames(searchName);
-            this.fetchUserStats(searchName);
-            this.userName = name;
             this.showDialog = false;
         },
     },
