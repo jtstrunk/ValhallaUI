@@ -170,7 +170,8 @@
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
             <p>Dominion Kingdom Creation</p>
-            <div style="display: flex; flex-direction: row; justify-content: space-between; width: 710px;">
+            <div id="advancedFilters" >
+                <span v-if="isMobile" class="tags">Kingdom Features</span>
                 <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 112.5px; justify-content: space-between;">
                     <button
                         v-for="cardType in cardTypes"
@@ -182,6 +183,7 @@
                         }" > {{ cardType }}
                     </button>
                 </div>
+                <span v-if="isMobile" class="tags">Expansions</span>
                 <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 75px; justify-content: space-between;">
                     <button
                         v-for="expansion in expansions"
@@ -198,13 +200,13 @@
                 <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
                 <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Missing Cards</button>
             </div>
-            <div style="margin-top: 10px; display: flex; flex-direction: row; flex-wrap: wrap; width: 720px;">
+            <div id="advancedCards">
                 <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
                     :src="getCardImage(card.name)" :class="{ traitCards: this.traitCards.includes(card) }" 
                     @click="removeCard(card)" />
             </div>
-            <div style="margin-top: 10px; display: flex; flex-direction: row; justify-content: center; width: 875px; margin-left: 15px;">
-                <img v-for="card in selectedAddons" :key="card" class="addonCard"
+            <div id="advancedLandscapes">
+                <img v-for="card in selectedAddons" :key="card" class="tinyLandscape"
                     :src="getLandscapesImage(card)" :alt="card"/>
             </div>
         </div>
@@ -232,7 +234,7 @@ export default {
             userID: userState.userID,
             numGenerateCards: 10,
             searchType: 'exclusive',
-            showDialog: false,
+            showDialog: true,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
@@ -251,6 +253,9 @@ export default {
         
     },
     computed: {
+        isMobile() {
+            return window.innerWidth < 420;
+        },
         filteredCards() {
             if (this.filterMode === 'favorites') {
                 return [...this.cards].filter(card =>
@@ -2816,7 +2821,15 @@ img {
     height: 215px;
     margin: 2px;
 }
-.addonCard {
+#advancedLandscapes {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 875px;
+    margin-left: 15px;
+}
+.tinyLandscape {
     width: 215px;
     height: 140px;
     margin: 2px;
@@ -2883,7 +2896,71 @@ img {
     font-family: 'Manolo Mono', sans-serif !important;
     margin: 14px 0;
 }
+#advancedFilters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 710px;
+}
+#advancedCards {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 720px;
+}
 .traitCards {
     border: 3.5px solid purple;
+}
+
+@media (max-width: 	420px) {
+    .gamepopup {
+        width: 400px;
+        height: 820px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        background-color: #242526;
+        border-radius: 2%;
+        text-align: center;
+        z-index: 1001;
+    }
+    .popupContainer {
+        margin-top: 40px;
+        width: 400px !important;
+    }
+    #advancedFilters {
+        width: 340px;
+        flex-direction: column;
+    }
+    .tags {
+        text-align: left;
+        color: white;
+        margin-bottom: 5px;
+        font-size: smaller;
+        font-family: 'Manolo Mono', sans-serif !important;
+    }
+    #advancedCards {
+        width: 380px !important;
+    }
+    .tinyCard {
+        width: 72px;
+        height: 110px;
+        margin: 2px;
+    }
+    #advancedLandscapes {
+        margin-top: 2px;
+        width: 380px !important;
+        flex-wrap: wrap;
+        margin-left: 0px;
+        margin-bottom: 20px;
+    }
+    .tinyLandscape {
+        width: 160px;
+        height: 105px;
+        margin: 2px;
+    }
 }
 </style>
