@@ -19,7 +19,6 @@
                 </div>
             </div>
             <div>
-                <!-- <button id="Set" class="btn btn-main btn-outline" style="outline: none; margin-bottom: 2.5px;" @click="showBanned()">Banned</button> -->
                 <button class="btn btn-main" :class="filterMode === 'banned' ? 'btn-customlist' : 'btn-outline'"
                     style="outline: none; margin-bottom: 2.5px;" @click="showBanned()">Banned</button>
                 <div id="types">
@@ -131,30 +130,19 @@
                     @click.stop="removeFavorite(card)" >×</span>
                 <span v-if="filterMode === 'banned'" class="delete-icon"
                     @click.stop="removeBanned(card)" >×</span>
-                </div>
+            </div>
         </div>
         <div id="selectedCards" >
             <span class="special">Start a Game</span>
             <div class="buttons" style="margin-bottom: 8px;">
                 <button @click="startGame()" id="selectedCardsbtn" class="btn-option btn-dark">Use Selected Cards</button>
                 <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button>
-                <!-- <button @click="this.showDialog=!this.showDialog" id="advancedKingdom" class="btn-option btn-dark">Generate Kingdom</button> -->
-                <!-- <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button> -->
             </div>
             <button @click="this.showDialog=!this.showDialog" id="advancedKingdom" 
                 class="btn-option btn-dark" style="width: 302px !important; margin-bottom: 10px;">Generate Advanced Kingdom</button>
-            <!-- <div class="buttons" style="margin-bottom: 15px; display: flex; flex-direction: row;">
-                <div style="margin-top: 4px;">
-                    <label id="numCardsLabel" style="font-size: 15px; margin-left: 8px;">Generate Cards</label>
-                    <input v-model.number="numGenerateCards" id="numGenerateCards">
-                </div>
-                <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button>
-            </div> -->
             <div class="buttons">
                 <span class="special" style="margin-top: 15px !important;">Select Random Cards From</span>
             </div>
-
-            <span id="alert"></span>
             <div class="buttons">
                 <button @click="selectedFill()" id="selectedFill" class="btn-option btn-dark">Selected Filters</button>
                 <button @click="anyFill()" id="randomFill" class="btn-option btn-dark">Any Filter</button>
@@ -167,7 +155,8 @@
     </div>
 
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
-    <div id="popups" class="gamepopup" v-if="this.showDialog"> 
+    <div id="popups" class="gamepopup" v-if="this.showDialog">
+        <p v-if="isMobile" id="exitPopupMobile" @click="this.showDialog=!this.showDialog">X</p>
         <div class="popupContainer">
             <p>Dominion Kingdom Creation</p>
             <div id="advancedFilters" >
@@ -234,7 +223,7 @@ export default {
             userID: userState.userID,
             numGenerateCards: 10,
             searchType: 'exclusive',
-            showDialog: true,
+            showDialog: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
@@ -2912,11 +2901,16 @@ img {
 .traitCards {
     border: 3.5px solid purple;
 }
+#exitPopupMobile:hover {
+    cursor: pointer;
+}
 
 @media (max-width: 	420px) {
     .gamepopup {
+        margin-top: 80px;
         width: 400px;
-        height: 820px;
+        overflow-y: auto;
+        height: 700px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         position: fixed;
         top: 50%;
@@ -2926,10 +2920,22 @@ img {
         border-radius: 2%;
         text-align: center;
         z-index: 1001;
+        margin-bottom: 120px;
     }
     .popupContainer {
-        margin-top: 40px;
         width: 400px !important;
+    }
+    .popupContainer p { 
+        margin-top: 0px;
+        margin-bottom: 6px;
+    }
+    #exitPopupMobile {
+        text-align: right;
+        margin-right: 12px;
+        color: white;
+        margin-bottom: 0px;
+        margin-top: 6px; 
+        font-family: 'Manolo Mono', sans-serif !important;
     }
     #advancedFilters {
         width: 340px;
@@ -2955,7 +2961,7 @@ img {
         width: 380px !important;
         flex-wrap: wrap;
         margin-left: 0px;
-        margin-bottom: 20px;
+        margin-bottom: 90px;
     }
     .tinyLandscape {
         width: 160px;
