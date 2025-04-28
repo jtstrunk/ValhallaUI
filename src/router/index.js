@@ -28,6 +28,11 @@ const router = createRouter({
       component: () => import("../components/Login.vue"),
     },
     {
+      path: '/usersearch',
+      name: 'UserSearch',
+      component: () => import("../components/UserSearch.vue"),
+    },
+    {
       path: '/profile/:username',
       name: 'Profile',
       component: () => import("../components/Profile.vue"),

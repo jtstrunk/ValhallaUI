@@ -4,7 +4,10 @@
             <img :src="profileImageSrc" id="profile" @click="navigateToProfile(this.userName)">
             <p>{{ this.userName }}</p>
         </div>
-        <img src="/src/assets/icons/logout-512.webp" id="logout" @click="logUserOut">
+        <div>
+            <img src="/src/assets/icons/search.webp" id="search" @click="searchUser">
+            <img src="/src/assets/icons/logout.webp" id="logout" @click="logUserOut">
+        </div>
     </div>
 </template>
 
@@ -37,6 +40,9 @@ export default {
             userState.username = null;
             userState.isLoggedIn = false;
             this.$router.push(`/login`);
+        },
+        searchUser(){
+            this.$router.push(`/usersearch`);
         },
         navigateToProfile(name) {
             this.$router.push(`/profile/${name}`);
@@ -80,6 +86,16 @@ export default {
     border-radius: 0% !important;
 }
 #logout::hover {
+    cursor: pointer;
+}
+#search {
+    height: 30px !important;
+    margin-bottom: 13px !important;
+    width: 30px !important;
+    border-radius: 0% !important;
+    margin-right: 12px !important;
+}
+#search::hover {
     cursor: pointer;
 }
 </style>

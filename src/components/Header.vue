@@ -2,7 +2,8 @@
     <nav>
         <h2 @click="$router.push('/')">Valhalla's Tabletop Games</h2>
         <div style="display: flex; flex-direction: row;" >
-            <router-link :class="['nav-link']" to="/" class="">Return Home</router-link>
+            <!-- <router-link :class="['nav-link']" to="/" class="">Return Home</router-link> -->
+            <router-link :class="['nav-link']" to="/usersearch" class="">Search Users</router-link>
             <router-link :class="['nav-link']" to="/addrecord" class="">Add Record</router-link>
             <div class="dropdown MobileHide">
                 <button class="dropbtn" style="width: 85px !important;">View Tools</button>
