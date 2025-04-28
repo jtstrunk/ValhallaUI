@@ -1,6 +1,94 @@
 <template>
-    <div class="section" id="dominionSelector" style="background-color: #18191A;">
-        <div id="filters">
+    <div class="section" id="dominionSelector" style="background-color: #18191A; margin: 0px; padding: 0px;">
+        <!-- Mobile -->
+        <div v-if="isMobile" id="filters">
+            <div style="margin-left: 8px; display: flex; flex-direction: row; width: 98%; overflow-x: auto;">
+                <div>
+                    <p style="margin-top: 6px; margin-bottom: 4px;">Expansions</p>
+                    <div style="display: flex; flex-direction: row;">
+                        <button
+                            v-for="expansion in expansions"
+                            style="margin: 2px 0"
+                            :key="expansion"
+                            @click="toggleExpansion(expansion)"
+                            :class="{
+                                'btn-dark': !selectedExpansions.includes(expansion),
+                                'btn-seleced': selectedExpansions.includes(expansion)
+                            }" > {{ expansion }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-left: 8px; display: flex; flex-direction: row; width: 98%; overflow-x: auto;">
+                <div>
+                    <p style="margin-top: 6px; margin-bottom: 4px;">Types</p>
+                    <div style="display: flex; flex-direction: row;">
+                        <button
+                            v-for="type in types"
+                            style="margin: 2px 0"
+                            :key="type"
+                            @click="toggleType(type)"
+                            :class="{
+                                'btn-dark': !selectedTypes.includes(type),
+                                'btn-seleced': selectedTypes.includes(type)
+                            }" > {{ type }}
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <p style="margin-top: 6px; margin-bottom: 4px;">Categories</p>
+                    <div style="display: flex; flex-direction: row;">
+                        <button
+                            v-for="category in categories"
+                            style="margin: 2px 0"
+                            :key="category"
+                            @click="toggleCategory(category)"
+                            :class="{
+                                'btn-dark': !selectedCategories.includes(category),
+                                'btn-seleced': selectedCategories.includes(category)
+                            }" > {{ category }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="isMobile" id="cards" class="show-all" style="margin-left: 5px;">
+            <div style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 7px; margin-top: 7px;">
+                <div style="margin-left: 8px;">
+                    <p style="margin: 4px 0; font-family: 'Manolo Mono', sans-serif !important;">Filter By</p>
+                    <div id="filterByOptions" style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <div class="searchType">
+                            <input type="radio" id="exclusive" value="exclusive" v-model="searchType">
+                            <label for="exclusive">Match Every</label>
+                        </div>
+                        <div class="searchType" style="margin-left: 12px;">
+                            <input type="radio" id="inclusive" value="inclusive" v-model="searchType">
+                            <label for="inclusive">Match Any</label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <button class="btn btn-main" :class="filterMode === 'banned' ? 'btn-customlist' : 'btn-outline'"
+                            style="width: 98px; outline: none; margin-left: 2px;" @click="showBanned()">Banned</button>
+                        <button class="btn btn-main" :class="filterMode === 'favorites' ? 'btn-customlist' : 'btn-outline'"
+                            style="width: 98px; outline: none; margin-left: 2px;" @click="showFavorites()">Favorites</button>
+                    </div>
+                    <button @click="this.showDialog=!this.showDialog" id="advancedKingdom" 
+                        class="btn-option btn-dark" style="width: 198px !important; margin-bottom: 5px; margin-top: 8px;  margin-right: 8px;">Generate Advanced Kingdom</button>
+                </div>
+            </div>
+            <div class="card-wrapper" v-for="card in filteredCards" :key="card.name">
+                <img :alt="card.name" :src="getCardImage(card.name)" @click="addCard(card)" />
+                <span  v-if="filterMode === 'favorites'" class="delete-icon" 
+                    @click.stop="removeFavorite(card)" >×</span>
+                <span v-if="filterMode === 'banned'" class="delete-icon"
+                    @click.stop="removeBanned(card)" >×</span>
+            </div>
+        </div>
+
+        <!-- Desktop -->
+        <div v-if="!isMobile" id="filters">
             <div id="expansions">
                 <button class="btn btn-main" :class="filterMode === 'favorites' ? 'btn-customlist' : 'btn-outline'"
                     style="outline: none; margin-bottom: 2.5px;" @click="showFavorites()">Favorites</button>
@@ -53,7 +141,7 @@
                 </div>
             </div>
         </div>
-        <div id="cards" class="show-all">
+        <div v-if="!isMobile" id="cards" class="show-all">
             <!-- <button @click="console.clear()">clear console</button>
             <button @click="testfunction()">test func</button> -->
 
@@ -132,7 +220,7 @@
                     @click.stop="removeBanned(card)" >×</span>
             </div>
         </div>
-        <div id="selectedCards" >
+        <div v-if="!isMobile" id="selectedCards" >
             <span class="special">Start a Game</span>
             <div class="buttons" style="margin-bottom: 8px;">
                 <button @click="startGame()" id="selectedCardsbtn" class="btn-option btn-dark">Use Selected Cards</button>
@@ -2906,6 +2994,47 @@ img {
 }
 
 @media (max-width: 	420px) {
+    #dominionSelector {
+        width: 100%;
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+    }
+    
+    #filters {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        position: relative;
+        top: 0;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    #cards {
+        width: 98%;
+        margin-left: 0px;
+        margin-right: 0px;
+        position: relative;
+        top: 0;
+    }
+    img {
+        height: 170px;
+        width: 94px;
+        border: 3px solid black;
+        border-radius: 5px;
+        margin: 1px;
+    }
+
+    #filterByOptions {
+        display: flex; flex-direction: column !important;
+    }
+    #filterByOptions div {
+        margin: 3px 0px !important;
+    }
+    label {
+        font-size: smaller;
+    }
+
     .gamepopup {
         margin-top: 80px;
         width: 400px;
