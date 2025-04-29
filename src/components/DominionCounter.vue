@@ -156,7 +156,7 @@ export default {
             suggestedNames: [],
             filteredNames: [],
             playerCount: 2,
-            playerOneName: null,
+            playerOneName: userState.username || null,
             playerOneScore: 3,
             playerTwoName: null,
             playerTwoScore: 3,
@@ -339,14 +339,35 @@ export default {
         fixedPlayerFourName() {
             const name = typeof this.playerFourName === 'string' ? this.playerFourName : this.playerFourName.name || '';
             return name.length > 11 ? name.slice(0, 11) : name;
+        },
+        selectedCards() {
+            const cards = this.$store.getters.getSelectedCards
+            return cards.length ? cards : []
+        },
+        colonyGame() {
+            return this.$store.getters.getColonyGame
         }
-
     },
     created() {
         this.fetchUsersPlayedWith(this.userName);
         this.positionMapping = {
             'one': this.playerOneName, 'two': this.playerTwoName, 'three': this.playerThreeName, 'four': this.playerFourName
         }
+
+        if(this.colonyGame == true){
+            this.selectedAltVPCards.push('Colony')
+        }
+        if(this.selectedCards.length > 0) {
+            this.selectedCards.forEach(card => {
+                if (this.altVPCards.includes(card.name)){
+                    console.log('vp card', card.name)
+                    this.selectedAltVPCards.push(card.name)
+                } else if (card.name == 'Monument' || card.name == 'Bishop') {
+                    console.log('token card', card.name)
+                    this.selectedAltVPCards.push('Tokens')
+                }
+            });
+        }        
     }
 }
 </script>

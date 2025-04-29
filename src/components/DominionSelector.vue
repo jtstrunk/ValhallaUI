@@ -223,7 +223,7 @@
         <div v-if="!isMobile" id="selectedCards" >
             <span class="special">Start a Game</span>
             <div class="buttons" style="margin-bottom: 8px;">
-                <button @click="startGame()" id="selectedCardsbtn" class="btn-option btn-dark">Use Selected Cards</button>
+                <button @click="startCounter()" id="selectedCardsbtn" class="btn-option btn-dark">Use Selected Cards</button>
                 <button @click="clearSelections()" id="clearSele" class="btn-option btn-dark">Clear Selections</button>
             </div>
             <button @click="this.showDialog=!this.showDialog" id="advancedKingdom" 
@@ -276,6 +276,7 @@
             <div>
                 <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
                 <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Missing Cards</button>
+                <button class="btn-start" @click="startCounter()" style="margin-left: 5px;">Start Counter</button>
             </div>
             <div id="advancedCards">
                 <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
@@ -552,9 +553,10 @@ export default {
             if (index > -1) {
                 this.selectedCards.splice(index, 1);
             }
-        },
-        startGame() {
-            console.log('starting game to dominion counter')
+
+            if(this.traitCards.includes(card)){
+                this.traitCards = this.traitCards.filter(cardname => cardname !== card)
+            }
         },
         clearSelections() {
             this.selectedCards = [];
@@ -617,6 +619,16 @@ export default {
                 }
             }
         },
+        startCounter() {
+            if(this.selectedAdvancedCardTypes.includes('Col & Plat') == true) {
+                console.log('colony game: ', this.selectedAdvancedCardTypes.includes('Col & Plat'))
+                this.$store.dispatch('updateColonyGame', true)
+            } else {
+                this.$store.dispatch('updateColonyGame', false)
+            }
+            this.$store.dispatch('updateSelectedCards', this.selectedCards)
+            this.$router.push('/dominioncounter')
+        },
         fillFromExpansions(){
             this.selectedExpansionsCardList = [...this.cards];
             if (this.selectedAdvancedExpansions.length > 0) {
@@ -638,6 +650,28 @@ export default {
                     this.selectedCards.push(cardName);
                     this.selectedExpansionsCardList.splice(randomIndex, 1);
                     addedCount++;
+                }
+            }
+
+            let traitNumber = 0;
+            let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
+            traits.forEach(trait => {
+                if (this.selectedAddons.includes(trait.name)) {
+                    traitNumber++;
+                }
+            });
+
+            if(this.traitCards.length < traitNumber){
+                let traitCount = this.traitCards.length;
+                let attempts = 0;
+                while (traitCount < traitNumber && attempts < 20) {
+                    let randomNumber = Math.floor(Math.random() * 10);
+
+                    if(!this.traitCards.includes(this.selectedCards[randomNumber])) {
+                        this.traitCards.push(this.selectedCards[randomNumber])
+                        traitCount++;
+                    }
+                    attempts++
                 }
             }
         },
