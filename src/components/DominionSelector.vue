@@ -249,7 +249,7 @@
             <p>Dominion Kingdom Creation</p>
             <div id="advancedFilters" >
                 <span v-if="isMobile" class="tags">Kingdom Features</span>
-                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 112.5px; justify-content: space-between;">
+                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 450px; height: 112.5px; justify-content: space-between;">
                     <button
                         v-for="cardType in cardTypes"
                         :key="cardType"
@@ -261,7 +261,7 @@
                     </button>
                 </div>
                 <span v-if="isMobile" class="tags">Expansions</span>
-                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 75px; justify-content: space-between;">
+                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 112.5px; justify-content: space-between;">
                     <button
                         v-for="expansion in expansions"
                         :key="expansion"
@@ -271,12 +271,15 @@
                             'btn-seleced': selectedAdvancedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
+                    <button disabled class="btn-dark">Adventures</button>
+                    <button disabled class="btn-dark">Hinterlands</button>
                 </div>
             </div>
             <div>
                 <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
                 <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Missing Cards</button>
                 <button class="btn-start" @click="startCounter()" style="margin-left: 5px;">Start Counter</button>
+                <button @click="console.clear()">clear console</button>
             </div>
             <div id="advancedCards">
                 <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
@@ -316,10 +319,10 @@ export default {
             numGenerateCards: 10,
             searchType: 'exclusive',
             showDialog: false,
-            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
-            types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen'],
+            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun', 'Empires'],
+            types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
-            cardTypes: ['Treasure', 'Victory', 'Shadow', 'Debt', 'Loot', 'Col & Plat', 'Prophecy', 'Event', 'Trait'],
+            cardTypes: ['Treasure', 'Victory', 'Shadow', 'Gathering', 'Debt', 'Loot', 'Split Pile', 'Col & Plat', 'Prophecy', 'Event', 'Trait', 'Landmark'],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
             selectedAdvancedCardTypes: [],
             selectedExpansions: ['Dominion'],
@@ -708,13 +711,13 @@ export default {
 
             if (this.selectedAdvancedCardTypes.includes('Treasure') && !this.selectedAdvancedExpansions.includes('Intrigue')
                 && !this.selectedAdvancedExpansions.includes('Seaside') && !this.selectedAdvancedExpansions.includes('Prospertity')
-                && !this.selectedAdvancedExpansions.includes('Plunder')  && !this.selectedAdvancedExpansions.includes('Rising Sun') ) {
+                && !this.selectedAdvancedExpansions.includes('Plunder')  && !this.selectedAdvancedExpansions.includes('Rising Sun')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Treasure');
                 this.showRemovedCard('Treasure')
             }
             if (this.selectedAdvancedCardTypes.includes('Victory') && !this.selectedAdvancedExpansions.includes('Dominion') 
                 && !this.selectedAdvancedExpansions.includes('Intrigue') && !this.selectedAdvancedExpansions.includes('Seaside')
-                && !this.selectedAdvancedExpansions.includes('Prospertity')) {
+                && !this.selectedAdvancedExpansions.includes('Prospertity') && !this.selectedAdvancedExpansions.includes('Empires')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Victory');
                 this.showRemovedCard('Victory')
             }
@@ -722,7 +725,8 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Shadow');
                 this.showRemovedCard('Shadow')
             }
-            if (this.selectedAdvancedCardTypes.includes('Debt') && !this.selectedAdvancedExpansions.includes('Rising Sun')) {
+            if (this.selectedAdvancedCardTypes.includes('Debt') && !this.selectedAdvancedExpansions.includes('Rising Sun') 
+                && !this.selectedAdvancedExpansions.includes('Empires')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Debt');
                 this.showRemovedMechanic('Debt')
             }
@@ -749,6 +753,7 @@ export default {
             }
             
             for(let loopCount = 1; loopCount < 4; loopCount++) {
+                console.log('loop count: ', loopCount)
                 if(this.selectedAdvancedCardTypes.includes('Treasure')) {
                     if(loopCount == 1) {
                         this.addRandomCard(treasureCards)
@@ -2050,7 +2055,7 @@ export default {
                 name: "Landing_Party",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: [""],
+                categories: ["Village"],
                 costType: "Money",
                 cost: 4
             },
@@ -2451,6 +2456,212 @@ export default {
                 costType: "Money",
                 cost: 7
             },
+            {
+                name: "Engineer",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Gainer"],
+                tags: ["Debt"],
+                costType: "Debt",
+                cost: 4
+            },
+            {
+                name: "City_Quarter",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Village"],
+                tags: ["Debt"],
+                costType: "Debt",
+                cost: 8
+            },
+            {
+                name: "Overlord",
+                set: "Empires",
+                types: ["Action", "Command"],
+                categories: [""],
+                tags: ["Debt"],
+                costType: "Debt",
+                cost: 8
+            },
+            {
+                name: "Royal_Blacksmith",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Sifter", "Terminal Draw"],
+                tags: ["Debt"],
+                costType: "Debt",
+                cost: 8
+            },
+            {
+                name: "Encampment_Plunder",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Village"],
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Patrician_Emporium",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Victory_Token"],
+                costType: "Debt",
+                cost: 2
+            },
+            {
+                name: "Settlers_Bustling_Village",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Village", "Cantrip"],
+                costType: "Debt",
+                cost: 2
+            },
+            {
+                name: "Castles",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: ["Gainer"],
+                costType: "Debt",
+                cost: 3
+            },
+            {
+                name: "Catapult_Rocks",
+                set: "Empires",
+                types: ["Action", "Attack"],
+                categories: ["Gainer", "Trasher"],
+                costType: "Debt",
+                cost: 3
+            },
+            {
+                name: "Chariot_Race",
+                set: "Empires",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Enchantress",
+                set: "Empires",
+                types: ["Action", "Attack", "Duration"],
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Farmers'_Market",
+                set: "Empires",
+                types: ["Action", "Gathering"],
+                categories: ["Terminal Silver"],
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Gladiator_Fortune",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Trasher", "Terminal Silver"],
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Sacrifice",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Village", "Trasher", "Terminal Silver"],
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Temple",
+                set: "Empires",
+                types: ["Action", "Gathering"],
+                categories: ["Trasher"],
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Villa",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Village"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Archive",
+                set: "Empires",
+                types: ["Action", "Duration"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Capital",
+                set: "Empires",
+                types: ["Treasure"],
+                categories: [""],
+                tags: ["Debt"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Charm",
+                set: "Empires",
+                types: ["Treasure"],
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Crown",
+                set: "Empires",
+                types: ["Action", "Treasure"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Forum",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Sifter"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Groundskeeper",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Legionary",
+                set: "Empires",
+                types: ["Action", "Attack"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Wild_Hunt",
+                set: "Empires",
+                types: ["Action", "Gathering"],
+                categories: ["Terminal Draw"],
+                tags: ["Victory_Token"],
+                costType: "Money",
+                cost: 5
+            },
         ]
         this.landScapes = [
             {
@@ -2813,6 +3024,13 @@ h3{
 .btn-dark:hover {
     cursor: pointer;
 }
+.btn-dark:disabled {
+    background-color: #2d2d2d;
+    border-color: #333;
+    opacity: 0.8;
+    cursor: not-allowed;
+    position: relative;
+}
 .btn-customlist {
     width: 110px;
     height: 32px;
@@ -3074,7 +3292,7 @@ img {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    width: 710px;
+    width: 820px;
 }
 #advancedCards {
     margin-top: 10px;
