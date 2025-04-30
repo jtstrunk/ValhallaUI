@@ -214,9 +214,9 @@
             </div>
             <div class="card-wrapper" v-for="card in filteredCards" :key="card.name">
                 <img :alt="card.name" :src="getCardImage(card.name)" @click="addCard(card)" />
-                <span  v-if="filterMode === 'favorites'" class="delete-icon" 
+                <span  v-if="filterMode === 'favorites'" class="icon delete-icon" 
                     @click.stop="removeFavorite(card)" >×</span>
-                <span v-if="filterMode === 'banned'" class="delete-icon"
+                <span v-if="filterMode === 'banned'" class="icon delete-icon"
                     @click.stop="removeBanned(card)" >×</span>
             </div>
         </div>
@@ -284,9 +284,12 @@
                     @click="removeCard(card)" />
             </div>
             <div id="advancedLandscapes">
-                <img v-for="card in selectedAddons" :key="card" class="tinyLandscape"
-                    :src="getLandscapesImage(card)" :alt="card"/>
+                <div class="card-wrapper" v-for="card in selectedAddons" :key="card.name">
+                    <img :alt="card" :src="getLandscapesImage(card)" class="tinyLandscape"/>
+                    <img src="../assets/icons/refresh.webp" class="icon refresh-icon"  @click="regenerateLandscape(card)"/>
+                </div>
             </div>
+            
         </div>
     </div>
 </template>
@@ -348,13 +351,10 @@ export default {
 
             let expansionCards = [...this.cards];
             if (this.selectedExpansions.length === 0 && this.selectedTypes.length === 0 && this.selectedCategories.length === 0) {
-                console.log("No filter selected, showing all cards.");
                 return expansionCards;
             }            
             
             if (this.searchType == 'inclusive') {
-                console.log('matching any filter')
-
                 expansionCards = expansionCards.filter(card => {
                     let expansionMatch = this.selectedExpansions.includes(card.set);
                     let typeMatch = this.selectedTypes.some(selectedType => card.types.includes(selectedType));
@@ -368,7 +368,7 @@ export default {
                         this.selectedExpansions.includes(card.set)
                     );
                 }
-                console.log('matching every filter')
+
                 expansionCards = expansionCards.filter(card => {
                     return this.selectedTypes.every(selectedType => card.types.includes(selectedType));
                 });
@@ -615,13 +615,11 @@ export default {
                 if (!this.selectedCards.includes(cardName)) {
                     this.selectedCards.push(cardName);
                     added = true;
-                    console.log(cardName);
                 }
             }
         },
         startCounter() {
             if(this.selectedAdvancedCardTypes.includes('Col & Plat') == true) {
-                console.log('colony game: ', this.selectedAdvancedCardTypes.includes('Col & Plat'))
                 this.$store.dispatch('updateColonyGame', true)
             } else {
                 this.$store.dispatch('updateColonyGame', false)
@@ -923,6 +921,60 @@ export default {
                     traitCount++;
                 }
                 attempts++
+            }
+        },
+        regenerateLandscape(card) {
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
+            let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
+            let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
+
+            if(prophecies.some(prophecy => prophecy.name.includes(card))) {
+                let index = this.selectedAddons.findIndex(prophecy => prophecy.includes(card));
+                let attempts = 0, inserted = false
+                    while (inserted == false && attempts < 20) {
+
+                    if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy))) {
+                        let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                        let cardName = prophecies[prophecyRandomIndex].name;
+                        if (!this.selectedAddons.includes(cardName)) {
+                            this.selectedAddons[index] = cardName;
+                            inserted = true
+                        }
+                    }
+                    attempts++
+                }
+            }
+            if(events.some(event => event.name.includes(card))) {
+                let index = this.selectedAddons.findIndex(event => event.includes(card));
+                let attempts = 0, inserted = false
+                    while (inserted == false && attempts < 20) {
+
+                    if(!events.some(event => this.selectedAddons.includes(event))) {
+                        let eventRandomIndex = Math.floor(Math.random() * events.length);
+                        let cardName = events[eventRandomIndex].name;
+                        if (!this.selectedAddons.includes(cardName)) {
+                            this.selectedAddons[index] = cardName;
+                            inserted = true
+                        }
+                    }
+                    attempts++
+                }
+            }
+            if(traits.some(trait => trait.name.includes(card))) {
+                let index = this.selectedAddons.findIndex(trait => trait.includes(card));
+                let attempts = 0, inserted = false
+                    while (inserted == false && attempts < 20) {
+
+                    if(!traits.some(trait => this.selectedAddons.includes(trait))) {
+                        let traitRandomIndex = Math.floor(Math.random() * traits.length);
+                        let cardName = traits[traitRandomIndex].name;
+                        if (!this.selectedAddons.includes(cardName)) {
+                            this.selectedAddons[index] = cardName;
+                            inserted = true
+                        }
+                    }
+                    attempts++
+                }
             }
         },
         async fetchUsersPlayedWith(user) {
@@ -2892,7 +2944,7 @@ img {
     display: inline-block;
 }
 
-.delete-icon {
+.icon {
     position: absolute;
     right: 0px;
     background: red;
@@ -2906,9 +2958,20 @@ img {
     z-index: 2;
     font-weight: bold;
 }
-
+.delete-icon {
+    background: red;
+    color: white;
+}
 .delete-icon:hover {
     background: darkred;
+}
+.refresh-icon {
+    background: gray;
+    border: 2px solid gray;
+}
+.refresh-icon:hover {
+    background: darkred;
+    border: 2px solid darkred;
 }
 
 #selectedCards {
@@ -3130,6 +3193,11 @@ img {
         width: 160px;
         height: 105px;
         margin: 2px;
+    }
+
+    .icon {
+        width: 15px;
+        height: 15px;
     }
 }
 </style>
