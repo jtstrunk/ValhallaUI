@@ -318,12 +318,12 @@ export default {
             userID: userState.userID,
             numGenerateCards: 10,
             searchType: 'exclusive',
-            showDialog: false,
+            showDialog: true,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun', 'Empires'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
-            cardTypes: ['Treasure', 'Victory', 'Shadow', 'Gathering', 'Debt', 'Loot', 'Split Pile', 'Col & Plat', 'Prophecy', 'Event', 'Trait', 'Landmark'],
-            selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun'],
+            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Col & Plat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
+            selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Plunder', 'Empires'],
             selectedAdvancedCardTypes: [],
             selectedExpansions: ['Dominion'],
             selectedTypes: [],
@@ -627,6 +627,22 @@ export default {
             } else {
                 this.$store.dispatch('updateColonyGame', false)
             }
+            if(this.selectedAdvancedCardTypes.includes('Landmark') == true) {
+                this.$store.dispatch('updateLandmarkName', this.selectedAddons[0])
+            } else {
+                this.$store.dispatch('updateLandmarkName', '')
+            }
+            if(this.selectedAdvancedCardTypes.includes('Event') == true) {
+                let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
+                console.log('event cards', events)
+                let matchingEvents = events
+                    .filter(event => this.selectedAddons.includes(event.name))
+                    .map(event => event.name);
+                console.log('matching events', matchingEvents)
+                this.$store.dispatch('updateEventName', matchingEvents)
+            } else {
+                this.$store.dispatch('updateEventName', [])
+            }
             this.$store.dispatch('updateSelectedCards', this.selectedCards)
             this.$router.push('/dominioncounter')
         },
@@ -694,20 +710,26 @@ export default {
                 );
             }
 
-            let treasureCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Treasure'))
             let victoryCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Victory') || card.tags?.includes('Victory_Token'))
+            let treasureCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Treasure'))
+            let gatheringCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Gathering'))
             let shadowCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Shadow'))
             let debtCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Debt'))
+            let splitPileCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Split_Pile'))
             let lootCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Loot'))
             let omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
-            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
             let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
+            let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
             let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
 
             const countEffectingTypes = ["Treasure", "Debt", "Prophecy", "Loot", "Victory", "Shadow"];
             if (countEffectingTypes.every(type => this.selectedAdvancedCardTypes.includes(type))) {
                 maxEffectCount = true;
             }
+            
+            console.log('gatheringCards', gatheringCards)
+            console.log('splitPileCards', splitPileCards)
 
             if (this.selectedAdvancedCardTypes.includes('Treasure') && !this.selectedAdvancedExpansions.includes('Intrigue')
                 && !this.selectedAdvancedExpansions.includes('Seaside') && !this.selectedAdvancedExpansions.includes('Prospertity')
@@ -725,6 +747,10 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Shadow');
                 this.showRemovedCard('Shadow')
             }
+            if (this.selectedAdvancedCardTypes.includes('Gathering') && !this.selectedAdvancedExpansions.includes('Empires')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Gathering');
+                this.showRemovedCard('Gathering')
+            }
             if (this.selectedAdvancedCardTypes.includes('Debt') && !this.selectedAdvancedExpansions.includes('Rising Sun') 
                 && !this.selectedAdvancedExpansions.includes('Empires')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Debt');
@@ -734,6 +760,10 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Loot');
                 this.showRemovedMechanic('Loot')
             }
+            if (this.selectedAdvancedCardTypes.includes('Split Pile') && !this.selectedAdvancedExpansions.includes('Empires')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Split Pile');
+                this.showRemovedMechanic('Split Pile')
+            }
             if (this.selectedAdvancedCardTypes.includes('Col & Plat') && !this.selectedAdvancedExpansions.includes('Prosperity')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Col & Plat');
                 this.showRemovedMechanic('Col & Plat')
@@ -742,7 +772,7 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Prophecy');
                 this.showRemovedLandscape('Prophecies')
             }
-            if (this.selectedAdvancedCardTypes.includes('Event') &&
+            if (this.selectedAdvancedCardTypes.includes('Event') && !this.selectedAdvancedExpansions.includes('Empires') &&
                 !this.selectedAdvancedExpansions.includes('Rising Sun') && !this.selectedAdvancedExpansions.includes('Plunder')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Event');
                 this.showRemovedLandscape('Events')
@@ -751,9 +781,29 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Trait');
                 this.showRemovedLandscape('Traits')
             }
-            
+            if (this.selectedAdvancedCardTypes.includes('Landmark') && !this.selectedAdvancedExpansions.includes('Empires')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Landmark');
+                this.showRemovedLandscape('Landmarks')
+            }
+
             for(let loopCount = 1; loopCount < 4; loopCount++) {
                 console.log('loop count: ', loopCount)
+                if(this.selectedAdvancedCardTypes.includes('Victory')) {
+                    if(loopCount == 1) {
+                        this.addRandomCard(victoryCards)
+                    } else if (loopCount == 2){
+                        let randomChance = Math.floor(Math.random() * 100)
+                        if(randomChance <= 40) {
+                            this.addRandomCard(victoryCards)
+                        }
+                    } else {
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 5) {
+                            this.addRandomCard(victoryCards)
+                        }
+                    }
+                }
+
                 if(this.selectedAdvancedCardTypes.includes('Treasure')) {
                     if(loopCount == 1) {
                         this.addRandomCard(treasureCards)
@@ -772,19 +822,9 @@ export default {
                     }
                 }
 
-                if(this.selectedAdvancedCardTypes.includes('Victory')) {
+                if(this.selectedAdvancedCardTypes.includes('Gathering')) {
                     if(loopCount == 1) {
-                        this.addRandomCard(victoryCards)
-                    } else if (loopCount == 2){
-                        let randomChance = Math.floor(Math.random() * 100)
-                        if(randomChance <= 40) {
-                            this.addRandomCard(victoryCards)
-                        }
-                    } else {
-                        let randomChance = Math.floor(Math.random() * 100);
-                        if(randomChance <= 5) {
-                            this.addRandomCard(victoryCards)
-                        }
+                        this.addRandomCard(gatheringCards)
                     }
                 }
 
@@ -842,6 +882,14 @@ export default {
                 }
             }
 
+            if(this.selectedAdvancedCardTypes.includes('Landmark')) {
+                let landmarkRandomIndex = Math.floor(Math.random() * landmarks.length);
+                let cardName = landmarks[landmarkRandomIndex].name;
+                if (!this.selectedAddons.includes(cardName)) {
+                    this.selectedAddons.push(cardName);
+                }
+            }
+
             if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy)) 
                 && omenCards.some(omen => this.selectedCards.includes(omen))) {
                 let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
@@ -854,7 +902,7 @@ export default {
             if(this.selectedAdvancedCardTypes.includes('Event')) {
                 let numEvent = 0, addedCount = 0, attempts = 0;
                 let randomChance = Math.floor(Math.random() * 100);
-                if (this.selectedAdvancedCardTypes.includes('Prophecy')) {
+                if (this.selectedAdvancedCardTypes.includes('Prophecy') || this.selectedAdvancedCardTypes.includes('Landmark')) {
                     numEvent = 1;
                 } else {
                     if(randomChance < 81) {
@@ -879,7 +927,7 @@ export default {
             if(this.selectedAdvancedCardTypes.includes('Trait')) {
                 let numTrait = 0, addedCount = 0, attempts = 0;
                 let randomChance = Math.floor(Math.random() * 100);
-                if(randomChance < 71) {
+                if(randomChance < 71 || (this.selectedAdvancedCardTypes.includes('Event') && this.selectedAdvancedCardTypes.includes('Landmark') && this.selectedAdvancedCardTypes.includes('Prophecy'))) {
                     numTrait = 1
                 } else {
                     numTrait = 2
@@ -929,18 +977,19 @@ export default {
             }
         },
         regenerateLandscape(card) {
-            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
+            let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
             let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
             let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
 
-            if(prophecies.some(prophecy => prophecy.name.includes(card))) {
-                let index = this.selectedAddons.findIndex(prophecy => prophecy.includes(card));
+            if(landmarks.some(landmark => landmark.name.includes(card))) {
+                let index = this.selectedAddons.findIndex(landmark => landmark.includes(card));
                 let attempts = 0, inserted = false
                     while (inserted == false && attempts < 20) {
 
-                    if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy))) {
-                        let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
-                        let cardName = prophecies[prophecyRandomIndex].name;
+                    if(!landmarks.some(landmark => this.selectedAddons.includes(landmark))) {
+                        let landmarkRandomIndex = Math.floor(Math.random() * landmarks.length);
+                        let cardName = landmarks[landmarkRandomIndex].name;
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
                             inserted = true
@@ -973,6 +1022,22 @@ export default {
                     if(!traits.some(trait => this.selectedAddons.includes(trait))) {
                         let traitRandomIndex = Math.floor(Math.random() * traits.length);
                         let cardName = traits[traitRandomIndex].name;
+                        if (!this.selectedAddons.includes(cardName)) {
+                            this.selectedAddons[index] = cardName;
+                            inserted = true
+                        }
+                    }
+                    attempts++
+                }
+            }
+            if(prophecies.some(prophecy => prophecy.name.includes(card))) {
+                let index = this.selectedAddons.findIndex(prophecy => prophecy.includes(card));
+                let attempts = 0, inserted = false
+                    while (inserted == false && attempts < 20) {
+
+                    if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy))) {
+                        let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                        let cardName = prophecies[prophecyRandomIndex].name;
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
                             inserted = true
@@ -2497,7 +2562,7 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Village"],
-                tags: ["Victory_Token"],
+                tags: ["Victory_Token", "Split_Pile"],
                 costType: "Money",
                 cost: 2
             },
@@ -2506,8 +2571,8 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Victory_Token"],
-                costType: "Debt",
+                tags: ["Victory_Token", "Split_Pile"],
+                costType: "Money",
                 cost: 2
             },
             {
@@ -2515,7 +2580,8 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Village", "Cantrip"],
-                costType: "Debt",
+                tags: ["Split_Pile"],
+                costType: "Money",
                 cost: 2
             },
             {
@@ -2523,7 +2589,7 @@ export default {
                 set: "Empires",
                 types: ["Victory", "Castles"],
                 categories: ["Gainer"],
-                costType: "Debt",
+                costType: "Money",
                 cost: 3
             },
             {
@@ -2531,7 +2597,8 @@ export default {
                 set: "Empires",
                 types: ["Action", "Attack"],
                 categories: ["Gainer", "Trasher"],
-                costType: "Debt",
+                tags: ["Split_Pile"],
+                costType: "Money",
                 cost: 3
             },
             {
@@ -2565,7 +2632,7 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Trasher", "Terminal Silver"],
-                tags: ["Debt"],
+                tags: ["Debt", "Split_Pile"],
                 costType: "Money",
                 cost: 3
             },
@@ -2664,6 +2731,176 @@ export default {
             },
         ]
         this.landScapes = [
+            {
+                name: "Advance",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Annex",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Banquet",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Conquest",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Delve",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Dominate",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Donate",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Ritual",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Salt_the_Earth",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Tax",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Triumph",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Wedding",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Windfall",
+                set: "Empires",
+                types: ["Event"]
+            },
+            {
+                name: "Aqueduct",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Arena",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Bandit_Fort",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Basilica",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Baths",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Battlefield",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Colonnade",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Defiled_Shrine",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Fountain",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Keep",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Labyrinth",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Mountain_Pass",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Museum",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Obelisk",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Orchard",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Palace",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Tomb",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Tower",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Triumphal_Arch",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Wall",
+                set: "Empires",
+                types: ["Landmark"]
+            },
+            {
+                name: "Wolf_Den",
+                set: "Empires",
+                types: ["Landmark"]
+            },
             {
                 name: "Avoid",
                 set: "Plunder",

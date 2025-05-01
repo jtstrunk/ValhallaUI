@@ -346,6 +346,12 @@ export default {
         },
         colonyGame() {
             return this.$store.getters.getColonyGame
+        },
+        landmarkName() {
+            return this.$store.getters.getLandmarkName
+        },
+        eventName() {
+            return this.$store.getters.getEventName
         }
     },
     created() {
@@ -353,7 +359,24 @@ export default {
         this.positionMapping = {
             'one': this.playerOneName, 'two': this.playerTwoName, 'three': this.playerThreeName, 'four': this.playerFourName
         }
-
+        
+        if(this.eventName.length > 0) {
+            let tokenEvents = ["Conquest", "Dominate", "Salt_the_Earth", "Ritual", "Triumph", "Wedding"]
+            if(this.eventName.some(event => tokenEvents.includes(event))) {
+                if(!this.selectedAltVPCards.includes('Tokens')) {
+                    this.selectedAltVPCards.push('Tokens')
+                }
+            }
+        }
+        if(this.landmarkName != "") {
+            let tokenLandmarks = ["Aqueduct", "Arena", "Basilica", "Baths", "Battlefield", "Colonnade", "Defiled_Shrine", "Labyrinth", "Mountain_Pass", "Tomb"]
+            if(tokenLandmarks.includes(this.landmarkName)) {
+                if(!this.selectedAltVPCards.includes('Tokens')) {
+                    this.selectedAltVPCards.push('Tokens')
+                }
+            }
+            this.selectedAltVPCards.push(this.landmarkName)
+        }
         if(this.colonyGame == true){
             this.selectedAltVPCards.push('Colony')
         }
