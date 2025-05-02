@@ -164,7 +164,7 @@ export default {
             playerThreeScore: 3,
             playerFourName: null,
             playerFourScore: 3,
-            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Harem', 'Mill', 'Nobles', 'Island'],
+            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Harem', 'Mill', 'Nobles', 'Island', 'Castles'],
             selectedAltVPCards: [],
             regularArray: [],
             insertObject: {
@@ -383,11 +383,13 @@ export default {
         if(this.selectedCards.length > 0) {
             this.selectedCards.forEach(card => {
                 if (this.altVPCards.includes(card.name)){
-                    console.log('vp card', card.name)
                     this.selectedAltVPCards.push(card.name)
-                } else if (card.name == 'Monument' || card.name == 'Bishop') {
-                    console.log('token card', card.name)
-                    this.selectedAltVPCards.push('Tokens')
+                } else if (card.name == 'Monument' || card.name == 'Bishop' || card.name == 'Chariot_Race' || card.name == "Patrician_Emporium" 
+                        || card.name == "Farmers'_Market" || card.name == 'Groundskeeper' || card.name == 'Plunder' || card.name == 'Sacrifice' 
+                        || card.name == 'Temple' || card.name == 'Wild_Hunt') {
+                    if(!this.selectedAltVPCards.includes('Tokens')) {
+                        this.selectedAltVPCards.push('Tokens')
+                    }
                 }
             });
         }        

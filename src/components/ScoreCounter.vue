@@ -58,9 +58,10 @@ export default {
                 Harem: 0,
                 Mill: 0,
                 Nobles: 0,
-                Island: 0
+                Island: 0,
+                Castles: 0
             },
-            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Harem', 'Mill', 'Nobles', 'Island']
+            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Harem', 'Mill', 'Nobles', 'Island', 'Castles']
         }
     },
     methods: {
@@ -87,32 +88,20 @@ export default {
                 baseCards.includes(cardType) || this.selectedAltVPCards.includes(cardType)
             );
 
-            // If Gardens or Wall is in selectedAltVPCards, add 'Cards' if not already present
             if (this.selectedAltVPCards.includes('Gardens') || this.selectedAltVPCards.includes('Wall')) {
                 if (!this.cardCounts['Cards']) {
-                    // If 'Cards' is not in cardCounts, you might want to set a default value, e.g., 0
                     filtered.push(['Cards', 0]);
                 } else if (!filtered.some(([cardType]) => cardType === 'Cards')) {
-                    // If 'Cards' is in cardCounts but not yet in filtered, add it
                     filtered.push(['Cards', this.cardCounts['Cards']]);
                 }
             }
 
             return Object.fromEntries(filtered);
         },
-
-        // filteredCardCounts() {
-        //     const baseCards = ['Estate', 'Duchy', 'Province', 'Curse'];
-        //     return Object.fromEntries(
-        //         Object.entries(this.cardCounts).filter(([cardType]) => 
-        //             baseCards.includes(cardType) || this.selectedAltVPCards.includes(cardType)
-        //         )
-        //     );
-        // },
         victoryPoints() {
             let playerScore = this.cardCounts['Estate'] + (this.cardCounts['Duchy'] * 3) + (this.cardCounts['Province'] * 6) + (this.cardCounts['Colony'] * 10)
                 + this.cardCounts['Tokens'] + (this.cardCounts['Gardens'] * Math.floor(this.cardCounts['Cards'] / 10)) + (this.cardCounts['Duke'] * this.cardCounts['Duchy'])
-                + ((this.cardCounts['Harem'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill'] - this.cardCounts['Curse']
+                + ((this.cardCounts['Harem'] + this.cardCounts['Nobles'] + this.cardCounts['Island']) * 2) + this.cardCounts['Mill'] + (this.cardCounts['Castles']) - this.cardCounts['Curse']
             this.$emit('updateScore', playerScore, this.playerNumber)
             return playerScore
         }

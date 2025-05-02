@@ -279,12 +279,12 @@
                 <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
                 <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Missing Cards</button>
                 <button class="btn-start" @click="startCounter()" style="margin-left: 5px;">Start Counter</button>
-                <button @click="console.clear()">clear console</button>
+                <!-- <button @click="console.clear()">clear console</button> -->
             </div>
             <div id="advancedCards">
                 <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
-                    :src="getCardImage(card.name)" :class="{ traitCards: this.traitCards.includes(card) }" 
-                    @click="removeCard(card)" />
+                    :src="getCardImage(card.name)" :class="{ traitCards: traitCards.includes(card), 
+                        obeliskcard: obeliskCard === card.name }"  @click="removeCard(card)" />
             </div>
             <div id="advancedLandscapes">
                 <div class="card-wrapper" v-for="card in selectedAddons" :key="card.name">
@@ -318,8 +318,8 @@ export default {
             userID: userState.userID,
             numGenerateCards: 10,
             searchType: 'exclusive',
-            showDialog: true,
-            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Plunder', 'Rising Sun', 'Empires'],
+            showDialog: false,
+            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
             cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Col & Plat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
@@ -331,6 +331,7 @@ export default {
             selectedCards: [],
             selectedAddons: [],
             traitCards: [],
+            obeliskCard: ""
         }
     },
     components: {
@@ -547,7 +548,7 @@ export default {
             }
         },
         addCard(card){
-            if (!this.selectedCards.includes(card)) {
+            if (!this.selectedCards.includes(card) & this.selectedCards.length < 10) {
                 this.selectedCards.push(card);
             }
         },
@@ -634,11 +635,9 @@ export default {
             }
             if(this.selectedAdvancedCardTypes.includes('Event') == true) {
                 let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
-                console.log('event cards', events)
                 let matchingEvents = events
                     .filter(event => this.selectedAddons.includes(event.name))
                     .map(event => event.name);
-                console.log('matching events', matchingEvents)
                 this.$store.dispatch('updateEventName', matchingEvents)
             } else {
                 this.$store.dispatch('updateEventName', [])
@@ -693,6 +692,7 @@ export default {
             }
         },
         generateAdvancedKingdom(){
+            this.obeliskCard = ""
             let maxEffectCount = false;
             this.selectedExpansionsCardList  = [...this.cards].filter(card => {
                 return !this.banned.includes(card.name);
@@ -727,9 +727,6 @@ export default {
             if (countEffectingTypes.every(type => this.selectedAdvancedCardTypes.includes(type))) {
                 maxEffectCount = true;
             }
-            
-            console.log('gatheringCards', gatheringCards)
-            console.log('splitPileCards', splitPileCards)
 
             if (this.selectedAdvancedCardTypes.includes('Treasure') && !this.selectedAdvancedExpansions.includes('Intrigue')
                 && !this.selectedAdvancedExpansions.includes('Seaside') && !this.selectedAdvancedExpansions.includes('Prospertity')
@@ -787,7 +784,6 @@ export default {
             }
 
             for(let loopCount = 1; loopCount < 4; loopCount++) {
-                console.log('loop count: ', loopCount)
                 if(this.selectedAdvancedCardTypes.includes('Victory')) {
                     if(loopCount == 1) {
                         this.addRandomCard(victoryCards)
@@ -960,6 +956,12 @@ export default {
                 }
             }
 
+            if (this.selectedAddons.includes("Obelisk")) {
+                let actionSupplyCards = this.selectedCards.filter(card => card.types.includes("Action"));
+                let randomNumber = Math.floor(Math.random() * actionSupplyCards.length);
+                this.obeliskCard = actionSupplyCards[randomNumber].name;
+            }
+
             let traitNumber = 0, traitCount = 0, attempts = 0;
             traits.forEach(trait => {
                 if (this.selectedAddons.includes(trait.name)) {
@@ -968,8 +970,7 @@ export default {
             });
             while (traitCount < traitNumber && attempts < 20) {
                 let randomNumber = Math.floor(Math.random() * 10);
-
-                if(!this.traitCards.includes(this.selectedCards[randomNumber])) {
+                if(!this.traitCards.includes(this.selectedCards[randomNumber]) && this.selectedCards[randomNumber].name != this.obeliskCard) {
                     this.traitCards.push(this.selectedCards[randomNumber])
                     traitCount++;
                 }
@@ -983,6 +984,7 @@ export default {
             let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
 
             if(landmarks.some(landmark => landmark.name.includes(card))) {
+                this.obeliskCard = ""
                 let index = this.selectedAddons.findIndex(landmark => landmark.includes(card));
                 let attempts = 0, inserted = false
                     while (inserted == false && attempts < 20) {
@@ -992,6 +994,11 @@ export default {
                         let cardName = landmarks[landmarkRandomIndex].name;
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
+                            if (cardName == "Obelisk") {
+                                let actionSupplyCards = this.selectedCards.filter(card => card.types.includes("Action"));
+                                let randomNumber = Math.floor(Math.random() * actionSupplyCards.length);
+                                this.obeliskCard = actionSupplyCards[randomNumber].name;
+                            }
                             inserted = true
                         }
                     }
@@ -1090,7 +1097,7 @@ export default {
                 "cardname": cardName.replace(/\s+/g, '_'),
                 "list": listName
             };
-            console.log('inserting', insertObject)
+
             fetch(`${import.meta.env.VITE_API_URL}/addtocustomlist`, {
                 method: 'POST',
                 headers: {
@@ -1112,7 +1119,7 @@ export default {
                 "cardname": cardName.replace(/\s+/g, '_'),
                 "list": listName
             }
-            console.log('inserting', insertObject)
+
             fetch(`${import.meta.env.VITE_API_URL}/removefromcustomlist`, {
                 method: 'POST',
                 headers: {
@@ -2079,7 +2086,7 @@ export default {
             {
                 name: "Crucible",
                 set: "Plunder",
-                types: ["Action", "Duration"],
+                types: ["Treasure"],
                 categories: ["Trasher"],
                 costType: "Money",
                 cost: 4
@@ -3540,6 +3547,9 @@ img {
 }
 .traitCards {
     border: 3.5px solid purple;
+}
+.obeliskcard {
+    border: 3.5px solid green;
 }
 #exitPopupMobile:hover {
     cursor: pointer;
