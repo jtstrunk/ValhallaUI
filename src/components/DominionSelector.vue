@@ -648,6 +648,7 @@ export default {
         },
         fillFromExpansions(){
             this.selectedExpansionsCardList = [...this.cards];
+            this.selectedExpansionsLandscapeList = [];
             if (this.selectedAdvancedExpansions.length > 0) {
                 this.selectedExpansionsCardList = this.selectedExpansionsCardList.filter(card =>
                     this.selectedAdvancedExpansions.includes(card.set)

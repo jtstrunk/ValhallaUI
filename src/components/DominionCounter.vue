@@ -384,6 +384,9 @@ export default {
             this.selectedCards.forEach(card => {
                 if (this.altVPCards.includes(card.name)){
                     this.selectedAltVPCards.push(card.name)
+                    if(card.name == 'Castles' && !this.selectedAltVPCards.includes('Tokens')) {
+                        this.selectedAltVPCards.push('Tokens')
+                    }
                 } else if (card.name == 'Monument' || card.name == 'Bishop' || card.name == 'Chariot_Race' || card.name == "Patrician_Emporium" 
                         || card.name == "Farmers'_Market" || card.name == 'Groundskeeper' || card.name == 'Plunder' || card.name == 'Sacrifice' 
                         || card.name == 'Temple' || card.name == 'Wild_Hunt') {
