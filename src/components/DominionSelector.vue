@@ -249,11 +249,12 @@
             <p>Dominion Kingdom Creation</p>
             <div id="advancedFilters" >
                 <span v-if="isMobile" class="tags">Kingdom Features</span>
-                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 450px; height: 112.5px; justify-content: space-between;">
+                <div id="cardTypeContainer">
                     <button
                         v-for="cardType in cardTypes"
                         :key="cardType"
                         @click="toggleAdvancedcardType(cardType)"
+                        class="btn-smaller"
                         :class="{
                             'btn-dark': !selectedAdvancedCardTypes.includes(cardType),
                             'btn-seleced': selectedAdvancedCardTypes.includes(cardType)
@@ -276,8 +277,8 @@
                 </div>
             </div>
             <div>
-                <button class="btn-start" @click="generateAdvancedKingdom">Generate Advanced Kingdom</button>
-                <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Missing Cards</button>
+                <button class="btn-start" @click="generateAdvancedKingdom">Generate Kingdom</button>
+                <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Cards</button>
                 <button class="btn-start" @click="startCounter()" style="margin-left: 5px;">Start Counter</button>
                 <!-- <button @click="console.clear()">clear console</button> -->
             </div>
@@ -3538,6 +3539,14 @@ img {
     justify-content: space-between;
     width: 820px;
 }
+#cardTypeContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 450px;
+    height: 112.5px;
+    justify-content: space-between;
+}
 #advancedCards {
     margin-top: 10px;
     display: flex;
@@ -3556,6 +3565,9 @@ img {
 }
 
 @media (max-width: 	420px) {
+    .btn-smaller {
+        width: 82px;
+    }
     #dominionSelector {
         width: 100%;
         display: flex;
@@ -3631,6 +3643,14 @@ img {
     #advancedFilters {
         width: 340px;
         flex-direction: column;
+    }
+    #cardTypeContainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 340px;
+        height: 112.5px;
+        justify-content: space-between;
     }
     .tags {
         text-align: left;
