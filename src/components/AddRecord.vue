@@ -1,6 +1,13 @@
 <template>
+    <div style="display: flex; justify-content: center;">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <label for="searchGameName" id="searchGameNameLabel">Search for a game to add</label>
+            <input v-model="searchGameName" placeholder="Search Games" id="searchGameName">
+        </div>
+    </div>
+
     <div id="availableGames">
-        <div v-for="game in this.supportedGames" class="card" @click="createPopup(game, this.gamePlayerCounts[game])">
+        <div v-for="game in filteredGames" class="card" @click="createPopup(game, this.gamePlayerCounts[game])">
             <div class="img">
                 <img :src="getGameImage(game)">
             </div>
@@ -12,11 +19,28 @@
                 </div>
             </div>
         </div>
+        <div class="card" @click="createPopup('', '1 - 6 Players')">
+            <div class="img">
+                <img :src="getGameImage('Unsupported')">
+            </div>
+            <div class="text">
+                <p style="font-size: 24px;">Add Custom Game</p>
+                <p style="font-size: large;">1 - 6 Players</p>
+                <div>
+                    <span class="bottom">Add a</span>&nbsp;<span class="bottom" style="text-decoration: underline;">game</span>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
-            <p style="color: white; display: inline-block;">Add a {{ this.insertingGameName }} record</p>
+            <p v-if="insertingGameName != ''" style="color: white; display: inline-block;">Add a {{ this.insertingGameName }} record</p>
+            <div v-if="insertingGameName == ''" style="color: white; display: inline-block; margin: 16px 0;">
+                <span>Add a </span>
+                <input v-model="insertingCustomGameName" placeholder="Custom Game Name">
+                <span> record</span>
+            </div>
             <div class="players">
                 <div class="playerSection">
                     <label for="winnerName">Winner</label>
@@ -209,11 +233,13 @@ export default {
             userID: userState.userID,
             showDialog: false,
             isVisitor: false,
+            searchGameName: '',
             insertingGameName: '',
+            insertingCustomGameName: '',
             insertingPlayerCount: null,
             filteredNames: [],
             supportedGames: ['Dominion', 'Moonrakers', 'Clank', 'Lords of Waterdeep', 'Race for the Galaxy', 'Heat', 
-                'Space Base', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
+                'Space Base', 'Root', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
             secondName: null,
@@ -232,6 +258,16 @@ export default {
         Dialog,
         RecentGame,
     },
+    computed: {
+        filteredGames() {
+            if (!this.searchGameName.trim()) {
+                return this.supportedGames;
+            }
+            const search = this.searchGameName.trim().toLowerCase();
+                return this.supportedGames.filter(game => game.toLowerCase().includes(search)
+            );
+        }
+    },
     methods: {
         getGameImage(game) {
             const cleanedGameName = game.replace(/\s+/g, '');
@@ -239,8 +275,8 @@ export default {
         },
         createMapping(){
             this.gamePlayerCounts = {
-                'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 4 Players', 
-                'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', ' Puerto Rico' : '3 - 5 Players',
+                'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 
+                'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', 'Root' : '2 - 4 Players', 'Puerto Rico' : '3 - 5 Players',
                 'Cosmic Encounter': '3 - 5 Players', 'Catan': '2 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players'
             }
             this.positionMapping = {
@@ -265,6 +301,12 @@ export default {
             this[placement + 'Name'] = input.value;
         },
         submitRecord(){
+            if(this.insertingCustomGameName != '') {
+                this.insertingGameName = this.insertingCustomGameName
+                this.winnerScore ??= 0;
+                this.secondScore ??= 0;
+
+            }
             if (this.insertingGameName === "Heat") {
                 this.winnerScore = 0;
                 this.secondScore = 0;
@@ -301,6 +343,7 @@ export default {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 this.showDialog=!this.showDialog;
+                this.insertingCustomGameName = ''
                 this.winnerName = null;
                 this.winnerScore = null;
                 this.secondName = null;
@@ -506,6 +549,18 @@ input {
     width: 90%;
 }
 
+#searchGameName {
+    width: 300px;
+    font-size: 16px;
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+#searchGameNameLabel {
+    color: white;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-family: 'Manolo Mono', sans-serif !important;
+}
+
 @media (max-width: 	420px) {
     .MobileHide {
         display: none !important;
@@ -532,10 +587,17 @@ input {
     }
 
     img {
-    width: 100px;
-    height: 100px;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
+        width: 100px;
+        height: 100px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+
+    #searchGameNameLabel {
+        color: white;
+        margin-top: 6px;
+        margin-bottom: 6px;
+        font-family: 'Manolo Mono', sans-serif !important;
+    }
 }
 </style>
