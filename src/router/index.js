@@ -38,6 +38,11 @@ const router = createRouter({
       component: () => import("../components/Profile.vue"),
     },
     {
+      path: '/game/:gamename',
+      name: 'GamePage',
+      component: () => import("../components/GamePage.vue"),
+    },
+    {
       path: '/dominioncounter',
       name: 'DominionCounter',
       component: () => import("../components/DominionCounter.vue"),

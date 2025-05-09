@@ -125,7 +125,6 @@ export default {
     },
     methods: {
         showpopup(term) {
-            console.log(term)
             this.showingList = term;
             this.showDialog = true;
         },
@@ -161,7 +160,6 @@ export default {
             }})
             .then(response => {
                 this.users = response.data.map(user => user.username);
-                console.log('users', this.users)
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -221,9 +219,7 @@ export default {
                 'Content-Type': 'application/json',
             }})
             .then(response => {
-                console.log('followers')
                 this.followers = response.data
-                console.log(this.followers)
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -236,9 +232,7 @@ export default {
                 'Content-Type': 'application/json',
             }})
             .then(response => {
-                console.log('following')
                 this.following = response.data
-                console.log(this.following)
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -249,7 +243,7 @@ export default {
                 "follower": this.logginUserID,
                 "following": user
             }
-            console.log(insertObject)
+            
             fetch(`${import.meta.env.VITE_API_URL}/getuserelationship`, {
                 method: 'POST',
                 headers: {
@@ -262,7 +256,6 @@ export default {
                 return response.json();
             })
             .then(data => {
-                console.log('data:', data);
                 this.userRelationship = data.relationship === "Following User" ? "Unfollow" : "Follow";
             })
             .catch(error => {
@@ -274,7 +267,7 @@ export default {
                 "follower": this.logginUserID,
                 "following": user
             }
-            console.log(insertObject)
+            
             fetch(`${import.meta.env.VITE_API_URL}/followuser`, {
                 method: 'POST',
                 headers: {
@@ -300,7 +293,7 @@ export default {
                 "follower": this.logginUserID,
                 "following": user
             }
-            console.log(insertObject)
+            
             fetch(`${import.meta.env.VITE_API_URL}/unfollowuser`, {
                 method: 'POST',
                 headers: {
