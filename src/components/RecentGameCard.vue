@@ -6,7 +6,7 @@
                 <div class="testtext" style="margin-left: 15px;">
                     <p class="name">{{ posterName }}</p>
                     <p class="date">{{ formattedDate }}</p>
-                    <p class="gameName">{{ gameData.gamename }}</p>
+                    <p class="gameName" @click="navigateToGamePage(gameData.gamename)">{{ gameData.gamename }}</p>
                     <span class='gameID' style="display: none;">Game ID {{ gameData.game_id}}</span>
                 </div>
             </div>
@@ -249,6 +249,9 @@ export default {
         }
     },
     methods: {
+        navigateToGamePage(name) {
+            this.$router.push(`/game/${name}`);
+        },
         navigateToProfile(name) {
             this.$router.push(`/profile/${name}`);
             let searchName = name;

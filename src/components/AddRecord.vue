@@ -8,6 +8,7 @@
 
     <div id="availableGames">
         <div v-for="game in filteredGames" class="card" @click="createPopup(game, this.gamePlayerCounts[game])">
+            <img src="../assets/icons/newpage.webp" class="icon newpage-icon" @click="navigateToGamePage(game)"/>
             <div class="img">
                 <img :src="getGameImage(game)">
             </div>
@@ -273,6 +274,9 @@ export default {
             const cleanedGameName = game.replace(/\s+/g, '');
             return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
         },
+        navigateToGamePage(name) {
+            this.$router.push(`/game/${name}`);
+        },
         createMapping(){
             this.gamePlayerCounts = {
                 'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 
@@ -430,6 +434,7 @@ export default {
     border-radius: 5px;
     margin-left: 10px;
     margin-right: 10px;
+    position: relative;
 }
 .card p, span {
     color: white;
@@ -561,6 +566,22 @@ input {
     font-family: 'Manolo Mono', sans-serif !important;
 }
 
+.icon {
+    position: absolute;
+    right: 0px;
+    color: white;
+    border-top-right-radius: 5px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    cursor: pointer;
+    z-index: 2;
+    font-weight: bold;
+    background: #242526;
+    border: 2px solid #242526;
+}
+
 @media (max-width: 	420px) {
     .MobileHide {
         display: none !important;
@@ -598,6 +619,12 @@ input {
         margin-top: 6px;
         margin-bottom: 6px;
         font-family: 'Manolo Mono', sans-serif !important;
+    }
+
+    .icon {
+        width: 25px;
+        height: 25px;
+        border: 3px solid #242526;
     }
 }
 </style>

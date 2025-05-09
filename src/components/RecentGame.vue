@@ -4,7 +4,7 @@
             <img class="gameimg" :src="imageSource" style="border-top-right-radius: 5px;">
         </div>
         <div class="gameContent">
-            <h4 class="gameName" :style="gameNameStyle">{{ gameData.gamename }}</h4>
+            <h4 class="gameName" :style="gameNameStyle" @click="navigateToGamePage(gameData.gamename)">{{ gameData.gamename }}</h4>
             <h5>Winner: {{ this.winnerName }}</h5>
             <h5>Second: {{ this.secondName }}</h5>
             <span class='gameID' style="font-size: smaller;">Game ID {{ gameData.gameid}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -253,6 +253,9 @@ export default {
         }
     },
     methods: {
+        navigateToGamePage(name) {
+            this.$router.push(`/game/${name}`);
+        },
         createPopup(playerCount){
             if(this.isVisitor == true) {
                 return;

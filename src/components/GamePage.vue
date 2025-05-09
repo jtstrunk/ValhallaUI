@@ -9,26 +9,54 @@
                     <p id="gameContext">{{ gameContext }}</p>
                 </div>
             </div>
-            <p style="margin-bottom: 0px;">Your Stats</p>
-            <div style="display: flex; flex-direction: row; width: 480px; justify-content: space-around;">
-                <div>
+            <p style="margin-left: 8px; margin-bottom: 0px; font-family: 'Manolo Mono', sans-serif !important;">Your Stats</p>
+            <div id="gameInformation">
+                <div class="stat">
                     <p>{{ userPlays }}</p>
                     <p>Plays</p>
                 </div>
-                <div>
+                <div class="stat">
                     <p>{{ userWins }}</p>
                     <p>Wins</p>
                 </div>
-                <div>
+                <div class="stat">
                     <p>{{ (userWinPercent * 100).toFixed(2) }}%</p>
                     <p>Win Rate</p>
                 </div>
             </div>
         </div>
-       
-        <!-- <div class="section" id="gamesHeader" >
-            <p>Most Won</p>
-        </div> -->
+        <div class="section" id="gamesHeader" >
+            <div id="winPercentHeader">
+                <p style="margin-left: 8px; font-size: 18px;">Highest Win Percent</p>
+                <p style="margin: 0 8px;"> - </p>
+                <p id="highestWinPercentName">{{ this.highestWinPercent.name }}</p>
+            </div>
+            <div style="display: flex; flex-direction: row; justify-content: space-around;">
+                <div class="stat">
+                    <p>{{ this.highestWinPercent.plays }}</p>
+                    <p>Plays</p>
+                </div>
+                <div class="stat">
+                    <p>{{ this.highestWinPercent.wins }}</p>
+                    <p>Wins</p>
+                </div>
+                <div class="stat">
+                    <p>{{ this.highestWinPercent.percent }}%</p>
+                    <p>Win Rate</p>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: row; justify-content: space-around; margin-top: 10px;">
+                <div class="stat">
+                    <p>Most Games Played</p>
+                    <span>{{ mostPlayedName }} - {{ mostPlayedGames }}</span><span></span>
+                </div>
+                <div class="stat">
+                    <p>Most Games Won</p>
+                    <span>{{ mostWonName }} - {{ mostWonGames }}</span><span></span>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -50,7 +78,17 @@ export default {
             userWinPercent: null,
             isVisitor: false,
             gameContext: null,
-            gameContextTwo: null
+            gameContextTwo: null,
+            highestWinPercent: {
+                name: null,
+                plays: null,
+                wins: null,
+                percent: null
+            },
+            mostPlayedName: null,
+            mostPlayedGames: null,
+            mostWonName: null,
+            mostWonGames: null
         }
     },
     components: {
@@ -67,11 +105,28 @@ export default {
                 console.log(response.data)
                 this.gameData = response.data;
                 this.gameContext = `Played ${this.gameData.gameplaycount} times by ${this.gameData.playercount} unique players`;
-                // this.gameContextTwo = `You've played ${this.gameData.userinformation[0].plays} times and have won ${this.gameData.userinformation[0].wins} times`;
                 this.userPlays = this.gameData.userinformation[0].plays;
                 this.userWins = this.gameData.userinformation[0].wins;
                 this.userWinPercent = this.userWins / this.userPlays;
-                console.log(this.gameContext)
+
+                if(this.gameData.gameplaycount > 5) {
+                    let miniumCountGames = this.gameData.winpercent
+                        .filter(obj => obj.total_games > 2);
+                    this.highestWinPercent.name = miniumCountGames[0].name
+                    this.highestWinPercent.plays = miniumCountGames[0].total_games
+                    this.highestWinPercent.wins = miniumCountGames[0].win_count
+                    this.highestWinPercent.percent = miniumCountGames[0].win_percent.toFixed(2)
+                } else {
+                    this.highestWinPercent.name = this.gameData.winpercent[0].name
+                    this.highestWinPercent.plays = this.gameData.winpercent[0].total_games
+                    this.highestWinPercent.wins = this.gameData.winpercent[0].win_count
+                    this.highestWinPercent.percent = this.gameData.winpercent[0].win_percent.toFixed(2)
+                }
+
+                this.mostWonName = this.gameData.wincounts[0].name
+                this.mostWonGames = this.gameData.wincounts[0].win_count
+                this.mostPlayedName = this.gameData.playcounts[0].name
+                this.mostPlayedGames = this.gameData.playcounts[0].win_count
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -119,11 +174,48 @@ export default {
     border-radius: 5px;
 }
 
-#gamesHeader {
+#gameInformation {
+    display: flex;
+    flex-direction: row;
     width: 480px;
+    justify-content: space-around;
+}
+
+#gamesHeader {
+    width: 500px;
 }
 #gameContext {
     font-size: larger;
+}
+.stat {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.stat p {
+    font-size: larger;
+    font-family: 'Manolo Mono', sans-serif !important;
+    margin: 4px 0;
+}
+.stat span {
+    color: white;
+    font-size: 20px;
+    font-family: 'Manolo Mono', sans-serif !important;
+    margin: 4px 0;
+}
+
+#winPercentHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+#winPercentHeader p { 
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+#highestWinPercentName {
+    font-size: 20px;
 }
 
 @media (max-width: 	420px) {
@@ -133,6 +225,35 @@ export default {
 
     .section{
         padding: 5px;
+    }
+
+    #profileHeader {
+        display: flex;
+        flex-direction: row;
+        width: 380px;
+    }
+    #gameInformation {
+        width: 380px;
+    }
+    #gamesHeader {
+        width: 400px;
+    }
+    #gameContext {
+        font-size: 16px;
+    }
+    #winPercentHeader {
+        margin-top: 5px;
+    }
+    #highestWinPercentName {
+        font-size: 18px;
+    }
+
+
+    .stat p {
+        font-size: 18;
+    }
+    .stat span {
+        font-size: 18px;
     }
 }
 </style>
