@@ -232,6 +232,9 @@ export default {
         flex-direction: row;
         width: 380px;
     }
+    .gamePicture {
+        margin-right: 8px;
+    }
     #gameInformation {
         width: 380px;
     }
@@ -239,7 +242,7 @@ export default {
         width: 400px;
     }
     #gameContext {
-        font-size: 16px;
+        font-size: 15px;
     }
     #winPercentHeader {
         margin-top: 5px;
