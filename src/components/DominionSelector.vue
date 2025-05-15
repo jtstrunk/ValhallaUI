@@ -332,7 +332,27 @@ export default {
             selectedCards: [],
             selectedAddons: [],
             traitCards: [],
-            obeliskCard: ""
+            obeliskCard: "",
+            splitPileCheck: {
+                'Encampment': 'Encampment_Plunder',
+                'Plunder': 'Encampment_Plunder',
+                'Patrician': 'Patrician_Emporium',
+                'Emporium': 'Patrician_Emporium',
+                'Settlers': 'Settlers_Bustling_Village',
+                'Bustling_Village': 'Settlers_Bustling_Village',
+                'Catapult': 'Catapult_Rocks',
+                'Rocks': 'Catapult_Rocks',
+                'Gladiator': 'Gladiator_Fortune',
+                'Fortune': 'Gladiator_Fortune',
+                'Humble_Castle': 'Castles',
+                'Crumbling_Castle': 'Castles',
+                'Small_Castle': 'Castles',
+                'Haunted_Castle': 'Castles',
+                'Opulent_Castle': 'Castles',
+                'Sprawling_Castle': 'Castles',
+                'Grand_Castle': 'Castles',
+                "King's_Castle": 'Castles'
+            }
         }
     },
     components: {
@@ -549,6 +569,16 @@ export default {
             }
         },
         addCard(card){
+            let splitPileCards = this.cards.filter(card => card.tags?.includes('Split_Pile_Card'))
+            if (splitPileCards.some(item => item.name === card.name)) {
+                let mainCardName = this.splitPileCheck[card.name]
+                let mainCard = this.cards.find(card => card.name === mainCardName);
+                if (!this.selectedCards.includes(mainCard) & this.selectedCards.length < 10) {
+                    this.selectedCards.push(mainCard);
+                }
+                return;
+            }
+
             if (!this.selectedCards.includes(card) & this.selectedCards.length < 10) {
                 this.selectedCards.push(card);
             }
@@ -2576,6 +2606,24 @@ export default {
                 cost: 2
             },
             {
+                name: "Encampment",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Village"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Plunder",
+                set: "Empires",
+                types: ["Treasure"],
+                categories: [""],
+                tags: ["Victory_Token", "Split_Pile_Card"],
+                costType: "Money",
+                cost: 2
+            },
+            {
                 name: "Patrician_Emporium",
                 set: "Empires",
                 types: ["Action"],
@@ -2583,6 +2631,24 @@ export default {
                 tags: ["Victory_Token", "Split_Pile"],
                 costType: "Money",
                 cost: 2
+            },
+            {
+                name: "Patrician",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Emporium",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Victory_Token", "Split_Pile_Card"],
+                costType: "Money",
+                cost: 5
             },
             {
                 name: "Settlers_Bustling_Village",
@@ -2594,12 +2660,103 @@ export default {
                 cost: 2
             },
             {
+                name: "Settlers",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Bustling_Village",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Village"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 5
+            },
+            {
                 name: "Castles",
                 set: "Empires",
                 types: ["Victory", "Castles"],
-                categories: ["Gainer"],
+                categories: ["Gainer", "Trasher"],
+                tags: ["Split_Pile"],
                 costType: "Money",
                 cost: 3
+            },
+            {
+                name: "Humble_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: [""],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Crumbling_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: ["Gainer"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Small_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: ["Gainer", "Trasher"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Haunted_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: ["Gainer"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 6
+            },
+            {
+                name: "Opulent_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: [""],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 7
+            },
+            {
+                name: "Sprawling_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: ["Gainer"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 8
+            },
+            {
+                name: "Grand_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: [""],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 9
+            },
+            {
+                name: "King's_Castle",
+                set: "Empires",
+                types: ["Victory", "Castles"],
+                categories: [""],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 10
             },
             {
                 name: "Catapult_Rocks",
@@ -2609,6 +2766,24 @@ export default {
                 tags: ["Split_Pile"],
                 costType: "Money",
                 cost: 3
+            },
+            {
+                name: "Catapult",
+                set: "Empires",
+                types: ["Action", "Attack"],
+                categories: ["Trasher"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Rocks",
+                set: "Empires",
+                types: ["Treasure"],
+                categories: ["Gainer"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 4
             },
             {
                 name: "Chariot_Race",
@@ -2644,6 +2819,24 @@ export default {
                 tags: ["Debt", "Split_Pile"],
                 costType: "Money",
                 cost: 3
+            },
+            {
+                name: "Gladiator",
+                set: "Empires",
+                types: ["Action"],
+                categories: ["Trasher", "Terminal Silver"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Fortune",
+                set: "Empires",
+                types: ["Treasure"],
+                categories: [""],
+                tags: ["Debt", "Split_Pile_Card"],
+                costType: "Debt",
+                cost: 8
             },
             {
                 name: "Sacrifice",
