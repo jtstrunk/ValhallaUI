@@ -1,10 +1,11 @@
 <template>
-    <div id="popups" class="gamepopup" v-if="this.insertPopup"> 
+    <!-- <div id="popups" class="gamepopup" v-if="this.insertPopup">  -->
+    <div id="popups" class="gamepopup" > 
         <div class="popupContainer">
             <p style="color: white; display: inline-block;">Update a {{ this.insertingGameName }} record</p>
             <div class="players">
                 <div class="playerSection">
-                    <label for="winnerName">Winner</label>
+                    <label for="winnerName">Player One</label>
                     <AutoComplete v-model="winnerName" :suggestions="filteredNames"  optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'winner')" id="winnerName"
                         class="custom-autocomplete" optionValue="name" @change="inputName($event, 'winner')"  @keydown="handleKeyDown($event, 'winner')"
@@ -23,14 +24,20 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
-                    <label for="winnerScore">Score</label>
-                    <Input v-model.number="winnerScore" id="winnerScore"></Input>
+                <div class="playerSection">
+                    <label for="playerOneCharacter">Character</label>
+                    <Select v-model="playerCharacters[0]" :options="filteredOptions(0)"
+                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
+                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                            overlay: { style: { backgroundColor: '#404040' } },
+                            option: {style: { color: 'white', padding: '4px 8px' } } 
+                        }" 
+                    />
                 </div>
             </div>
             <div class="players">
                 <div class="playerSection">
-                    <label for="secondName">Second</label>
+                    <label for="secondName">Player Two</label>
                     <AutoComplete v-model="secondName" :suggestions="filteredNames" optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'second')" id="secondName"
                         class="custom-autocomplete" optionValue="name" @change="inputName($event, 'second')"  @keydown="handleKeyDown($event, 'second')"
@@ -52,14 +59,20 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
-                    <label for="secondScore">Score</label>
-                    <Input v-model.number="secondScore" id="secondScore"></Input>
+                <div class="playerSection">
+                    <label for="playerTwoCharacter">Character</label>
+                    <Select v-model="playerCharacters[1]" :options="filteredOptions(1)"
+                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
+                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                            overlay: { style: { backgroundColor: '#404040' } },
+                            option: {style: { color: 'white', padding: '4px 8px' } } 
+                        }" 
+                    />
                 </div>
             </div>
-            <div v-if="this.calculatedPlayerCount > 2" class="players">
+            <div class="players">
                 <div class="playerSection">
-                    <label for="thirdName">Third</label>
+                    <label for="thirdName">Player Three</label>
                     <AutoComplete v-model="thirdName" :suggestions="filteredNames" optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'third')" id="thirdName"
                         class="custom-autocomplete" optionValue="name" @change="inputName($event, 'third')"  @keydown="handleKeyDown($event, 'third')"
@@ -81,14 +94,20 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
-                    <label for="secondScore">Score</label>
-                    <Input v-model.number="thirdScore" id="thirdScore"></Input>
+                <div class="playerSection">
+                    <label for="playerThreeCharacter">Character</label>
+                    <Select v-model="playerCharacters[2]" :options="filteredOptions(2)"
+                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
+                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                            overlay: { style: { backgroundColor: '#404040' } },
+                            option: {style: { color: 'white', padding: '4px 8px' } } 
+                        }" 
+                    />
                 </div>
             </div>
-            <div v-if="this.calculatedPlayerCount > 3" class="players">
+            <div class="players">
                 <div class="playerSection">
-                    <label for="fourthName">Fourth</label>
+                    <label for="fourthName">Player Four</label>
                     <AutoComplete v-model="fourthName" :suggestions="filteredNames" optionLabel="name"
                         @complete="searchName" @item-select="updateName($event, 'fourth')" id="fourthName"
                         class="custom-autocomplete" optionValue="name" @change="inputName($event, 'fourth')" @keydown="handleKeyDown($event, 'fourth')"
@@ -110,67 +129,15 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
-                    <label for="secondScore">Score</label>
-                    <Input v-model.number="fourthScore" id="fourthScore"></Input>
-                </div>
-            </div>
-            <div v-if="this.calculatedPlayerCount > 4" class="players">
                 <div class="playerSection">
-                    <label for="fifthName">Fifth</label>
-                    <AutoComplete v-model="fifthName" :suggestions="filteredNames" optionLabel="name"
-                        @complete="searchName" @item-select="updateName($event, 'fifth')" id="fifthName"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'fifth')" @keydown="handleKeyDown($event, 'fifth')"
-                        :pt="{
-                            root: {
-                                class: 'customAutocomplete',
-                            },
-                            option: 
-                            { 
-                                style: { color: 'white', padding: '4px 8px'}
-                            },
-                            overlay: {
-                                style: { backgroundColor: '#404040', transform: 'translateY(8px)', 
-                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
-                            },
-                            pcInputText: {
-                                style: { '::placeholder': { color: '#2e6da4' } }
-                            }
-                            
-                        }"></AutoComplete>
-                </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
-                    <label for="fifthScore">Score</label>
-                    <Input v-model.number="fifthScore" id="fifthScore"></Input>
-                </div>
-            </div>
-            <div v-if="this.insertingPlayerCount > 5" class="players">
-                <div class="playerSection">
-                    <label for="sixthName">Sixth</label>
-                    <AutoComplete v-model="sixthName" :suggestions="filteredNames" optionLabel="name"
-                        @complete="searchName" @item-select="updateName($event, 'sixth')" id="sixthName"
-                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'sixth')" @keydown="handleKeyDown($event, 'sixth')"
-                        :pt="{
-                            root: {
-                                class: 'customAutocomplete',
-                            },
-                            option: 
-                            { 
-                                style: { color: 'white', padding: '4px 8px'}
-                            },
-                            overlay: {
-                                style: { backgroundColor: '#404040', transform: 'translateY(8px)', 
-                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
-                            },
-                            pcInputText: {
-                                style: { '::placeholder': { color: '#2e6da4' } }
-                            }
-                            
-                        }"></AutoComplete>
-                </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
-                    <label for="sixthScore">Score</label>
-                    <Input v-model.number="sixthScore" id="sixthScore"></Input>
+                    <label for="playerFourCharacter">Character</label>
+                    <Select v-model="playerCharacters[3]" :options="filteredOptions(3)"
+                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
+                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                            overlay: { style: { backgroundColor: '#404040' } },
+                            option: {style: { color: 'white', padding: '4px 8px' } } 
+                        }" 
+                    />
                 </div>
             </div>
             <button class="btn-primary" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
@@ -183,52 +150,44 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import { userState } from "@/state/userState"
+import Select from 'primevue/select';
 
 export default {
     inheritAttrs: false,
     name: "Add Record",
     props: {
-        scrolledToBottom: {
-            type: Boolean
-        },
-        gameName: {
-            type: String,
-            required: true
-        },
-        insertingPlayerCount : {
-            type: Number,
-            required: true
-        },
-        insertPopup: {
-            type: Boolean,
-            required: true
-        },
-        gameInformationObject: {
-            type: Object,
-            required: true
-        }
     },
     data(){
         return{
             userName: userState.username,
             userID: userState.userID,
             isVisitor: false,
-            insertingGameName: this.gameName || '',
+            insertingGameName: 'Slay the Spire',
             filteredNames: [],
-            supportedGames: ['Dominion', 'Moonrakers', 'Clank', 'Lords of Waterdeep', 'Race for the Galaxy', 'Heat', 
-                'Space Base', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
+            characterOptions: [
+                { name: 'The Silent', code: 'silent' },
+                { name: 'The Ironclad', code: 'ironclad' },
+                { name: 'The Defect', code: 'defect' },
+                { name: 'The Watcher', code: 'watcher' },
+                { name: '--', code: 'empty' },
+            ],
+            playerCharacters: ['empty', 'empty', 'empty', 'empty']
         }
     },
     components: {
         RecentGame,
     },
     methods: {
+        filteredOptions(index) {
+            // Get all codes picked by other players, except 'empty'
+            const picked = this.playerCharacters
+            .filter((code, i) => i !== index && code !== 'empty');
+            // Always include the 'empty' option
+            return this.characterOptions.filter(
+            opt => opt.code === 'empty' || !picked.includes(opt.code)
+            );
+        },
         createMapping(){
-            this.gamePlayerCounts = {
-                'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 4 Players', 
-                'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', ' Puerto Rico' : '3 - 5 Players',
-                'Cosmic Encounter': '3 - 5 Players', 'Catan': '2 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players'
-            }
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName, 'sixth': this.sixthName,
             }
@@ -246,62 +205,83 @@ export default {
             this[placement + 'Name'] = input.value;
         },
         submitRecord(){
-            if (this.insertingGameName === "Heat") {
-                this.winnerScore = 0;
-                this.secondScore = 0;
+
+
+            // if (this.insertingGameName === "Heat") {
+            //     this.winnerScore = 0;
+            //     this.secondScore = 0;
+            // }
+
+            let characterMapping = {
+                'silent' : 1,
+                'ironclad' : 2,
+                'defect' : 3,
+                'watcher' : 4,
             }
+
+            console.log('p1', characterMapping[this.playerCharacters[0]])
+            console.log('p2', characterMapping[this.playerCharacters[1]])
+            console.log('p3', characterMapping[this.playerCharacters[2]])
+            console.log('p4', characterMapping[this.playerCharacters[3]])
+
+            this.playerCharacters[0] = characterMapping[this.playerCharacters[0]]
+            this.playerCharacters[1] = characterMapping[this.playerCharacters[1]]
+            this.playerCharacters[2] = characterMapping[this.playerCharacters[2]]
+            this.playerCharacters[3] = characterMapping[this.playerCharacters[3]]
             
             let insertObject = {
                 "posterid": this.userID,
                 "gamename": this.insertingGameName,
                 "winnername": this.winnerName,
-                "winnerscore": this.winnerScore,
+                "winnerscore": this.playerCharacters[0],
                 "secondname": this.secondName,
-                "secondscore": this.secondScore,
+                "secondscore": this.playerCharacters[1],
                 "thirdname": this.thirdName,
-                "thirdscore": this.thirdScore,
+                "thirdscore": this.playerCharacters[2],
                 "fourthname": this.fourthName,
-                "fourthscore": this.fourthScore,
+                "fourthscore": this.playerCharacters[3],
                 "fifthname": this.fifthName,
                 "fifthscore": this.fifthScore,
-                "sixthname": this.sixthName,
-                "sixthscore": this.sixthScore,
+                "sixthname": null,
+                "sixthscore": null,
                 date: null
             }
 
-            fetch(`${import.meta.env.VITE_API_URL}/insertgame`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(insertObject)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                this.winnerName = null;
-                this.winnerScore = null;
-                this.secondName = null;
-                this.secondScore = null;
-                this.thirdName = null;
-                this.thirdScore = null;
-                this.fourthName = null;
-                this.fourthScore = null;
-                this.fifthName = null;
-                this.fifthScore = null;
-                this.sixthName = null;
-                this.sixthScore = null;
-                this.$emit('gameInserted')
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            console.log(insertObject)
+
+            // fetch(`${import.meta.env.VITE_API_URL}/insertgame`, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Accept': 'application/json'
+            //     },
+            //     body: JSON.stringify(insertObject)
+            // })
+            // .then(response => {
+            //     if (!response.ok) {
+            //         throw new Error(`HTTP error! status: ${response.status}`);
+            //     }
+            //     this.winnerName = null;
+            //     this.winnerScore = null;
+            //     this.secondName = null;
+            //     this.secondScore = null;
+            //     this.thirdName = null;
+            //     this.thirdScore = null;
+            //     this.fourthName = null;
+            //     this.fourthScore = null;
+            //     this.fifthName = null;
+            //     this.fifthScore = null;
+            //     this.sixthName = null;
+            //     this.sixthScore = null;
+            //     this.$emit('gameInserted')
+            //     return response.json();
+            // })
+            // .then(data => {
+            //     console.log('Success:', data);
+            // })
+            // .catch(error => {
+            //     console.error('Error:', error);
+            // });
         },
         async fetchUsersPlayedWith(user) {
             axios.get(`${import.meta.env.VITE_API_URL}/getuseruniqueplayers/${user}`, {
@@ -345,42 +325,6 @@ export default {
                 return this.insertingPlayerCount !== null ? this.insertingPlayerCount : null;
             }
         },
-        winnerName() {
-            return this.gameInformationObject.winnername;
-        },
-        winnerScore() {
-            return this.gameInformationObject.winnerscore;
-        },
-        secondName() {
-            return this.gameInformationObject.secondname;
-        },
-        secondScore() {
-            return this.gameInformationObject.secondscore;
-        },
-        thirdName() {
-            return this.gameInformationObject.thirdname;
-        },
-        thirdScore() {
-            return this.gameInformationObject.thirdscore;
-        },
-        fourthName() {
-            return this.gameInformationObject.fourthname;
-        },
-        fourthScore() {
-            return this.gameInformationObject.fourthscore;
-        },
-        fifthName() {
-            return this.gameInformationObject.fifthname;
-        },
-        fifthScore() {
-            return this.gameInformationObject.fifthscore;
-        },
-        sixthName() {
-            return this.gameInformationObject.sixthname;
-        },
-        sixthScore() {
-            return this.gameInformationObject.sixthscore;
-        }
     },
     created(){
         let searchName = this.userName;
@@ -493,6 +437,22 @@ input {
     border-radius: 5px;
     width: 90%;
 }
+
+.p-dropdown-panel,
+.p-dropdown-items {
+  background: #404040 !important;
+}
+
+/* For the individual dropdown items (optional, for hover/selected states) */
+.p-dropdown-item {
+  background: #404040 !important;
+  color: #fff; /* Optional: makes text visible on dark background */
+}
+.p-dropdown-item.p-highlight,
+.p-dropdown-item:hover {
+  background: #505050 !important; /* Slightly lighter for hover/selected */
+}
+
 
 @media (max-width: 	420px) {
     .MobileHide {

@@ -1,4 +1,5 @@
 <template>
+    <InsertSlaytheSpirePopup></InsertSlaytheSpirePopup>
     <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden;">
         <div style="display: flex; flex-direction: row;" class="mobileContainer">
             <!-- mobile -->
@@ -185,6 +186,7 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import { userState } from '/src/state/userState'
+import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 
 export default {
     name: "Home",
@@ -213,7 +215,8 @@ export default {
         }
     },
     components: {
-        RecentGame
+        RecentGame,
+        InsertSlaytheSpirePopup
     },
     watch: {
         searchType() {
