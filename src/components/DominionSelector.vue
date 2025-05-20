@@ -292,6 +292,10 @@
                     <img :alt="card" :src="getLandscapesImage(card)" class="tinyLandscape"/>
                     <img src="../assets/icons/refresh.webp" class="icon refresh-icon"  @click="regenerateLandscape(card)"/>
                 </div>
+                <div v-if="containsTrait" @click="addTrait()" style="display: flex; flex-direction: column; justify-content: center; margin-left: 20px">
+                    <img id="addRecordImg" src="/src/assets/icons/add.webp">
+                    <span style="margin-bottom: 15px; color: #fff; font-family: 'Manolo Mono', sans-serif !important;">Add Trait</span>
+                </div>
             </div>
             
         </div>
@@ -327,6 +331,7 @@ export default {
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Plunder', 'Empires'],
             selectedAdvancedCardTypes: [],
             selectedExpansions: ['Dominion'],
+            selectedExpansionsLandscapeList: [],
             selectedTypes: [],
             selectedCategories: [],
             selectedCards: [],
@@ -359,6 +364,16 @@ export default {
         
     },
     computed: {
+        containsTrait() {
+            let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'));
+            if (this.selectedCards.length === 0) {
+                return false;
+            }
+            if (this.selectedAddons.some(item => traits.some(trait => trait.name === item))) {
+                return false;
+            }
+            return true;
+        },
         isMobile() {
             return window.innerWidth < 420;
         },
@@ -678,7 +693,7 @@ export default {
         },
         fillFromExpansions(){
             this.selectedExpansionsCardList = [...this.cards];
-            this.selectedExpansionsLandscapeList = [];
+            this.selectedExpansionsLandscapeList = [...this.landscapes];
             if (this.selectedAdvancedExpansions.length > 0) {
                 this.selectedExpansionsCardList = this.selectedExpansionsCardList.filter(card =>
                     this.selectedAdvancedExpansions.includes(card.set)
@@ -729,7 +744,7 @@ export default {
             this.selectedExpansionsCardList  = [...this.cards].filter(card => {
                 return !this.banned.includes(card.name);
             });
-            this.selectedExpansionsLandscapeList = [...this.landScapes];
+            this.selectedExpansionsLandscapeList = [...this.landscapes];
             this.selectedCards = [];
             this.selectedAddons = [];
             this.traitCards = [];
@@ -1037,6 +1052,7 @@ export default {
                     attempts++
                 }
             }
+
             if(events.some(event => event.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(event => event.includes(card));
                 let attempts = 0, inserted = false
@@ -1053,6 +1069,7 @@ export default {
                     attempts++
                 }
             }
+
             if(traits.some(trait => trait.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(trait => trait.includes(card));
                 let attempts = 0, inserted = false
@@ -1069,6 +1086,7 @@ export default {
                     attempts++
                 }
             }
+
             if(prophecies.some(prophecy => prophecy.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(prophecy => prophecy.includes(card));
                 let attempts = 0, inserted = false
@@ -1083,6 +1101,18 @@ export default {
                         }
                     }
                     attempts++
+                }
+            }
+        },
+        addTrait(){
+            let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'));
+            let randomIndex = Math.floor(Math.random() * traits.length);
+            let traitName = traits[randomIndex].name;
+            if (!this.selectedAddons.includes(traitName)) {
+                this.selectedAddons.push(traitName);
+                let randomNumber = Math.floor(Math.random() * 10);
+                if(!this.traitCards.includes(this.selectedCards[randomNumber]) && this.selectedCards[randomNumber].name != this.obeliskCard) {
+                    this.traitCards.push(this.selectedCards[randomNumber])
                 }
             }
         },
@@ -2932,7 +2962,7 @@ export default {
                 cost: 5
             },
         ]
-        this.landScapes = [
+        this.landscapes = [
             {
                 name: "Advance",
                 set: "Empires",
@@ -3758,6 +3788,15 @@ img {
     cursor: pointer;
 }
 
+#addRecordImg {
+    width: 70px;
+    height: 70px;
+    border: none;
+}
+#addRecordImg:hover {
+    cursor: pointer !important;
+}
+
 @media (max-width: 	420px) {
     .btn-smaller {
         width: 82px;
@@ -3875,8 +3914,8 @@ img {
     }
 
     .icon {
-        width: 15px;
-        height: 15px;
+        width: 20px;
+        height: 20px;
     }
 }
 </style>

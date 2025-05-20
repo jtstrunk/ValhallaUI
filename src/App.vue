@@ -58,7 +58,6 @@ export default {
     }
   },
   mounted() {
-    console.log('moutned')
     this.$refs.scrollContainer.addEventListener("scroll", this.debounce(this.handleScroll, 10));
   },
   beforeDestroy() {
