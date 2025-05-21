@@ -741,9 +741,10 @@ export default {
         generateAdvancedKingdom(){
             this.obeliskCard = ""
             let maxEffectCount = false;
-            this.selectedExpansionsCardList  = [...this.cards].filter(card => {
-                return !this.banned.includes(card.name);
+            this.selectedExpansionsCardList = [...this.cards].filter(card => {
+                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card");
             });
+            console.log(this.selectedExpansionsCardList)
             this.selectedExpansionsLandscapeList = [...this.landscapes];
             this.selectedCards = [];
             this.selectedAddons = [];
@@ -896,6 +897,10 @@ export default {
                             this.addRandomCard(debtCards)
                         }
                     }
+                }
+
+                if(this.selectedAdvancedCardTypes.includes('Split Pile') && loopCount == 1) {
+                    this.addRandomCard(splitPileCards)
                 }
             
                 if(this.selectedAdvancedCardTypes.includes('Loot')) {
@@ -3450,7 +3455,7 @@ export default {
 #numCardsLabel {
     font-family: 'Manolo Mono', sans-serif !important;
 }
-#advancedKingdom{
+#advancedKingdom {
     margin-top: 0px;
     font-family: 'Manolo Mono', sans-serif !important;
 }
