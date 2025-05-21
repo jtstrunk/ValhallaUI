@@ -337,6 +337,8 @@ export default {
             selectedCards: [],
             selectedAddons: [],
             traitCards: [],
+            prophecies: [],
+            omenCards: [],
             obeliskCard: "",
             splitPileCheck: {
                 'Encampment': 'Encampment_Plunder',
@@ -737,6 +739,22 @@ export default {
                     attempts++
                 }
             }
+
+            if(this.prophecies.some(prophecy => this.selectedAddons.includes(prophecy.name)) &&
+                !this.omenCards.some(omen => this.selectedCards.some(card => card.name === omen.name))) {
+                    console.log('prop removed')
+                    this.selectedAddons = this.selectedAddons.filter(
+                        addonName => !this.prophecies.some(prophecy => prophecy.name === addonName)
+                    );
+            }
+            if(!this.prophecies.some(prophecy => this.selectedAddons.includes(prophecy.name)) 
+                && this.omenCards.some(omen => this.selectedCards.some(card => card.name === omen.name))) {
+                let prophecyRandomIndex = Math.floor(Math.random() * this.prophecies.length);
+                let cardName = this.prophecies[prophecyRandomIndex].name;
+                if (!this.selectedAddons.includes(cardName)) {
+                    this.selectedAddons.push(cardName);
+                }
+            }
         },
         generateAdvancedKingdom(){
             this.obeliskCard = ""
@@ -744,7 +762,6 @@ export default {
             this.selectedExpansionsCardList = [...this.cards].filter(card => {
                 return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card");
             });
-            console.log(this.selectedExpansionsCardList)
             this.selectedExpansionsLandscapeList = [...this.landscapes];
             this.selectedCards = [];
             this.selectedAddons = [];
@@ -770,6 +787,9 @@ export default {
             let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
             let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
             let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
+
+            this.prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
+            this.omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
 
             const countEffectingTypes = ["Treasure", "Debt", "Prophecy", "Loot", "Victory", "Shadow"];
             if (countEffectingTypes.every(type => this.selectedAdvancedCardTypes.includes(type))) {
@@ -938,15 +958,6 @@ export default {
                 }
             }
 
-            if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy)) 
-                && omenCards.some(omen => this.selectedCards.includes(omen))) {
-                let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
-                let cardName = prophecies[prophecyRandomIndex].name;
-                if (!this.selectedAddons.includes(cardName)) {
-                    this.selectedAddons.push(cardName);
-                }
-            }
-
             if(this.selectedAdvancedCardTypes.includes('Event')) {
                 let numEvent = 0, addedCount = 0, attempts = 0;
                 let randomChance = Math.floor(Math.random() * 100);
@@ -1027,6 +1038,16 @@ export default {
                     traitCount++;
                 }
                 attempts++
+            }
+
+            if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy)) 
+                && omenCards.some(omen => this.selectedCards.some(card => card.name === omen.name))) {
+                    console.log('where we should be ')
+                let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                let cardName = prophecies[prophecyRandomIndex].name;
+                if (!this.selectedAddons.includes(cardName)) {
+                    this.selectedAddons.push(cardName);
+                }
             }
         },
         regenerateLandscape(card) {
