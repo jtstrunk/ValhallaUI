@@ -282,17 +282,25 @@
                 <button class="btn-start" @click="startCounter()" style="margin-left: 5px;">Start Counter</button>
                 <!-- <button @click="console.clear()">clear console</button> -->
             </div>
-            <div id="advancedCards">
-                <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
-                    :src="getCardImage(card.name)" :class="{ traitCards: traitCards.includes(card), 
-                        obeliskcard: obeliskCard === card.name }"  @click="removeCard(card)" />
+            <div style="display: flex; flex-direction: row;">
+                <div id="advancedCards">
+                    <img v-for="card in selectedCards" :key="card.name" :alt="card" class="tinyCard"
+                        :src="getCardImage(card.name)" :class="{ traitCards: traitCards.includes(card), 
+                            obeliskcard: obeliskCard === card.name }"  @click="removeCard(card)" />
+                </div>
+                <div v-if="this.containsRiverboat && !isMobile" style="display: flex; align-items: center; margin-left: 10px;">
+                    <div class="card-wrapper" :key="this.riverboatCard">
+                        <img class="riverboatCard" :src="getCardImage(this.riverboatCard)" />
+                        <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateRiverboatCard(this.riverboatCard)" />
+                    </div>
+                </div>
             </div>
             <div id="advancedLandscapes">
                 <div class="card-wrapper" v-for="card in selectedAddons" :key="card.name">
                     <img :alt="card" :src="getLandscapesImage(card)" class="tinyLandscape"/>
                     <img src="../assets/icons/refresh.webp" class="icon refresh-icon"  @click="regenerateLandscape(card)"/>
                 </div>
-                <div v-if="containsTrait" @click="addTrait()" style="display: flex; flex-direction: column; justify-content: center; margin-left: 20px">
+                <div v-if="containsTrait && this.numberTraits < 2" @click="addTrait()" style="display: flex; flex-direction: column; justify-content: center; margin-left: 20px">
                     <img id="addRecordImg" src="/src/assets/icons/add.webp">
                     <span style="margin-bottom: 15px; color: #fff; font-family: 'Manolo Mono', sans-serif !important;">Add Trait</span>
                 </div>
@@ -323,12 +331,13 @@ export default {
             userID: userState.userID,
             numGenerateCards: 10,
             searchType: 'exclusive',
-            showDialog: false,
+            showDialog: true,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
             cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Col & Plat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Plunder', 'Empires'],
+            // selectedAdvancedExpansions: ['Rising Sun'],
             selectedAdvancedCardTypes: [],
             selectedExpansions: ['Dominion'],
             selectedExpansionsLandscapeList: [],
@@ -339,6 +348,9 @@ export default {
             traitCards: [],
             prophecies: [],
             omenCards: [],
+            containsRiverboat: false,
+            numberTraits: 0,
+            riverboatCard: "Smithy",
             obeliskCard: "",
             splitPileCheck: {
                 'Encampment': 'Encampment_Plunder',
@@ -713,7 +725,7 @@ export default {
 
                 if (!this.selectedCards.includes(cardName)) {
                     this.selectedCards.push(cardName);
-                    this.selectedExpansionsCardList.splice(randomIndex, 1);
+                    // this.selectedExpansionsCardList.splice(randomIndex, 1);
                     addedCount++;
                 }
             }
@@ -742,7 +754,6 @@ export default {
 
             if(this.prophecies.some(prophecy => this.selectedAddons.includes(prophecy.name)) &&
                 !this.omenCards.some(omen => this.selectedCards.some(card => card.name === omen.name))) {
-                    console.log('prop removed')
                     this.selectedAddons = this.selectedAddons.filter(
                         addonName => !this.prophecies.some(prophecy => prophecy.name === addonName)
                     );
@@ -755,9 +766,27 @@ export default {
                     this.selectedAddons.push(cardName);
                 }
             }
+
+            if (this.selectedCards.some(card => card.name === 'Riverboat')){
+                this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => card.cost == 5 
+                    && card.costType == 'Money' && !card.types.includes('Duration') &&
+                    !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                );
+
+                let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+                let card = this.potentialRiverboatCards[riverboatRandomIndex]
+                this.riverboatCard = card.name;
+                this.containsRiverboat = true;
+            } else {
+                this.riverboatCard = "";
+                this.containsRiverboat = false;
+            }
         },
         generateAdvancedKingdom(){
-            this.obeliskCard = ""
+            this.containsRiverboat = false;
+            this.riverboatCard = "";
+            this.obeliskCard = "";
+            this.numberTraits = 0;
             let maxEffectCount = false;
             this.selectedExpansionsCardList = [...this.cards].filter(card => {
                 return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card");
@@ -788,6 +817,7 @@ export default {
             let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
             let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
 
+            this.traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
             this.prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'))
             this.omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
 
@@ -1014,7 +1044,6 @@ export default {
 
                 if (!this.selectedCards.includes(cardName)) {
                     this.selectedCards.push(cardName);
-                    this.selectedExpansionsCardList.splice(randomIndex, 1);
                     addedCount++;
                 }
             }
@@ -1042,13 +1071,32 @@ export default {
 
             if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy)) 
                 && omenCards.some(omen => this.selectedCards.some(card => card.name === omen.name))) {
-                    console.log('where we should be ')
                 let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
                 let cardName = prophecies[prophecyRandomIndex].name;
                 if (!this.selectedAddons.includes(cardName)) {
                     this.selectedAddons.push(cardName);
                 }
             }
+
+            if (this.selectedCards.some(card => card.name === 'Riverboat')){
+                this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => 
+                    card.cost == 5 && card.costType == 'Money' && !card.types.includes('Duration')
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                );
+
+                let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+                let card = this.potentialRiverboatCards[riverboatRandomIndex]
+                this.riverboatCard = card.name;
+                this.containsRiverboat = true;
+            }
+        },
+        regenerateRiverboatCard(cardName) {
+            let newPotentialRiverboatCards = this.potentialRiverboatCards.filter(
+                potentialCard => potentialCard.name !== cardName
+            );
+            let riverboatRandomIndex = Math.floor(Math.random() * newPotentialRiverboatCards.length);
+            let card = newPotentialRiverboatCards[riverboatRandomIndex]
+            this.riverboatCard = card.name;
         },
         regenerateLandscape(card) {
             let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
@@ -1131,7 +1179,7 @@ export default {
             }
         },
         addTrait(){
-            let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'));
+            let traits = this.landscapes.filter(card => card.types.includes('Trait'));
             let randomIndex = Math.floor(Math.random() * traits.length);
             let traitName = traits[randomIndex].name;
             if (!this.selectedAddons.includes(traitName)) {
@@ -1141,6 +1189,8 @@ export default {
                     this.traitCards.push(this.selectedCards[randomNumber])
                 }
             }
+            this.numberTraits = this.selectedAddons.filter(addon =>
+                traits.some(trait => trait.name === addon)).length;
         },
         async fetchUsersPlayedWith(user) {
             axios.get(`${import.meta.env.VITE_API_URL}/getuseruniqueplayers/${user}`, {
@@ -3707,6 +3757,12 @@ img {
     width: 140px;
     height: 215px;
     margin: 2px;
+}
+.riverboatCard {
+    width: 118px;
+    height: 185px;
+    margin: 2px;
+    border: 2px solid orange;
 }
 #advancedLandscapes {
     margin-top: 10px;
