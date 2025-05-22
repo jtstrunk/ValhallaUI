@@ -6,7 +6,7 @@
             <router-link :class="['nav-link']" to="/usersearch" class="">Search Users</router-link>
             <router-link :class="['nav-link']" to="/addrecord" class="">Add Record</router-link>
             <div class="dropdown MobileHide">
-                <button class="dropbtn" style="width: 85px !important;">View Tools</button>
+                <button class="dropbtn" style="width: 95px !important;">View Tools</button>
                 <div class="dropdown-content">
                     <router-link to="/gamerecords">View Records</router-link>
                     <router-link to="/dominionselector">Dominion Selector</router-link>

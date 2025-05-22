@@ -5,7 +5,7 @@
                 <p style="font-size: 26px; margin-left: 5px;">{{ typeof playerName === 'string' ? playerName : playerName.name }}</p>
                 <div style="display: flex; flex-direction: row; margin-right: 15px;">
                     <p style="font-size: 30px; margin-left: 5px;">{{ victoryPoints }}</p>
-                    <img src="/src/assets/icons/vp.png" style="height: 25px; width: 25px; margin-top: 5px; margin-left: 5px;">
+                    <img src="/src/assets/icons/vp.png" id="VPSymbol">
                 </div>
             </div>
             <div style="width: 365px; display: flex; flex-direction: row; flex-wrap: wrap;">
@@ -133,6 +133,7 @@ export default {
 }
 .counter p {
     margin: 0px;
+    user-select: none;
 }
 .type {
     margin: 10px;
@@ -150,11 +151,22 @@ export default {
     text-align: center;
     font-size: 20px;
     margin-top: 5px !important;
+    user-select: none;
 }
 .subtracting {
     font-size: 24px;
+    user-select: none;
 }
 .adding {
     font-size: 24px;
+    user-select: none;
+}
+
+#VPSymbol{
+    height: 25px;
+    width: 25px;
+    margin-top: 5px;
+    margin-left: 5px;
+    user-select: none;
 }
 </style>
