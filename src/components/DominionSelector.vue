@@ -272,7 +272,7 @@
                             'btn-seleced': selectedAdvancedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
-                    <button disabled class="btn-dark">Adventures</button>
+                    <!-- <button disabled class="btn-dark">Adventures</button> -->
                     <button disabled class="btn-dark">Hinterlands</button>
                 </div>
             </div>
@@ -332,11 +332,11 @@ export default {
             numGenerateCards: 10,
             searchType: 'exclusive',
             showDialog: false,
-            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Empires', 'Plunder', 'Rising Sun'],
+            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
             cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Col & Plat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
-            selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Plunder', 'Empires'],
+            selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
             // selectedAdvancedExpansions: ['Rising Sun'],
             selectedAdvancedCardTypes: [],
             selectedExpansions: ['Dominion'],
@@ -867,8 +867,9 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Prophecy');
                 this.showRemovedLandscape('Prophecies')
             }
-            if (this.selectedAdvancedCardTypes.includes('Event') && !this.selectedAdvancedExpansions.includes('Empires') &&
-                !this.selectedAdvancedExpansions.includes('Rising Sun') && !this.selectedAdvancedExpansions.includes('Plunder')) {
+            if (this.selectedAdvancedCardTypes.includes('Event') && !this.selectedAdvancedExpansions.includes('Adventures') &&
+                !this.selectedAdvancedExpansions.includes('Empires') && !this.selectedAdvancedExpansions.includes('Rising Sun') && 
+                !this.selectedAdvancedExpansions.includes('Plunder')) { 
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Event');
                 this.showRemovedLandscape('Events')
             }
@@ -3039,6 +3040,107 @@ export default {
             },
         ]
         this.landscapes = [
+            {
+                name: "Alms",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Ball",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Bonfire",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Borrow",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Expedition",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Ferry",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Inheritance",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Lost_Arts",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Mission",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Pathfinding",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Pilgrimage",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Plan",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Quest",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Raid",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Save",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Scouting_Party",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Seaway",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Trade",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Training",
+                set: "Adventures",
+                types: ["Event"]
+            },
+            {
+                name: "Travelling_Fair",
+                set: "Adventures",
+                types: ["Event"]
+            },
+
             {
                 name: "Advance",
                 set: "Empires",
