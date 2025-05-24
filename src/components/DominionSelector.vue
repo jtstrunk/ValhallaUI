@@ -333,7 +333,7 @@ export default {
             searchType: 'exclusive',
             showDialog: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
-            types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering'],
+            types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering', 'Reserve'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
             cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Col & Plat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
@@ -1398,7 +1398,7 @@ export default {
                 name: "Remodel",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Gainer"],
+                categories: ["Gainer", "Trasher"],
                 costType: "Money",
                 cost: 4
             },
@@ -1470,7 +1470,7 @@ export default {
                 name: "Mine",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Gainer"],
+                categories: ["Gainer", "Trasher"],
                 costType: "Money",
                 cost: 5
             },
@@ -1500,7 +1500,7 @@ export default {
             },
             {
                 name: "Captain",
-                set: "Promo",
+                set: "Seaside",
                 types: ["Action", "Duration", "Command"],
                 categories: [""],
                 costType: "Money",
@@ -1508,7 +1508,7 @@ export default {
             },
             {
                 name: "Church",
-                set: "Promo",
+                set: "Seaside",
                 types: ["Action", "Duration"],
                 categories: ["Trasher"],
                 costType: "Money",
@@ -1894,7 +1894,7 @@ export default {
                 name: "Replace",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Gainer"],
+                categories: ["Gainer", "Trasher"],
                 costType: "Money",
                 cost: 5
             },
@@ -1918,7 +1918,7 @@ export default {
                 name: "Upgrade",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip", "Gainer"],
+                categories: ["Cantrip", "Gainer", "Trasher"],
                 costType: "Money",
                 cost: 5
             },
@@ -2104,7 +2104,7 @@ export default {
                 name : "Expand",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Gainer"],
+                categories: ["Gainer", "Trasher"],
                 costType: "Money",
                 cost: 7
             },
@@ -2339,7 +2339,7 @@ export default {
                 name: "Enlarge",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: [""],
+                categories: ["Gainer", "Trasher"],
                 costType: "Money",
                 cost: 5
             },
@@ -2572,7 +2572,7 @@ export default {
                 name: "River_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Trasher"],
+                categories: ["Gainer", "Trasher"],
                 costType: "Money",
                 cost: 4
             },
@@ -2588,7 +2588,7 @@ export default {
                 name: "Gold_Mine",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: ["Cantrip"],
+                categories: ["Cantrip", "Gainer"],
                 tags: ["Debt"],
                 costType: "Money",
                 cost: 5
@@ -2666,6 +2666,319 @@ export default {
                 categories: [""],
                 costType: "Money",
                 cost: 7
+            },
+            {
+                name: "Coin_of_the_Realm",
+                set: "Adventures",
+                types: ["Treasure"],
+                categories: ["Village"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Page",
+                set: "Adventures",
+                types: ["Action", "Traveller"],
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Treasure_Hunter",
+                set: "Adventures",
+                types: ["Action", "Traveller"],
+                categories: [""],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Warrior",
+                set: "Adventures",
+                types: ["Action", "Attack", "Traveller"],
+                categories: ["Terminal Draw"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Hero",
+                set: "Adventures",
+                types: ["Action", "Traveller"],
+                categories: ["Gainer", "Terminal Silver"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Champion",
+                set: "Adventures",
+                types: ["Action", "Duration"],
+                categories: ["Village"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 6
+            },
+            {
+                name: "Peasant",
+                set: "Adventures",
+                types: ["Action", "Traveller"],
+                categories: [""],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Soldier",
+                set: "Adventures",
+                types: ["Action", "Attack", "Traveller"],
+                categories: [""],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Fugitive",
+                set: "Adventures",
+                types: ["Action", "Traveller"],
+                categories: ["Sifter"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Disciple",
+                set: "Adventures",
+                types: ["Action", "Traveller"],
+                categories: ["Village", "Gainer"],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Teacher",
+                set: "Adventures",
+                types: ["Action", "Reserve"],
+                categories: [""],
+                tags: ["Split_Pile_Card"],
+                costType: "Money",
+                cost: 6
+            },
+            {
+                name: "Ratcatcher",
+                set: "Adventures",
+                types: ["Action", "Reserve"],
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Raze",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Amulet",
+                set: "Adventures",
+                types: ["Action", "Duration"],
+                categories: ["Gainer", "Trasher"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Caravan_Guard",
+                set: "Adventures",
+                types: ["Action", "Duration", "Reaction"],
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Dungeon",
+                set: "Adventures",
+                types: ["Action", "Duration"],
+                categories: ["Sifter"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Gear",
+                set: "Adventures",
+                types: ["Action", "Duration"],
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Guide",
+                set: "Adventures",
+                types: ["Action", "Reserve"],
+                categories: ["Cantrip", "Sifter"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Duplicate",
+                set: "Adventures",
+                types: ["Action", "Reserve"],
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Magpie",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Cantrip", "Gainer"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Messenger",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Gainer", "Terminal Silver"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Miser",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Trasher"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Port",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Village", "Gainer"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Ranger",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Transmogrify",
+                set: "Adventures",
+                types: ["Action", "Reserve"],
+                categories: ["Gainer", "Trasher"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Artificer",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Cantrip", "Gainer"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Bridge_Troll",
+                set: "Adventures",
+                types: ["Action", "Duration", "Attack"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Distant_Lands",
+                set: "Adventures",
+                types: ["Action", "Reserve", "Victory"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+
+            {
+                name: "Giant",
+                set: "Adventures",
+                types: ["Action", "Attack"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Haunted_Woods",
+                set: "Adventures",
+                types: ["Action", "Duration", "Attack"],
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Lost_City",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Village"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Relic",
+                set: "Adventures",
+                types: ["Treasure", "Attack"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Royal_Carriage",
+                set: "Adventures",
+                types: ["Action", "Reserve"],
+                categories: ["Village"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Storyteller",
+                set: "Adventures",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Swamp_Hag",
+                set: "Adventures",
+                types: ["Action", "Duration", "Attack"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Treasure_Trove",
+                set: "Adventures",
+                types: ["Treasure"],
+                categories: ["Gainer"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Wine_Merchant",
+                set: "Adventures",
+                types: ["Action", "Reserve"],
+                categories: [""],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Hireling",
+                set: "Adventures",
+                types: ["Action", "Duration"],
+                categories: [""],
+                costType: "Money",
+                cost: 6
             },
             {
                 name: "Engineer",
@@ -2975,7 +3288,7 @@ export default {
                 name: "Archive",
                 set: "Empires",
                 types: ["Action", "Duration"],
-                categories: [""],
+                categories: ["Cantrip"],
                 costType: "Money",
                 cost: 5
             },
@@ -3040,6 +3353,11 @@ export default {
             },
         ]
         this.landscapes = [
+            {
+                name: "Summon",
+                set: "Adventures",
+                types: ["Event"]
+            },
             {
                 name: "Alms",
                 set: "Adventures",
