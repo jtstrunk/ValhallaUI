@@ -272,7 +272,6 @@
                             'btn-seleced': selectedAdvancedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
-                    <!-- <button disabled class="btn-dark">Adventures</button> -->
                     <button disabled class="btn-dark">Hinterlands</button>
                 </div>
             </div>
@@ -335,7 +334,7 @@ export default {
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering', 'Reserve'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
-            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Col & Plat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
+            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Player Mats', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
             // selectedAdvancedExpansions: ['Rising Sun'],
             selectedAdvancedCardTypes: [],
@@ -370,7 +369,15 @@ export default {
                 'Opulent_Castle': 'Castles',
                 'Sprawling_Castle': 'Castles',
                 'Grand_Castle': 'Castles',
-                "King's_Castle": 'Castles'
+                "King's_Castle": 'Castles',
+                'Treasure_Hunter': 'Page',
+                'Warrior': 'Page',
+                'Hero': 'Page',
+                'Champion': 'Page',
+                'Soldier': 'Peasant',
+                'Fugitive': 'Peasant',
+                'Disciple': 'Peasant',
+                'Teacher': 'Peasant'
             }
         }
     },
@@ -809,6 +816,7 @@ export default {
             let gatheringCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Gathering'))
             let shadowCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Shadow'))
             let debtCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Debt'))
+            let playerMatCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Player_Mat'))
             let splitPileCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Split_Pile'))
             let lootCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Loot'))
             let omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
@@ -859,9 +867,10 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Split Pile');
                 this.showRemovedMechanic('Split Pile')
             }
-            if (this.selectedAdvancedCardTypes.includes('Col & Plat') && !this.selectedAdvancedExpansions.includes('Prosperity')) {
-                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Col & Plat');
-                this.showRemovedMechanic('Col & Plat')
+            if (this.selectedAdvancedCardTypes.includes('Player Mats') && !this.selectedAdvancedExpansions.includes('Seaside')
+                && !this.selectedAdvancedExpansions.includes('Adventures')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Player Mats');
+                this.showRemovedMechanic('Player Mats')
             }
             if (this.selectedAdvancedCardTypes.includes('Prophecy') && !this.selectedAdvancedExpansions.includes('Rising Sun')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Prophecy');
@@ -946,6 +955,17 @@ export default {
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 10) {
                             this.addRandomCard(debtCards)
+                        }
+                    }
+                }
+
+                if(this.selectedAdvancedCardTypes.includes('Player Mats')) {
+                    if(loopCount == 1) {
+                        this.addRandomCard(playerMatCards)
+                    } else if (loopCount == 2){
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 34) {
+                            this.addRandomCard(playerMatCards)
                         }
                     }
                 }
@@ -1535,6 +1555,7 @@ export default {
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Village", "Trasher"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 2
             },
@@ -1623,6 +1644,7 @@ export default {
                 set: "Seaside",
                 types: ["Action", "Victory"],
                 categories: ["Trasher"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 4
             },
@@ -2759,7 +2781,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve"],
                 categories: [""],
-                tags: ["Split_Pile_Card"],
+                tags: ["Split_Pile_Card", "Player_Mat"],
                 costType: "Money",
                 cost: 6
             },
@@ -2768,6 +2790,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve"],
                 categories: ["Cantrip"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 2
             },
@@ -2816,6 +2839,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve"],
                 categories: ["Cantrip", "Sifter"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 3
             },
@@ -2824,6 +2848,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve"],
                 categories: ["Gainer"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 4
             },
@@ -2848,6 +2873,7 @@ export default {
                 set: "Adventures",
                 types: ["Action"],
                 categories: ["Trasher"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 4
             },
@@ -2872,6 +2898,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve"],
                 categories: ["Gainer", "Trasher"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 4
             },
@@ -2896,6 +2923,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve", "Victory"],
                 categories: [""],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -2937,6 +2965,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve"],
                 categories: ["Village"],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -2969,6 +2998,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Reserve"],
                 categories: [""],
+                tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
