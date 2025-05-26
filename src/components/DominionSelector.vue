@@ -92,8 +92,8 @@
             <div id="expansions">
                 <button class="btn btn-main" :class="filterMode === 'favorites' ? 'btn-customlist' : 'btn-outline'"
                     style="outline: none; margin-bottom: 2.5px;" @click="showFavorites()">Favorites</button>
-                <button id="Set" class="btn btn-main btn-outline" style="outline: none; margin-bottom: 2px;" onclick="toggleCollapse('collapsibleSets', 'Set')">Expansions</button>
-                <div id="collapsibleSets" class="">
+                <button id="Set" class="btn" :class="showSets ? 'btn-outline' : 'btn-main'" style="outline: none; margin-bottom: 2px;" @click="toggleCollapse('Set')">Expansions</button>
+                <div v-if="this.showSets" id="collapsibleSets">
                     <button
                         v-for="expansion in expansions"
                         style="margin: 2px 0"
@@ -104,14 +104,18 @@
                             'btn-seleced': selectedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
+                    <button disabled class="btn-dark" style="margin: 2px 0">Hinterlands</button>
+                    <button disabled class="btn-dark" style="margin: 2px 0">Guilds & Cornu</button>
+                    <button disabled class="btn-dark" style="margin: 2px 0">Renaissance</button>
+                    <button disabled class="btn-dark" style="margin: 2px 0">Allies</button>
                 </div>
             </div>
             <div>
                 <button class="btn btn-main" :class="filterMode === 'banned' ? 'btn-customlist' : 'btn-outline'"
                     style="outline: none; margin-bottom: 2.5px;" @click="showBanned()">Banned</button>
                 <div id="types">
-                    <button id="Type" class="btn btn-main btn-outline" style="outline: none; margin-bottom: 2px;" onclick="toggleCollapse('collapsibleButtons', 'Type')">Types</button>
-                    <div id="collapsibleButtons" class="">
+                    <button id="Type" class="btn" :class="showTypes ? 'btn-outline' : 'btn-main'" style="outline: none; margin-bottom: 2px;" @click="toggleCollapse('Type')">Types</button>
+                    <div v-if="this.showTypes" id="collapsibleButtons">
                         <button
                             v-for="type in types"
                             style="margin: 2px 0"
@@ -125,8 +129,8 @@
                     </div>
                 </div>
                 <div id="categories">
-                    <button id="Category" class="btn btn-main" style="outline: none;" onclick="toggleCollapse('collapsibleCategories', 'Category')">Categories</button>
-                    <div id="collapsibleCategories" class="Hide">
+                    <button id="Category" class="btn" :class="showCategories ? 'btn-outline' : 'btn-main'" style="outline: none; margin: 2px 0;" @click="toggleCollapse('Category')">Categories</button>
+                    <div v-if="this.showCategories" id="collapsibleCategories">
                         <button
                             v-for="category in categories"
                             style="margin: 2px 0"
@@ -331,8 +335,11 @@ export default {
             numGenerateCards: 10,
             searchType: 'exclusive',
             showDialog: false,
+            showSets: true,
+            showTypes: true,
+            showCategories: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
-            types: ['Action', 'Victory', 'Treasure', 'Attack', 'Reaction', 'Duration', 'Command', 'Shadow', 'Omen', 'Castle', 'Gathering', 'Reserve'],
+            types: ['Action', 'Attack', 'Reaction', 'Victory', 'Treasure', 'Duration', 'Command', 'Reserve', 'Castle', 'Gathering', 'Shadow', 'Omen'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
             cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Player Mats', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
@@ -349,9 +356,17 @@ export default {
             omenCards: [],
             containsRiverboat: false,
             numberTraits: 0,
-            riverboatCard: "Smithy",
+            riverboatCard: "",
             obeliskCard: "",
             splitPileCheck: {
+                'Treasure_Hunter': 'Page',
+                'Warrior': 'Page',
+                'Hero': 'Page',
+                'Champion': 'Page',
+                'Soldier': 'Peasant',
+                'Fugitive': 'Peasant',
+                'Disciple': 'Peasant',
+                'Teacher': 'Peasant',
                 'Encampment': 'Encampment_Plunder',
                 'Plunder': 'Encampment_Plunder',
                 'Patrician': 'Patrician_Emporium',
@@ -369,15 +384,7 @@ export default {
                 'Opulent_Castle': 'Castles',
                 'Sprawling_Castle': 'Castles',
                 'Grand_Castle': 'Castles',
-                "King's_Castle": 'Castles',
-                'Treasure_Hunter': 'Page',
-                'Warrior': 'Page',
-                'Hero': 'Page',
-                'Champion': 'Page',
-                'Soldier': 'Peasant',
-                'Fugitive': 'Peasant',
-                'Disciple': 'Peasant',
-                'Teacher': 'Peasant'
+                "King's_Castle": 'Castles'
             }
         }
     },
@@ -450,6 +457,21 @@ export default {
     methods: {
         testfunction(){
             console.log('test function')
+        },
+        toggleCollapse(collapseGroup){
+            console.log('collapsing', collapseGroup)
+            if (collapseGroup == 'Set') {
+                this.showSets = !this.showSets
+                console.log('new value', this.showSets)
+            }
+            if (collapseGroup == 'Type') {
+                this.showTypes = !this.showTypes
+                console.log('new value', this.showTypes)
+            }
+            if (collapseGroup == 'Category') {
+                this.showCategories = !this.showCategories
+                console.log('new value', this.showCategories)
+            }
         },
         showFavoriteSuggestions() {
             this.$refs.favoritesAutocomplete.search(null, '');
@@ -3130,7 +3152,7 @@ export default {
             {
                 name: "Castles",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: ["Gainer", "Trasher"],
                 tags: ["Split_Pile"],
                 costType: "Money",
@@ -3139,7 +3161,7 @@ export default {
             {
                 name: "Humble_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: [""],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
@@ -3148,7 +3170,7 @@ export default {
             {
                 name: "Crumbling_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: ["Gainer"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
@@ -3157,7 +3179,7 @@ export default {
             {
                 name: "Small_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: ["Gainer", "Trasher"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
@@ -3166,7 +3188,7 @@ export default {
             {
                 name: "Haunted_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: ["Gainer"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
@@ -3175,7 +3197,7 @@ export default {
             {
                 name: "Opulent_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: [""],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
@@ -3184,7 +3206,7 @@ export default {
             {
                 name: "Sprawling_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: ["Gainer"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
@@ -3193,7 +3215,7 @@ export default {
             {
                 name: "Grand_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: [""],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
@@ -3202,7 +3224,7 @@ export default {
             {
                 name: "King's_Castle",
                 set: "Empires",
-                types: ["Victory", "Castles"],
+                types: ["Victory", "Castle"],
                 categories: [""],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
