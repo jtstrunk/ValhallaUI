@@ -13,7 +13,7 @@
                             @click="toggleExpansion(expansion)"
                             :class="{
                                 'btn-dark': !selectedExpansions.includes(expansion),
-                                'btn-seleced': selectedExpansions.includes(expansion)
+                                'btn-selected': selectedExpansions.includes(expansion)
                             }" > {{ expansion }}
                         </button>
                     </div>
@@ -30,7 +30,7 @@
                             @click="toggleType(type)"
                             :class="{
                                 'btn-dark': !selectedTypes.includes(type),
-                                'btn-seleced': selectedTypes.includes(type)
+                                'btn-selected': selectedTypes.includes(type)
                             }" > {{ type }}
                         </button>
                     </div>
@@ -45,7 +45,7 @@
                             @click="toggleCategory(category)"
                             :class="{
                                 'btn-dark': !selectedCategories.includes(category),
-                                'btn-seleced': selectedCategories.includes(category)
+                                'btn-selected': selectedCategories.includes(category)
                             }" > {{ category }}
                         </button>
                     </div>
@@ -101,7 +101,7 @@
                         @click="toggleExpansion(expansion)"
                         :class="{
                             'btn-dark': !selectedExpansions.includes(expansion),
-                            'btn-seleced': selectedExpansions.includes(expansion)
+                            'btn-selected': selectedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
                     <button disabled class="btn-dark" style="margin: 2px 0">Hinterlands</button>
@@ -123,7 +123,7 @@
                             @click="toggleType(type)"
                             :class="{
                                 'btn-dark': !selectedTypes.includes(type),
-                                'btn-seleced': selectedTypes.includes(type)
+                                'btn-selected': selectedTypes.includes(type)
                             }" > {{ type }}
                         </button>
                     </div>
@@ -138,7 +138,7 @@
                             @click="toggleCategory(category)"
                             :class="{
                                 'btn-dark': !selectedCategories.includes(category),
-                                'btn-seleced': selectedCategories.includes(category)
+                                'btn-selected': selectedCategories.includes(category)
                             }" > {{ category }}
                         </button>
                     </div>
@@ -261,7 +261,7 @@
                         class="btn-smaller"
                         :class="{
                             'btn-dark': !selectedAdvancedCardTypes.includes(cardType),
-                            'btn-seleced': selectedAdvancedCardTypes.includes(cardType)
+                            'btn-selected': selectedAdvancedCardTypes.includes(cardType)
                         }" > {{ cardType }}
                     </button>
                 </div>
@@ -273,16 +273,27 @@
                         @click="toggleAdvancedExpansion(expansion)"
                         :class="{
                             'btn-dark': !selectedAdvancedExpansions.includes(expansion),
-                            'btn-seleced': selectedAdvancedExpansions.includes(expansion)
+                            'btn-selected': selectedAdvancedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
                     <button disabled class="btn-dark">Hinterlands</button>
                 </div>
             </div>
-            <div>
-                <button class="btn-start" @click="generateAdvancedKingdom">Generate Kingdom</button>
-                <button class="btn-start" @click="fillFromExpansions()" style="margin-left: 5px;">Populate Cards</button>
-                <button class="btn-start" @click="startCounter()" style="margin-left: 5px;">Start Counter</button>
+            <div :style="containerStyle">
+                <!-- <button class="btn-start" v-if="this.selectedAdvancedCardTypes.includes('Col & Plat')">Test</button> -->
+                <div v-if="showColAndPlat" style="display: flex; flex-direction: row; justify-content: center;" @click="toggleColonyandPlatinum()">
+                    <img class="colPlatHeader" :src="getLandscapesImage('SmallColony')" />
+                    <img class="colPlatHeader" :src="getLandscapesImage('SmallPlatinum')" />
+                </div>
+                <div v-else style="display: flex; flex-direction: row; justify-content: center;" @click="toggleColonyandPlatinum()">
+                    <img class="colPlatHeader" :src="getLandscapesImage('GraySmallColony')" />
+                    <img class="colPlatHeader" :src="getLandscapesImage('GraySmallPlatinum')" />
+                </div>
+                <div style="display: flex; flex-direction: row; justify-content: center;">
+                    <button class="btn-selected" :style="firstButtonStyle" @click="generateAdvancedKingdom">Generate Kingdom</button>
+                    <button class="btn-selected" :style="otherButtonStyle" @click="fillFromExpansions()">Populate Cards</button>
+                    <button class="btn-customlist" :style="otherButtonStyle" @click="startCounter()">Start Counter</button>
+                </div>
                 <!-- <button @click="console.clear()">clear console</button> -->
             </div>
             <div style="display: flex; flex-direction: row;">
@@ -341,7 +352,7 @@ export default {
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Attack', 'Reaction', 'Victory', 'Treasure', 'Duration', 'Command', 'Reserve', 'Castle', 'Gathering', 'Shadow', 'Omen'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
-            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Player Mats', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
+            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Player Mat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
             // selectedAdvancedExpansions: ['Rising Sun'],
             selectedAdvancedCardTypes: [],
@@ -385,6 +396,16 @@ export default {
                 'Sprawling_Castle': 'Castles',
                 'Grand_Castle': 'Castles',
                 "King's_Castle": 'Castles'
+            },
+            setCount: {
+                'Dominion': 0,
+                'Intrigue': 0,
+                'Seaside': 0,
+                'Prosperity': 0,
+                'Adventures': 0,
+                'Empires': 0,
+                'Plunder': 0,
+                'Rising Sun': 0,
             }
         }
     },
@@ -452,6 +473,32 @@ export default {
                 const debtPriority = (b.costType === 'Debt') - (a.costType === 'Debt')
                 return debtPriority || b.cost - a.cost
             })
+        },
+        showColAndPlat() {
+            return this.selectedAdvancedCardTypes.includes('Col & Plat');
+        },
+        containerStyle() {
+            return {
+                display: 'flex',
+                flexDirection: this.isMobile ? 'column-reverse' : 'row',
+                width: this.isMobile ? '100%' : '720px'
+            };
+        },
+        firstButtonStyle() {
+            return {
+                marginTop: '5px',
+                marginLeft: this.isMobile ? '0' : '55px',
+                height: '28px',
+                width: '135px'
+            };
+        },
+        otherButtonStyle() {
+            return {
+                marginTop: '5px',
+                marginLeft: '5px',
+                height: '28px',
+                width: '115px'
+            };
         }
     },
     methods: {
@@ -471,6 +518,13 @@ export default {
             if (collapseGroup == 'Category') {
                 this.showCategories = !this.showCategories
                 console.log('new value', this.showCategories)
+            }
+        },
+        toggleColonyandPlatinum(){
+            if(this.selectedAdvancedCardTypes.includes('Col & Plat')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
+            } else {
+                this.selectedAdvancedCardTypes.push("Col & Plat")
             }
         },
         showFavoriteSuggestions() {
@@ -889,10 +943,10 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Split Pile');
                 this.showRemovedMechanic('Split Pile')
             }
-            if (this.selectedAdvancedCardTypes.includes('Player Mats') && !this.selectedAdvancedExpansions.includes('Seaside')
+            if (this.selectedAdvancedCardTypes.includes('Player Mat') && !this.selectedAdvancedExpansions.includes('Seaside')
                 && !this.selectedAdvancedExpansions.includes('Adventures')) {
-                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Player Mats');
-                this.showRemovedMechanic('Player Mats')
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Player Mat');
+                this.showRemovedMechanic('Player Mat')
             }
             if (this.selectedAdvancedCardTypes.includes('Prophecy') && !this.selectedAdvancedExpansions.includes('Rising Sun')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Prophecy');
@@ -981,7 +1035,7 @@ export default {
                     }
                 }
 
-                if(this.selectedAdvancedCardTypes.includes('Player Mats')) {
+                if(this.selectedAdvancedCardTypes.includes('Player Mat')) {
                     if(loopCount == 1) {
                         this.addRandomCard(playerMatCards)
                     } else if (loopCount == 2){
@@ -1131,6 +1185,28 @@ export default {
                 let card = this.potentialRiverboatCards[riverboatRandomIndex]
                 this.riverboatCard = card.name;
                 this.containsRiverboat = true;
+            }
+
+            this.setCount = {
+                'Dominion': 0,
+                'Intrigue': 0,
+                'Seaside': 0,
+                'Prosperity': 0,
+                'Adventures': 0,
+                'Empires': 0,
+                'Plunder': 0,
+                'Rising Sun': 0,
+            }
+            this.selectedCards.forEach(card => {
+                this.setCount[card.set] = this.setCount[card.set] + 1;
+            })
+
+            if ( this.setCount['Prosperity'] > 2) {
+                this.selectedAdvancedCardTypes.push("Col & Plat")
+            } else if ( this.setCount['Prosperity'] > 1 &&  this.setCount['Empires'] > 2) {
+                this.selectedAdvancedCardTypes.push("Col & Plat")
+            } else {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
             }
         },
         regenerateRiverboatCard(cardName) {
@@ -4061,7 +4137,7 @@ h3{
 .btn-customlist:hover {
     cursor: pointer;
 }
-.btn-seleced {
+.btn-selected {
     width: 110px;
     height: 32px;
     color: #17a2b8 !important;
@@ -4326,7 +4402,6 @@ img {
     justify-content: space-between;
 }
 #advancedCards {
-    margin-top: 10px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -4340,6 +4415,16 @@ img {
 }
 #exitPopupMobile:hover {
     cursor: pointer;
+}
+
+.colPlatHeader{
+    height: 28px !important;
+    width: 140px !important;
+    margin: 5px 2px;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }
 
 #addRecordImg {
@@ -4400,7 +4485,7 @@ img {
         margin-top: 80px;
         width: 400px;
         overflow-y: auto;
-        height: 700px;
+        height: 740px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         position: fixed;
         top: 50%;
@@ -4465,6 +4550,11 @@ img {
         width: 160px;
         height: 105px;
         margin: 2px;
+    }
+
+    .colPlatHeader{
+        height: 30px !important;
+        width: 100px !important;
     }
 
     .icon {
