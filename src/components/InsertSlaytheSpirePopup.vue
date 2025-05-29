@@ -140,7 +140,26 @@
                     />
                 </div>
             </div>
-            <button class="btn-primary" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
+            <div style="display: flex; flex-direction: row;">
+                <div class="playerSection">
+                    <label for="act" style="margin-bottom: 4px;">Act Beat</label>
+                    <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
+                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Act')">▼</div>
+                        <input v-model="Act" id="act" style="width: 18px;">
+                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Act')">▲</div>
+                    </span>
+                </div>
+                <div class="playerSection">
+                    <label for="Ascension" style="margin-bottom: 4px;">Ascension </label>
+                    <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
+                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Ascension')">▼</div>
+                        <input v-model="Ascension" id="act" style="width: 25px;" >
+                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Ascension')">▲</div>
+                    </span>
+                </div>
+                <button class="btn-primary" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
+            </div>
+
         </div>
     </div>
 </template>
@@ -171,7 +190,10 @@ export default {
                 { name: 'The Watcher', code: 'watcher' },
                 { name: '--', code: 'empty' },
             ],
-            playerCharacters: ['empty', 'empty', 'empty', 'empty']
+            playerCharacters: ['empty', 'empty', 'empty', 'empty'],
+            Act: 0,
+            Ascension: 0,
+            gameID: null
         }
     },
     components: {
@@ -189,7 +211,7 @@ export default {
         },
         createMapping(){
             this.positionMapping = {
-                'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName, 'sixth': this.sixthName,
+                'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName
             }
         },
         searchName(event) {
@@ -204,84 +226,104 @@ export default {
             this.positionMapping[placement] = input.value;
             this[placement + 'Name'] = input.value;
         },
-        submitRecord(){
-
-
-            // if (this.insertingGameName === "Heat") {
-            //     this.winnerScore = 0;
-            //     this.secondScore = 0;
-            // }
-
-            let characterMapping = {
-                'silent' : 1,
-                'ironclad' : 2,
-                'defect' : 3,
-                'watcher' : 4,
+        increaseCount(field){
+            if(field === 'Act' && this.Act < 4) {
+                this.Act = this.Act + 1;
             }
-
-            console.log('p1', characterMapping[this.playerCharacters[0]])
-            console.log('p2', characterMapping[this.playerCharacters[1]])
-            console.log('p3', characterMapping[this.playerCharacters[2]])
-            console.log('p4', characterMapping[this.playerCharacters[3]])
-
-            this.playerCharacters[0] = characterMapping[this.playerCharacters[0]]
-            this.playerCharacters[1] = characterMapping[this.playerCharacters[1]]
-            this.playerCharacters[2] = characterMapping[this.playerCharacters[2]]
-            this.playerCharacters[3] = characterMapping[this.playerCharacters[3]]
-            
+            if(field === 'Ascension' && this.Ascension < 13) {
+                this.Ascension = this.Ascension + 1;
+            }
+        },
+        decreaseCount(field){
+            if(field === 'Act' && this.Act > 0) {
+                this.Act = this.Act - 1;
+            }
+            if(field === 'Ascension' && this.Ascension > 0) {
+                this.Ascension = this.Ascension - 1;
+            }
+        },
+        submitRecord() {
             let insertObject = {
                 "posterid": this.userID,
                 "gamename": this.insertingGameName,
                 "winnername": this.winnerName,
-                "winnerscore": this.playerCharacters[0],
-                "secondname": this.secondName,
-                "secondscore": this.playerCharacters[1],
-                "thirdname": this.thirdName,
-                "thirdscore": this.playerCharacters[2],
-                "fourthname": this.fourthName,
-                "fourthscore": this.playerCharacters[3],
-                "fifthname": this.fifthName,
-                "fifthscore": this.fifthScore,
+                "winnerscore": this.Act,
+                "secondname": this.secondName || null,
+                "secondscore": this.Ascension,
+                "thirdname": this.thirdName || null,
+                "thirdscore": null,
+                "fourthname": this.fourthName || null,
+                "fourthscore": null,
+                "fifthname": null,
+                "fifthscore": null,
                 "sixthname": null,
                 "sixthscore": null,
                 date: null
-            }
+            };
 
-            console.log(insertObject)
+            fetch(`${import.meta.env.VITE_API_URL}/insertgame`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                this.gameID = data.gameid;
 
-            // fetch(`${import.meta.env.VITE_API_URL}/insertgame`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'Accept': 'application/json'
-            //     },
-            //     body: JSON.stringify(insertObject)
-            // })
-            // .then(response => {
-            //     if (!response.ok) {
-            //         throw new Error(`HTTP error! status: ${response.status}`);
-            //     }
-            //     this.winnerName = null;
-            //     this.winnerScore = null;
-            //     this.secondName = null;
-            //     this.secondScore = null;
-            //     this.thirdName = null;
-            //     this.thirdScore = null;
-            //     this.fourthName = null;
-            //     this.fourthScore = null;
-            //     this.fifthName = null;
-            //     this.fifthScore = null;
-            //     this.sixthName = null;
-            //     this.sixthScore = null;
-            //     this.$emit('gameInserted')
-            //     return response.json();
-            // })
-            // .then(data => {
-            //     console.log('Success:', data);
-            // })
-            // .catch(error => {
-            //     console.error('Error:', error);
-            // });
+                const isEmptyString = (value) => value === "empty" || value === "";
+                let charactersObject = {
+                    "gameid": this.gameID,
+                    "playerOneCharacter": isEmptyString(this.playerCharacters[0]) ? null : this.playerCharacters[0],
+                    "playerTwoCharacter": isEmptyString(this.playerCharacters[1]) ? null : this.playerCharacters[1],
+                    "playerThreeCharacter": isEmptyString(this.playerCharacters[2]) ? null : this.playerCharacters[2],
+                    "playerFourCharacter": isEmptyString(this.playerCharacters[3]) ? null : this.playerCharacters[3],
+                    "playerFiveCharacter": null,
+                    "playerSixCharacter": null
+                };
+
+                this.winnerName = null;
+                this.Act = null;
+                this.secondName = null;
+                this.Ascension = null;
+                this.thirdName = null;
+                this.fourthName = null;
+                this.$emit('gameInserted');
+
+                return fetch(`${import.meta.env.VITE_API_URL}/insertgamecharacters`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(charactersObject)
+                });
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                this.playerCharacters[0] = null;
+                this.playerCharacters[1] = null;
+                this.playerCharacters[2] = null;
+                this.playerCharacters[3] = null;
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         },
         async fetchUsersPlayedWith(user) {
             axios.get(`${import.meta.env.VITE_API_URL}/getuseruniqueplayers/${user}`, {
