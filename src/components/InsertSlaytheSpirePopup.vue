@@ -2,7 +2,7 @@
     <!-- <div id="popups" class="gamepopup" v-if="this.insertPopup">  -->
     <div id="popups" class="gamepopup" > 
         <div class="popupContainer">
-            <p style="color: white; display: inline-block;">Update a {{ this.insertingGameName }} record</p>
+            <p style="color: white; display: inline-block;">{{ this.popupType }} a {{ this.insertingGameName }} record</p>
             <div class="players">
                 <div class="playerSection">
                     <label for="winnerName">Player One</label>
@@ -157,7 +157,8 @@
                         <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Ascension')">▲</div>
                     </span>
                 </div>
-                <button class="btn-primary" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
+                <button class="btn-primary" v-if="this.popupType == 'Insert'" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
+                <button class="btn-outline" v-if="this.popupType == 'Update'" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="updateRecord" :disabled="isVisitor">Update Record</button>
             </div>
 
         </div>
@@ -167,7 +168,6 @@
 
 <script>
 import axios from "axios"
-import RecentGame from './RecentGame.vue'
 import { userState } from "@/state/userState"
 import Select from 'primevue/select';
 
@@ -175,12 +175,15 @@ export default {
     inheritAttrs: false,
     name: "Add Record",
     props: {
+        Type: String,
+        GameData: Object
     },
     data(){
         return{
             userName: userState.username,
             userID: userState.userID,
             isVisitor: false,
+            popupType: this.Type || "Insert",
             insertingGameName: 'Slay the Spire',
             filteredNames: [],
             characterOptions: [
@@ -193,11 +196,9 @@ export default {
             playerCharacters: ['empty', 'empty', 'empty', 'empty'],
             Act: 0,
             Ascension: 0,
-            gameID: null
+            gameID: null,
+            gamedata: this.GameData || null
         }
-    },
-    components: {
-        RecentGame,
     },
     methods: {
         filteredOptions(index) {
@@ -291,14 +292,95 @@ export default {
                 };
 
                 this.winnerName = null;
-                this.Act = null;
                 this.secondName = null;
-                this.Ascension = null;
                 this.thirdName = null;
                 this.fourthName = null;
+                this.Act = 0;
+                this.Ascension = 0;
                 this.$emit('gameInserted');
 
                 return fetch(`${import.meta.env.VITE_API_URL}/insertgamecharacters`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(charactersObject)
+                });
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                this.playerCharacters[0] = null;
+                this.playerCharacters[1] = null;
+                this.playerCharacters[2] = null;
+                this.playerCharacters[3] = null;
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        },
+        updateRecord(){
+            let insertObject = {
+                "gameid": this.gameID,
+                "winnername": this.winnerName,
+                "winnerscore": this.Act,
+                "secondname": this.secondName || null,
+                "secondscore": this.Ascension,
+                "thirdname": this.thirdName || null,
+                "thirdscore": null,
+                "fourthname": this.fourthName || null,
+                "fourthscore": null,
+                "fifthname": null,
+                "fifthscore": null,
+                "sixthname": null,
+                "sixthscore": null,
+                "date": this.date
+            };
+
+            fetch(`${import.meta.env.VITE_API_URL}/updategame`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+   
+                const isEmptyString = (value) => value === "empty" || value === "";
+                let charactersObject = {
+                    "gameid": this.gameID,
+                    "playerOneCharacter": isEmptyString(this.playerCharacters[0]) ? null : this.playerCharacters[0],
+                    "playerTwoCharacter": isEmptyString(this.playerCharacters[1]) ? null : this.playerCharacters[1],
+                    "playerThreeCharacter": isEmptyString(this.playerCharacters[2]) ? null : this.playerCharacters[2],
+                    "playerFourCharacter": isEmptyString(this.playerCharacters[3]) ? null : this.playerCharacters[3],
+                    "playerFiveCharacter": null,
+                    "playerSixCharacter": null
+                };
+
+                this.winnerName = null;
+                this.secondName = null;
+                this.thirdName = null;
+                this.fourthName = null;
+                this.Act = 0;
+                this.Ascension = 0;
+                this.$emit('gameInserted');
+
+                return fetch(`${import.meta.env.VITE_API_URL}/updategamecharacters`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -348,6 +430,23 @@ export default {
                 console.error("Error fetching data:", error);
             });
         },
+        async fetchGameCharacters(gameid) {
+            axios.get(`${import.meta.env.VITE_API_URL}/getgamecharacters/${gameid}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                this.gameCharacters = response.data
+                this.playerCharacters[0] = this.gameCharacters[0].characterOne;
+                this.playerCharacters[1] = this.gameCharacters[0].characterTwo;
+                this.playerCharacters[2] = this.gameCharacters[0].characterThree;
+                this.playerCharacters[3] = this.gameCharacters[0].characterFour;
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
         handleKeyDown(event, placement) {
             if (event.key === ' ' && !this.overlayVisible) {
             event.preventDefault();
@@ -375,6 +474,18 @@ export default {
         }
         this.createMapping();
         this.fetchUsersPlayedWith(searchName);
+
+        if(this.popupType == 'Update') {
+            this.fetchGameCharacters(this.gamedata.gameid)
+            this.Act = this.gamedata.winnerscore;
+            this.Ascension = this.gamedata.secondscore;
+            this.winnerName = this.gamedata.winnername;
+            this.secondName = this.gamedata.secondname;
+            this.thirdName = this.gamedata.thirdname;
+            this.fourthName = this.gamedata.fourthname;
+            this.gameID = this.gamedata.gameid;
+            this.date = this.gamedata.date;
+        }
     }
 }
 </script>
@@ -432,12 +543,23 @@ input {
     margin-bottom: 0;
     font-size: 14px;
     font-weight: 400;
-    line-height: 1.42857143;
     text-align: center;
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: 5px;
     width: 150px;
-    cursor: poNumberer;
+}
+.btn-outline {
+    color: #17a2b8 !important;
+    background: transparent;
+    border: 2px solid #17a2b8;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    border-radius: 5px;
+    width: 150px;
 }
 
 #overlay {

@@ -34,6 +34,9 @@
         </div>
     </div>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
+    <div id="overlay" v-if="this.showSTS" @click="this.showSTS=!this.showSTS"></div>
+    <InsertSlaytheSpirePopup v-if="this.showSTS" :Type="'Insert'"
+        @gameInserted="this.showSTS = false"></InsertSlaytheSpirePopup>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
             <p v-if="insertingGameName != ''" style="color: white; display: inline-block;">Add a {{ this.insertingGameName }} record</p>
@@ -225,6 +228,7 @@ import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import Dialog from 'primevue/dialog'
 import { userState } from "@/state/userState"
+import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 
 export default {
     name: "Add Record",
@@ -233,13 +237,14 @@ export default {
             userName: userState.username,
             userID: userState.userID,
             showDialog: false,
+            showSTS: false,
             isVisitor: false,
             searchGameName: '',
             insertingGameName: '',
             insertingCustomGameName: '',
             insertingPlayerCount: null,
             filteredNames: [],
-            supportedGames: ['Dominion', 'Moonrakers', 'Clank', 'Lords of Waterdeep', 'Race for the Galaxy', 'Heat', 
+            supportedGames: ['Dominion', 'Clank', 'Slay the Spire', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', 
                 'Space Base', '7 Wonders', 'Root', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
@@ -258,6 +263,7 @@ export default {
     components: {
         Dialog,
         RecentGame,
+        InsertSlaytheSpirePopup
     },
     computed: {
         filteredGames() {
@@ -279,7 +285,7 @@ export default {
         },
         createMapping(){
             this.gamePlayerCounts = {
-                'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 
+                'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
                 'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
                 'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '2 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players'
             }
@@ -288,6 +294,10 @@ export default {
             }
         },
         createPopup(gameName, playerCount){
+            if(gameName == 'Slay the Spire') {
+                this.showSTS = true;
+                return;
+            }
             this.insertingPlayerCount = playerCount.charAt(4);
             this.showDialog = !this.showDialog
             this.insertingGameName = gameName;
@@ -346,7 +356,8 @@ export default {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                this.showDialog=!this.showDialog;
+                this.showDialog = false;
+                this.showSTS = false;
                 this.insertingCustomGameName = ''
                 this.winnerName = null;
                 this.winnerScore = null;

@@ -1,5 +1,5 @@
 <template>
-    <div class="game" @click="createPopup(this.gamePlayerCounts[gameData.gamename])">
+    <div class="game" @click="createPopup(gameData.gamename)">
         <div class="header">
             <div style="display: flex; flex-direction: row;">
                 <img class="gamePicture" :src="imageSource" style="border-top-left-radius: 5px;">
@@ -27,6 +27,9 @@
             </div>
         </div>
     </div>
+    <div id="overlay" v-if="this.showSTS" @click="this.showSTS=!this.showSTS"></div>
+    <InsertSlaytheSpirePopup v-if="this.showSTS" :Type="'Update'" :GameData="gameData"
+        @gameInserted="this.showSTS = false"></InsertSlaytheSpirePopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div style="width: 450px; display: flex; flex-direction: column; align-items: center; margin-bottom: 25px;">
@@ -207,6 +210,7 @@
     
 <script>
 import { userState } from '/src/state/userState'
+import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 
 export default {
     name: "Home",
@@ -229,6 +233,7 @@ export default {
         return{
             userName: userState.username,
             showDialog: false,
+            showSTS: false,
             insertingPlayerCount: null,
             insertingGameName: this.gameData.gamename,
             filteredNames: [],
@@ -248,6 +253,9 @@ export default {
             userMapping: { 1: 'josh', 2: 'john', 3: 'thetwinmeister', 4: 'ethangambles', 13: 'Hibby'}
         }
     },
+    components: {
+        InsertSlaytheSpirePopup
+    },
     methods: {
         navigateToGamePage(name) {
             this.$router.push(`/game/${name}`);
@@ -260,10 +268,15 @@ export default {
                 this.isVisitor = true;
             }
         },
-        createPopup(playerCount){
+        createPopup(gameName){
             if(this.isVisitor == true) {
                 return;
             }
+            if(gameName == 'Slay the Spire') {
+                this.showSTS = true;
+                return;
+            }
+            let playerCount = this.gamePlayerCounts[gameName]
             this.gameid = this.gameData.gameid;
             this.insertingPlayerCount = playerCount.charAt(4);
             this.showDialog = !this.showDialog
@@ -328,7 +341,8 @@ export default {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                this.showDialog=!this.showDialog;
+                this.showDialog = false;
+                this.showSTS = false
                 this.winnerName = null;
                 this.winnerScore = null;
                 this.secondName = null;
@@ -380,7 +394,7 @@ export default {
     },
     created() {
         this.gamePlayerCounts = {
-            'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 
+            'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players', 
             'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
             'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '2 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players'
         }

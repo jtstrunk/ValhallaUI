@@ -1,5 +1,4 @@
 <template>
-    <InsertSlaytheSpirePopup></InsertSlaytheSpirePopup>
     <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden;">
         <div style="display: flex; flex-direction: row;" class="mobileContainer">
             <!-- mobile -->
@@ -186,7 +185,6 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import { userState } from '/src/state/userState'
-import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 
 export default {
     name: "Home",
@@ -194,13 +192,13 @@ export default {
         return{
             userName: userState.username,
             isMobile: window.innerWidth < 440,
-            deckBuilding: ['fakegame', 'Dominion', 'Moonrakers', 'Clank', 'Dune Imperium'],
+            deckBuilding: ['fakegame', 'Dominion', 'Moonrakers', 'Clank', 'Dune Imperium', 'Slay the Spire'],
             workerPlacement : ['fakegame', 'Puerto Rico', 'Dune Imperium', 'Lords of Waterdeep'],
             resourceManagement : ['fakegame', 'Catan', 'Space Base', 'Puerto Rico'],
             roleSelection : ['fakegame', 'Race for the Galaxy', 'Puerto Rico'],
             space: ['Moonrakers', 'Space Base', 'Dune Imperium', 'Race for the Galaxy'],
             medieval : ['Dominion', 'Puerto Rico', 'Lords of Waterdeep', 'Catan'],
-            fantasy : ['Clank', 'Munchkin'],
+            fantasy : ['Clank', 'Munchkin', 'Slay the Spire'],
             recentGames: [],
             showingGames: [],
             showingThemes: [],
@@ -215,8 +213,7 @@ export default {
         }
     },
     components: {
-        RecentGame,
-        InsertSlaytheSpirePopup
+        RecentGame
     },
     watch: {
         searchType() {
