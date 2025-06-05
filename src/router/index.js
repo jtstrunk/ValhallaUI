@@ -49,8 +49,13 @@ const router = createRouter({
     },
     {
       path: '/dominionselector',
-      name: 'DominionSeletor',
+      name: 'DominionSelector',
       component: () => import("../components/DominionSelector.vue"),
+    },
+    {
+      path: '/headtohead',
+      name: 'HeadtoHead',
+      component: () => import("../components/HeadtoHead.vue"),
     },
   ],
 })
