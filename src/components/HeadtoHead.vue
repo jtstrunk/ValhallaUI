@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden; background-color: #333333; padding: 20px; border-radius: 4px; margin-top: 15px;">
+    <div style="width: 350px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; background-color: #333333; padding-bottom: 20px; border-radius: 5px; margin-top: 15px;">
         <h2>Check Head to Head Stats</h2>
         <div style="display: flex; flex-direction: column; margin-bottom: 8px;">
                 <label style="color: white; margin-left: 3px;" for="gamename">Game Name</label>
@@ -54,12 +54,68 @@
             </div>            
         </div>
         <div>
-            <button class="btn-customlist" @click="fetchSpecificInformation()">Get Specific Stats</button>
             <button class="btn-customlist" @click="fetchGeneralInformation()">Get General Stats</button>
+            <button class="btn-customlist" @click="fetchSpecificInformation()">Get Specific Stats</button>
         </div>
     </div>
-    <div v-if="headtoheadGames.length > 0">
-        <p>showing when stats</p>
+    <div v-if="headtoheadGames.length > 0" style="width: 350px; background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-bottom: 20px">
+        <p>Player's {{ gameName}} Statistics</p>
+        <div style="display: flex; flex-direction: row; width: 80%; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <p>{{ playerOneName }}</p>
+                <p>{{ playerOneWins }}</p>
+                <p>{{ playerOneScore }}</p>
+                <p>{{ playerOneScore + playerTwoScore === 0 ? '0.00'
+                    : (playerOneScore / (playerOneWins + playerTwoWins)).toFixed(0)}}
+                </p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; ">
+                <p>Player</p>
+                <p>Wins</p>
+                <p>Points</p>
+                <p>Average Points</p>
+
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <p>{{ playerTwoName }}</p>
+                <p>{{ playerTwoWins }}</p>
+                <p>{{ playerTwoScore }}</p>
+                <p>{{ playerTwoScore + playerTwoScore === 0 ? '0.00'
+                    : (playerTwoScore / (playerOneWins + playerTwoWins)).toFixed(0)}}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div v-if="headtoheadGames.length > 0" style="background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-bottom: 20px">
+        <p>In Wins</p>
+
+        <div style="display: flex; flex-direction: row; justify-content: space-between; width: 80%;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <p>{{ playerOneStats.averageScore.toFixed(2) }}</p>
+                <p>{{ playerOneStats.highestScore }}</p>
+                <p>{{ playerOneStats.lowestScore }}</p>
+                <p>{{ playerOneStats.averageDifference.toFixed(2) }}</p>
+                <p>{{ playerOneStats.highestDifference }}</p>
+                <p>{{ playerOneStats.lowestDifference }}</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <p>Average Score</p>
+                <p>Highest Score</p>
+                <p>Lowest Score</p>
+                <p>Average Difference</p>
+                <p>Highest Difference</p>
+                <p>Lowest Difference</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <p>{{ playerTwoStats.averageScore.toFixed(2) }}</p>
+                <p>{{ playerTwoStats.highestScore }}</p>
+                <p>{{ playerTwoStats.lowestScore }}</p>
+                <p>{{ playerTwoStats.averageDifference.toFixed(2) }}</p>
+                <p>{{ playerTwoStats.highestDifference }}</p>
+                <p>{{ playerTwoStats.lowestDifference }}</p>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -74,9 +130,9 @@ export default {
         return{
             logginUser: userState.username,
             logginUserID: userState.userID,
-            playerOneName: null,
-            playerTwoName: null,
-            gameName: null,
+            playerOneName: 'josh',
+            playerTwoName: 'john',
+            gameName: 'Dominion',
             playerOneWins: 0,
             playerTwoWins: 0,
             playerOneScore: 0,
