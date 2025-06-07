@@ -1,9 +1,10 @@
 <template>
-    <div style="width: 350px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; background-color: #333333; padding-bottom: 20px; border-radius: 5px; margin-top: 15px;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+    <div style="width: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-x: hidden; background-color: #333333; padding-bottom: 20px; border-radius: 5px; margin-top: 15px;">
         <h2>Check Head to Head Stats</h2>
         <div style="display: flex; flex-direction: column; margin-bottom: 8px;">
                 <label style="color: white; margin-left: 3px;" for="gamename">Game Name</label>
-                <Select v-model="gameName" :options="twoPlayerGames" placeholder="Select a Game"
+                <Select v-model="gameName" :options="twoPlayerGames" placeholder="Select a Game" @change="this.showStatistics = false"
                     style="background-color: #404040; width: 250px; padding: 7px 10px; color: white; border-radius: 5px; margin-bottom: 10px;"
                     :pt="{
                         overlay: { style: { backgroundColor: '#404040' } },
@@ -58,10 +59,16 @@
             <button class="btn-customlist" @click="fetchSpecificInformation()">Get Specific Stats</button>
         </div>
     </div>
-    <div v-if="headtoheadGames.length > 0" style="width: 350px; background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-bottom: 20px">
-        <p>Player's {{ gameName}} Statistics</p>
+    <div v-if="showStatistics && headtoheadGames.length < 1" style="width: 350px; background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; margin-top: 10px;">
+        <h2 style="margin-left: 15px;">No Games Found</h2>
+        <div class="centered-message">
+            {{ noGamesMessage }}
+        </div>
+    </div>
+    <div v-if="showSpecific && headtoheadGames.length > 0" style="width: 350px; background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-bottom: 20px">
+        <p style="margin-bottom: 6px;">Player's {{ gameName}} Statistics</p>
         <div style="display: flex; flex-direction: row; width: 80%; justify-content: space-between;">
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div class="statInfo">
                 <p>{{ playerOneName }}</p>
                 <p>{{ playerOneWins }}</p>
                 <p>{{ playerOneScore }}</p>
@@ -69,14 +76,13 @@
                     : (playerOneScore / (playerOneWins + playerTwoWins)).toFixed(0)}}
                 </p>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center; ">
+            <div class="statInfo">
                 <p>Player</p>
                 <p>Wins</p>
                 <p>Points</p>
                 <p>Average Points</p>
-
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div class="statInfo">
                 <p>{{ playerTwoName }}</p>
                 <p>{{ playerTwoWins }}</p>
                 <p>{{ playerTwoScore }}</p>
@@ -86,19 +92,18 @@
             </div>
         </div>
     </div>
-    <div v-if="headtoheadGames.length > 0" style="background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-bottom: 20px">
-        <p>In Wins</p>
-
+    <div v-if="showSpecific && headtoheadGames.length > 0" style="width: 350px; background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-bottom: 20px">
+        <p style="margin-bottom: 6px;">In Wins</p>
         <div style="display: flex; flex-direction: row; justify-content: space-between; width: 80%;">
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div class="statInfo">
                 <p>{{ playerOneStats.averageScore.toFixed(2) }}</p>
-                <p>{{ playerOneStats.highestScore }}</p>
-                <p>{{ playerOneStats.lowestScore }}</p>
+                <p>{{ showZeroIfInvalid(playerOneStats.highestScore) }}</p>
+                <p>{{ showZeroIfInvalid(playerOneStats.lowestScore) }}</p>
                 <p>{{ playerOneStats.averageDifference.toFixed(2) }}</p>
-                <p>{{ playerOneStats.highestDifference }}</p>
-                <p>{{ playerOneStats.lowestDifference }}</p>
+                <p>{{ showZeroIfInvalid(playerOneStats.highestDifference) }}</p>
+                <p>{{ showZeroIfInvalid(playerOneStats.lowestDifference) }}</p>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div class="statInfo">
                 <p>Average Score</p>
                 <p>Highest Score</p>
                 <p>Lowest Score</p>
@@ -106,16 +111,63 @@
                 <p>Highest Difference</p>
                 <p>Lowest Difference</p>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div class="statInfo">
                 <p>{{ playerTwoStats.averageScore.toFixed(2) }}</p>
-                <p>{{ playerTwoStats.highestScore }}</p>
-                <p>{{ playerTwoStats.lowestScore }}</p>
+                <p>{{ showZeroIfInvalid(playerTwoStats.highestScore) }}</p>
+                <p>{{ showZeroIfInvalid(playerTwoStats.lowestScore) }}</p>
                 <p>{{ playerTwoStats.averageDifference.toFixed(2) }}</p>
-                <p>{{ playerTwoStats.highestDifference }}</p>
-                <p>{{ playerTwoStats.lowestDifference }}</p>
+                <p>{{ showZeroIfInvalid(playerTwoStats.highestDifference) }}</p>
+                <p>{{ showZeroIfInvalid(playerTwoStats.lowestDifference) }}</p>
             </div>
         </div>
-
+    </div>
+    <div v-if="showGeneral && showStatistics && headtoheadGames.length > 0" style="width: 350px; background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-bottom: 20px">
+        <p style="margin-bottom: 6px;">Any Game Statistics</p>
+        <div style="display: flex; flex-direction: row; justify-content: space-between; width: 80%;">
+            <div class="statInfo">
+                <p>{{ playerOneName }}</p>
+                <p>{{ playerOneWins }}</p>
+                <p>{{ playerOneMostWonGame }}</p>
+            </div>
+            <div class="statInfo">
+                <p>Player</p>
+                <p>Wins</p>
+                <p>Most Won</p>
+            </div>
+            <div class="statInfo">
+                <p>{{ playerTwoName }}</p>
+                <p>{{ playerTwoWins }}</p>
+                <p>{{ playerTwoMostWonGame }}</p>
+            </div>
+        </div>
+    </div>
+    <div v-if="showStatistics && headtoheadGames.length > 0 && !isMobile" style="background-color: #333333; border-radius: 5px; display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 120px;">
+        <button @click="this.showAdvGame=!this.showAdvGame" class="btn-customlist" :style="{ textAlign: 'center', width: '350px', margin: showAdvGame ? '10px 0 0 0' : '0px' }">Toggle Games</button>
+        <div v-if="showStatistics && showAdvGame" style="width: 800px;">
+            <div class="game-table" st>
+                <div class="game-row game-header">
+                    <span>GameID</span>
+                    <span>GameName</span>
+                    <span>Winner</span>
+                    <span>Score</span>
+                    <span>Second</span>
+                    <span>Score</span>
+                    <span>Difference</span>
+                    <span>Date</span>
+                </div>
+                <div class="game-row" v-for="game in headtoheadGames" :key="game.gameid">
+                    <span>{{ game.gameid }}</span>
+                    <span>{{ game.gamename }}</span>
+                    <span>{{ game.winnername }}</span>
+                    <span>{{ game.winnerscore }}</span>
+                    <span>{{ game.secondname }}</span>
+                    <span>{{ game.secondscore }}</span>
+                    <span>{{ game.difference }}</span>
+                    <span>{{ game.date }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </template>
 
@@ -133,10 +185,17 @@ export default {
             playerOneName: 'josh',
             playerTwoName: 'john',
             gameName: 'Dominion',
+            showStatistics: false,
+            showSpecific: false,
+            showGeneral: false,
+            showGameRows: false,
+            showAdvGame: false,
             playerOneWins: 0,
             playerTwoWins: 0,
             playerOneScore: 0,
             playerTwoScore: 0,
+            playerOneMostWonGame: '',
+            playerTwoMostWonGame: '',
             playerOneWinScores: [],
             playerOneWinDiffs: [],
             playerTwoWinScores: [],
@@ -153,6 +212,12 @@ export default {
         RecentGame
     },
     methods: {
+        showZeroIfInvalid(value) {
+            if (value == null || value === Infinity || value === -Infinity || isNaN(value)) {
+                return 0;
+            }
+            return value;
+        },
         showpopup(term) {
             this.showingList = term;
             this.showDialog = true;
@@ -164,7 +229,6 @@ export default {
             this.fetchSpecificHeadtoHeadStats(this.playerOneName, this.playerTwoName, this.gameName);
         },
         searchName(event, placement) {
-            console.log(this.suggestedNames)
             const query = (event && typeof event.query === 'string') ? event.query.toLowerCase() : '';
             this[`filteredNames${placement}`] = this.suggestedNames.filter(x => {
                 const name = (x && typeof x.name === 'string') ? x.name.toLowerCase() : '';
@@ -176,6 +240,9 @@ export default {
             this[`${placement}Name`] = name;
         },
         inputName(input, placement) {
+            this.showStatistics = false;
+            this.showSpecific = false;
+            this.showGeneral = false;
             this[`${placement}Name`] = input.value;
         },
         handleKeyDown(event, placement) {
@@ -189,6 +256,11 @@ export default {
             });
             }
         },
+        reorderGames(method) {
+            if(method === 'gameid') {
+                this.headtoheadGames
+            }
+        },
         async fetchGeneralHeadtoHeadStats(userone, usertwo) {
             axios.get(`${import.meta.env.VITE_API_URL}/getanygameheadtohead/${userone}/${usertwo}`, {
             withCredentials: false,
@@ -197,6 +269,39 @@ export default {
             }})
             .then(response => {
                 console.log(response.data)
+                this.showSpecific = false;
+                this.showGeneral = true;
+                this.showStatistics = true;
+                this.headtoheadGames = response.data;
+                this.playerOneWins = 0;
+                this.playerTwoWins = 0;
+                const playerOneGameWins = {};
+                const playerTwoGameWins = {};
+
+                this.headtoheadGames.forEach(game => {
+                    if (game.winnername === this.playerOneName) {
+                        this.playerOneWins++;
+                        playerOneGameWins[game.gamename] = (playerOneGameWins[game.gamename] || 0) + 1;
+                    } else {
+                        this.playerTwoWins++;
+                        playerTwoGameWins[game.gamename] = (playerTwoGameWins[game.gamename] || 0) + 1;
+                    }
+                });
+
+                function getMostWonGame(gameWinsObj) {
+                    let max = 0;
+                    let mostWonGame = null;
+                    for (const [gamename, count] of Object.entries(gameWinsObj)) {
+                        if (count > max) {
+                            max = count;
+                            mostWonGame = gamename;
+                        }
+                    }
+                    return mostWonGame;
+                }
+
+                this.playerOneMostWonGame = getMostWonGame(playerOneGameWins);
+                this.playerTwoMostWonGame = getMostWonGame(playerTwoGameWins);
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -210,19 +315,19 @@ export default {
             }})
             .then(response => {
                 console.log(response.data)
+                this.showStatistics = true;
+                this.showSpecific = true;
+                this.showGeneral = false;
                 this.headtoheadGames = response.data;
                 this.playerOneScore = 0;
                 this.playerTwoScore = 0;
                 this.playerOneWins = 0;
                 this.playerTwoWins = 0;
-
-                // For stats:
                 this.playerOneWinScores = [];
                 this.playerOneWinDiffs = [];
                 this.playerTwoWinScores = [];
                 this.playerTwoWinDiffs = [];
 
-                // Your loop
                 this.headtoheadGames.forEach(game => {
                     if (game.winnername === this.playerOneName) {
                         this.playerOneScore += game.winnerscore;
@@ -242,8 +347,6 @@ export default {
                         this.playerTwoScore += game.secondscore;
                     }
                 });
-
-                // After the loop, calculate stats:
                 function average(arr) {
                     return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
                 }
@@ -256,9 +359,6 @@ export default {
                     highestDifference: Math.max(...this.playerOneWinDiffs),
                     lowestDifference: Math.min(...this.playerOneWinDiffs),
                 };
-
-                console.log("Player One Win Stats:", this.playerOneStats);
-
                 this.playerTwoStats = {
                     averageScore: average(this.playerTwoWinScores),
                     highestScore: Math.max(...this.playerTwoWinScores),
@@ -268,11 +368,6 @@ export default {
                     lowestDifference: Math.min(...this.playerTwoWinDiffs),
                 };
 
-                console.log("Player Two Win Stats:", this.playerTwoStats);
-
-
-                console.log(this.playerOneName, 'has won', this.playerOneWins, 'games with a total score of', this.playerOneScore)
-                console.log(this.playerTwoName, 'has won', this.playerTwoWins, 'games with a total score of', this.playerTwoScore)
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -301,9 +396,16 @@ export default {
         }
     },
     computed: {
+        noGamesMessage() {
+            let message = `No 1v1 games were found between ${this.playerOneName} and ${this.playerTwoName}`;
+            if (this.showSpecific) {
+                message += ` playing ${this.gameName}`;
+            }
+            return message;
+        },
         isMobile() {
-            return window.innerWidth < 410;
-        }
+            return window.innerWidth < 420;
+        },
     },
     created() {
         let searchName = this.logginUser;
@@ -340,4 +442,57 @@ export default {
 .btn-customlist:hover {
     cursor: pointer;
 }
+
+.centered-message {
+  font-family: 'Manolo Mono', sans-serif !important;
+  margin: 15px auto;
+  text-align: center;
+  max-width: 500px;   /* Adjust as needed for your layout */
+  word-break: break-word;
+  color: white;
+}
+
+.statInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.statInfo p {
+    margin: 10px 0;
+}
+
+.game-table {
+  width: fit-content;     /* Shrinks to fit the grid's contents */
+  margin: 0 auto;         /* Centers the table horizontally */
+  margin-top: 20px;       /* Optional: vertical spacing */
+  padding-bottom: 15px;
+}
+
+.game-row {
+  display: grid;
+  grid-template-columns:
+    80px      /* GameID: wider for full word */
+    170px     /* GameName */
+    90px      /* Winner */
+    70px      /* Score: wider for header */
+    90px      /* Second */
+    70px      /* Score: wider for header */
+    90px      /* Difference */
+    110px;    /* Date */
+  align-items: center;
+  color: white;
+}
+
+.game-header {
+  font-weight: bold;
+  border-bottom: 2px solid #fff;
+}
+
+.game-row span {
+  padding: 4px 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 </style>

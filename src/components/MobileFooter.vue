@@ -21,6 +21,9 @@
     </div>
 
     <div v-show="showDropdown" class="dropdown-content-mobile" style="left: 5px; min-width: 160px;">
+        <router-link to="/headtohead" class="dropdown-item">
+            1v1 Statistics
+        </router-link>
         <router-link to="/dominioncounter" class="dropdown-item">
             Dominion Counter
         </router-link>
@@ -99,7 +102,7 @@ export default {
 
 .dropdown-content-mobile {
     position: absolute;
-    bottom: 61px;
+    bottom: 91px;
     left: 20px;
     display: flex;
     flex-direction: column;
@@ -114,5 +117,6 @@ export default {
     width: 136px;
     text-decoration: none;
     color: white;
+    text-align: center;
 }
 </style>
