@@ -12,7 +12,48 @@
             </div>
             <img :src="profileImageSrc" class="profilePicture">
         </div>
-        <div class="gameInformation">
+        <div class="slaythespireInformation" v-if="gameData.gamename === 'Slay the Spire'">
+            <div v-if="gameData.secondname === null" style="width: 100%; margin-top: 15px; display: flex; flex-direction: row; justify-content: space-around;">
+                <div>
+                    <span style="color: white;" @click="navigateToProfile(gameData.winnername)">{{ gameData.winnername }}</span>
+                </div>
+                <div>
+                    <span style="color: white;">Act Beat:&nbsp;</span>
+                    <span style="color: white;">{{ gameData.winnerscore }}</span>
+                </div>
+                <div>
+                    <span style="color: white;">Ascension:&nbsp;</span>
+                    <span style="color: white;">{{ gameData.secondscore }}</span>
+                </div>
+            </div>
+            <div v-if="gameData.secondname !== null">
+                <div class="slaythespireRow" style="width: 95px; justify-content: space-between;">
+                    <span>Act Beat:</span>
+                    <span>{{ gameData.winnerscore }}</span>
+                </div>
+                <div class="slaythespireRow" style="width: 95px; justify-content: space-between;">
+                    <span>Ascension:</span>
+                    <span>{{ gameData.secondscore }}</span>
+                </div>
+            </div>
+            <div v-if="gameData.secondname !== null">
+                <div class="slaythespireRow">
+                    <span @click="navigateToProfile(gameData.winnername)">{{ gameData.winnername }}</span>
+                </div>
+                <div class="slaythespireRow">
+                    <span @click="navigateToProfile(gameData.secondname)">{{ gameData.secondname }}</span>
+                </div>
+            </div>
+            <div v-if="gameData.thirdname !== null">
+                <div class="slaythespireRow">
+                    <span @click="navigateToProfile(gameData.thirdname)">{{ gameData.thirdname }}</span>
+                </div>
+                <div class="slaythespireRow">
+                    <span @click="navigateToProfile(gameData.fourthname)">{{ gameData.fourthname }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="gameInformation" v-if="gameData.gamename !== 'Slay the Spire'">
             <div class="podium">
                 <img src="/src/assets/icons/firstblack.png" class="medal">
                 <p class="placer" @click="navigateToProfile(this.winnerName)">{{ this.winnerName }}</p>
@@ -407,6 +448,10 @@ export default {
             this.secondName = 'Player 2';
             this.thirdName = 'Player 3';
         }
+
+        if(this.gameData.gamename == 'Slay the Spire') {
+            console.log(this.gameData)
+        }
     }
 }
 </script>
@@ -467,6 +512,21 @@ export default {
 }
 .gameInformation p {
     color: white;
+}
+.slaythespireInformation { 
+    display: flex;
+    flex-direction: row;
+    margin-top: 28px;
+    width: 100%;
+    justify-content: space-around;
+}
+.slaythespireRow {
+    display: flex;
+    flex-direction: row;
+}
+.slaythespireRow span {
+    color: white;
+    margin-bottom: 8px;
 }
 .podium{
     width: 155px;
@@ -573,6 +633,9 @@ input {
     }
     .gameInformation {
         margin-top: 12px;
+    }
+    .slaythespireInformation{
+        margin-top: 10px;
     }
     .name {
         font-size: 18px;

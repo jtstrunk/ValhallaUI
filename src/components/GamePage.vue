@@ -10,7 +10,7 @@
                 </div>
             </div>
             <p style="margin-left: 8px; margin-bottom: 0px; font-family: 'Manolo Mono', sans-serif !important;">Your Stats</p>
-            <div id="gameInformation">
+            <div id="gameInformation" v-if="gameName !== 'Slay the Spire'">
                 <div class="stat">
                     <p>{{ userPlays }}</p>
                     <p>Plays</p>
@@ -24,8 +24,25 @@
                     <p>Win Rate</p>
                 </div>
             </div>
+            <div id="gameInformation" v-if="gameName === 'Slay the Spire'">
+                <div class="stat">
+                    <p>{{ this.stsplays }}</p>
+                    <p>Plays</p>
+                </div>
+                <div class="stat">
+                    <p>{{ this.stswins }}</p>
+                    <p>Wins</p>
+                </div>
+                <div class="stat">
+                    <p>{{ this.ascension }}</p>
+                    <p>Max Ascension</p>
+                </div>
+            </div>
+            <div id="gameInformation" v-if="gameName === 'Slay the Spire'" style="color: white; margin-top: 20px; font-family: 'Manolo Mono', sans-serif !important;">
+                Most played character: The {{ capitalizedCharacterName }} ({{ this.characterPlays }} plays)
+            </div>
         </div>
-        <div class="section" id="gamesHeader" >
+        <div class="section" id="gamesHeader" v-if="gameName !== 'Slay the Spire'">
             <div id="winPercentHeader">
                 <p style="margin-left: 8px; font-size: 18px;">Highest Win Percent</p>
                 <p style="margin: 0 8px;"> - </p>
@@ -88,7 +105,13 @@ export default {
             mostPlayedName: null,
             mostPlayedGames: null,
             mostWonName: null,
-            mostWonGames: null
+            mostWonGames: null,
+            slaythespireData: null,
+            stswins: null,
+            stsplays: null,
+            ascension: null,
+            characterName: null,
+            characterPlays: null
         }
     },
     components: {
@@ -132,12 +155,36 @@ export default {
                 console.error("Error fetching data:", error);
             });
         },
+        async fetchSlaytheSpireInformation(username) {
+            axios.get(`${import.meta.env.VITE_API_URL}/getslaythespireinformation/${username}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                console.log(response.data)
+                this.slaythespireData = response.data;
+                this.gameContext = `Played ${this.slaythespireData.GamePlayCount} times by ${this.slaythespireData.PlayerCount} unique players`;
+                this.stswins = response.data.Wins;
+                this.stsplays = response.data.Plays;
+                this.ascension = response.data.Ascension;
+                this.characterName = response.data.CharacterName;
+                this.characterPlays = response.data.CharacterPlays;
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
     },
     computed: {
         gameImage() {
             const cleanedGameName = this.gameName.replace(/\s+/g, '');
             return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
         },
+        capitalizedCharacterName() {
+            if (!this.characterName) return "";
+            return this.characterName.charAt(0).toUpperCase() + this.characterName.slice(1);
+        }
     },
     created() {
         let searchName = this.userName;
@@ -145,10 +192,15 @@ export default {
             searchName = 'josh'
             this.isVisitor = true;
         }
-        console.log(searchName)
-        this.fetchGameInformation(searchName, this.gameName);
+        
+        if(this.gameName === 'Slay the Spire') {
+            this.fetchSlaytheSpireInformation(searchName)
+        } else {
+            this.fetchGameInformation(searchName, this.gameName);
+        }
+        
         this.gamePlayerCounts = {
-            'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 
+            'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
             'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', 'Root' : '2 - 4 Players', 'Puerto Rico' : '3 - 5 Players',
             'Cosmic Encounter': '3 - 5 Players', 'Catan': '2 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players'
         }
