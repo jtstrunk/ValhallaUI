@@ -182,9 +182,9 @@ export default {
         return{
             logginUser: userState.username,
             logginUserID: userState.userID,
-            playerOneName: 'josh',
-            playerTwoName: 'john',
-            gameName: 'Dominion',
+            playerOneName: userState.username,
+            playerTwoName: null,
+            gameName: null,
             showStatistics: false,
             showSpecific: false,
             showGeneral: false,
