@@ -77,6 +77,12 @@
             this.$router.push('/');
           } else {
             console.log('no matchig user')
+            this.$toast.add({
+                severity: 'info',
+                summary: 'Incorrect Login',
+                detail: 'We couldn’t find an account with that username and password',
+                life: 7000
+            });
           }
         } catch (error) {
           console.error('Login failed:', error)
