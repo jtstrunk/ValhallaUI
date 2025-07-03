@@ -789,7 +789,9 @@ export default {
             this.$router.push('/dominioncounter')
         },
         fillFromExpansions(){
-            this.selectedExpansionsCardList = [...this.cards];
+            this.selectedExpansionsCardList = [...this.cards].filter(card => {
+                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card");
+            });
             this.selectedExpansionsLandscapeList = [...this.landscapes];
             if (this.selectedAdvancedExpansions.length > 0) {
                 this.selectedExpansionsCardList = this.selectedExpansionsCardList.filter(card =>
