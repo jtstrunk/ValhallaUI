@@ -105,7 +105,6 @@
                         }" > {{ expansion }}
                     </button>
                     <button disabled class="btn-dark" style="margin: 2px 0">Hinterlands</button>
-                    <button disabled class="btn-dark" style="margin: 2px 0">Guilds & Cornu</button>
                     <button disabled class="btn-dark" style="margin: 2px 0">Renaissance</button>
                     <button disabled class="btn-dark" style="margin: 2px 0">Allies</button>
                 </div>
@@ -266,7 +265,7 @@
                     </button>
                 </div>
                 <span v-if="isMobile" class="tags">Expansions</span>
-                <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 340px; height: 112.5px; justify-content: space-between;">
+                <div id="expansionContainer">
                     <button
                         v-for="expansion in expansions"
                         :key="expansion"
@@ -276,7 +275,10 @@
                             'btn-selected': selectedAdvancedExpansions.includes(expansion)
                         }" > {{ expansion }}
                     </button>
+                    <!-- <button disabled class="btn-dark">Hinterlands</button> -->
                     <button disabled class="btn-dark">Hinterlands</button>
+                    <button disabled class="btn-dark">Renaissance</button>
+                    <button disabled class="btn-dark">Allies</button>
                 </div>
             </div>
             <div :style="containerStyle">
@@ -349,10 +351,10 @@ export default {
             showSets: true,
             showTypes: true,
             showCategories: false,
-            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
+            expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Cornu & Guilds', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Attack', 'Reaction', 'Victory', 'Treasure', 'Duration', 'Command', 'Reserve', 'Castle', 'Gathering', 'Shadow', 'Omen'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
-            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Player Mat', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
+            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Trashing', 'Choice', 'Player Mat', 'Overpay', 'Coffers', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
             // selectedAdvancedExpansions: ['Rising Sun'],
             selectedAdvancedCardTypes: [],
@@ -369,6 +371,9 @@ export default {
             numberTraits: 0,
             riverboatCard: "",
             obeliskCard: "",
+            expansionDisplayNames: {
+                'Cornu & Guilds': 'Cornu & Guilds'
+            },
             splitPileCheck: {
                 'Treasure_Hunter': 'Page',
                 'Warrior': 'Page',
@@ -1416,7 +1421,7 @@ export default {
                 types: ["Action"],
                 categories: ["Sifter"],
                 costType: "Money",
-                cost: 3
+                cost: 2
             },
             {
                 name: "Chapel",
@@ -3481,6 +3486,240 @@ export default {
                 costType: "Money",
                 cost: 5
             },
+            {
+                name: "Candlestick_Maker",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Farrier",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Hamlet",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Village", "Cantrip"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Stonemason",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Gainer"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 2
+            },
+            {
+                name: "Infirmary",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Menagerie",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Shop",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 3
+            },
+            {
+                name: "Advisor",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Farmhands",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Village"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Herald",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Cantrip"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Plaza",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Village"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Remake",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Young_Witch",
+                set: "Cornu & Guilds",
+                types: ["Action", "Attack"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 4
+            },
+            {
+                name: "Baker",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Butcher",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Carnival",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Ferryman",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: ["Sifter"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Footpad",
+                set: "Cornu & Guilds",
+                types: ["Action", "Attack"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Horn_of_Plenty",
+                set: "Cornu & Guilds",
+                types: ["Treasure"],
+                categories: ["Gainer"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Hunting_Party",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Jester",
+                set: "Cornu & Guilds",
+                types: ["Action", "Attack"],
+                categories: ["Gainer"],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Journeyman",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Joust",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Merchant_Guild",
+                set: "Cornu & Guilds",
+                types: ["Action"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Soothsayer",
+                set: "Cornu & Guilds",
+                types: ["Action", "Attack"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 5
+            },
+            {
+                name: "Fairgrounds",
+                set: "Cornu & Guilds",
+                types: ["Victory"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 6
+            },
         ]
         this.landscapes = [
             {
@@ -4353,7 +4592,7 @@ img {
 
 .gamepopup {
     width: 950px;
-    height: 820px;
+    height: 850px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 50%;
@@ -4400,7 +4639,15 @@ img {
     flex-direction: row;
     flex-wrap: wrap;
     width: 450px;
-    height: 112.5px;
+    height: 144px;
+    justify-content: space-between;
+}
+#expansionContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 340px;
+    height: 144px;
     justify-content: space-between;
 }
 #advancedCards {
