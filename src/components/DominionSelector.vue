@@ -354,7 +354,7 @@ export default {
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Cornu & Guilds', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Attack', 'Reaction', 'Victory', 'Treasure', 'Duration', 'Command', 'Reserve', 'Castle', 'Gathering', 'Shadow', 'Omen'],
             categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
-            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Trashing', 'Choice', 'Player Mat', 'Overpay', 'Coffers', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
+            cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Trasher', 'Choice', 'Player Mat', 'Overpay', 'Coffers', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
             // selectedAdvancedExpansions: ['Rising Sun'],
             selectedAdvancedCardTypes: [],
@@ -514,15 +514,12 @@ export default {
             console.log('collapsing', collapseGroup)
             if (collapseGroup == 'Set') {
                 this.showSets = !this.showSets
-                console.log('new value', this.showSets)
             }
             if (collapseGroup == 'Type') {
                 this.showTypes = !this.showTypes
-                console.log('new value', this.showTypes)
             }
             if (collapseGroup == 'Category') {
                 this.showCategories = !this.showCategories
-                console.log('new value', this.showCategories)
             }
         },
         toggleColonyandPlatinum(){
@@ -696,6 +693,15 @@ export default {
                 return;
             }
 
+            let rewardCards = this.cards.filter(card => card.types?.includes('Reward'))
+            if (rewardCards.some(item => item.name === card.name)) {
+                let mainCard = this.cards.find(card => card.name === 'Joust');
+                if (!this.selectedCards.includes(mainCard) & this.selectedCards.length < 10) {
+                    this.selectedCards.push(mainCard);
+                }
+                return;
+            }
+
             if (!this.selectedCards.includes(card) & this.selectedCards.length < 10) {
                 this.selectedCards.push(card);
             }
@@ -795,7 +801,7 @@ export default {
         },
         fillFromExpansions(){
             this.selectedExpansionsCardList = [...this.cards].filter(card => {
-                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card");
+                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") && !card.types?.includes("Reward");
             });
             this.selectedExpansionsLandscapeList = [...this.landscapes];
             if (this.selectedAdvancedExpansions.length > 0) {
@@ -879,7 +885,7 @@ export default {
             this.numberTraits = 0;
             let maxEffectCount = false;
             this.selectedExpansionsCardList = [...this.cards].filter(card => {
-                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card");
+                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") && !card.types?.includes("Reward");
             });
             this.selectedExpansionsLandscapeList = [...this.landscapes];
             this.selectedCards = [];
@@ -898,6 +904,10 @@ export default {
             let treasureCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Treasure'))
             let gatheringCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Gathering'))
             let shadowCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Shadow'))
+            let trasherCards = this.selectedExpansionsCardList.filter(card => card.categories.includes('Trasher'))
+            let choiceCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Choice'))
+            let coffersCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Coffers'))
+            let overpayCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Overpay'))
             let debtCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Debt'))
             let playerMatCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Player_Mat'))
             let splitPileCards = this.selectedExpansionsCardList.filter(card => card.tags?.includes('Split_Pile'))
@@ -973,6 +983,20 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Landmark');
                 this.showRemovedLandscape('Landmarks')
             }
+            if (this.selectedAdvancedCardTypes.includes('Coffers') && !this.selectedAdvancedExpansions.includes('Cornu & Guilds')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Coffers');
+                this.showRemovedCard('Coffers')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Overpay') && !this.selectedAdvancedExpansions.includes('Cornu & Guilds')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Overpay');
+                this.showRemovedCard('Overpay')
+            }
+            if (this.selectedAdvancedCardTypes.includes('Choice') && !this.selectedAdvancedExpansions.includes('Intrigue')
+                && !this.selectedAdvancedExpansions.includes('Seaside') && !this.selectedAdvancedExpansions.includes('Adventures')
+                && !this.selectedAdvancedExpansions.includes('Empires') && !this.selectedAdvancedExpansions.includes('Plunder')) {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Choice');
+                this.showRemovedCard('Choice')
+            }
 
             for(let loopCount = 1; loopCount < 4; loopCount++) {
                 if(this.selectedAdvancedCardTypes.includes('Victory')) {
@@ -1042,10 +1066,45 @@ export default {
                     }
                 }
 
+                if(this.selectedAdvancedCardTypes.includes('Trasher')) {
+                    if(loopCount == 1) {
+                        console.log('adding trash')
+                        this.addRandomCard(trasherCards)
+                    }
+                }
+
+                if(this.selectedAdvancedCardTypes.includes('Choice')) {
+                    if(loopCount == 1) {
+                        this.addRandomCard(choiceCards)
+                    } else if (loopCount == 2) {
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 15) {
+                            this.addRandomCard(choiceCards)
+                        }
+                    }
+                }
+
+                if(this.selectedAdvancedCardTypes.includes('Coffers')) {
+                    if(loopCount == 1) {
+                        this.addRandomCard(coffersCards)
+                    } else if (loopCount == 2) {
+                        let randomChance = Math.floor(Math.random() * 100);
+                        if(randomChance <= 35) {
+                            this.addRandomCard(coffersCards)
+                        }
+                    }
+                }
+
+                if(this.selectedAdvancedCardTypes.includes('Overpay')) {
+                    if(loopCount == 1) {
+                        this.addRandomCard(overpayCards)
+                    }
+                }
+
                 if(this.selectedAdvancedCardTypes.includes('Player Mat')) {
                     if(loopCount == 1) {
                         this.addRandomCard(playerMatCards)
-                    } else if (loopCount == 2){
+                    } else if (loopCount == 2) {
                         let randomChance = Math.floor(Math.random() * 100);
                         if(randomChance <= 34) {
                             this.addRandomCard(playerMatCards)
@@ -1660,7 +1719,7 @@ export default {
                 set: "Seaside",
                 types: ["Action"],
                 categories: ["Village", "Trasher"],
-                tags: ["Player_Mat"],
+                tags: ["Choice", "Player_Mat"],
                 costType: "Money",
                 cost: 2
             },
@@ -1870,6 +1929,7 @@ export default {
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Gainer", "Trasher"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 2
             },
@@ -1878,6 +1938,7 @@ export default {
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Cantrip"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 2
             },
@@ -1902,6 +1963,7 @@ export default {
                 set: "Intrigue",
                 types: ["Action"],
                 categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 3
             },
@@ -1990,6 +2052,7 @@ export default {
                 set: "Intrigue",
                 types: ["Action"],
                 categories: [""],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 5
             },
@@ -2006,6 +2069,7 @@ export default {
                 set: "Intrigue",
                 types: ["Action", "Attack"],
                 categories: ["Sifter"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 5
             },
@@ -2062,6 +2126,7 @@ export default {
                 set: "Intrigue",
                 types: ["Action", "Victory"],
                 categories: ["Village", "Terminal Draw"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 5
             },
@@ -2103,6 +2168,7 @@ export default {
                 set: "Prosperity",
                 types: ["Treasure"],
                 categories: ["Trasher"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 4
             },
@@ -2346,6 +2412,7 @@ export default {
                 set: "Plunder",
                 types: ["Action", "Duration"],
                 categories: ["Cantrip"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 4
             },
@@ -2540,6 +2607,7 @@ export default {
                 set: "Plunder",
                 types: ["Action", "Duration"],
                 categories: ["Gainer"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 5
             },
@@ -2734,6 +2802,7 @@ export default {
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Omen"],
                 categories: ["Village", "Terminal Silver"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 5
             },
@@ -2912,6 +2981,7 @@ export default {
                 set: "Adventures",
                 types: ["Action", "Duration"],
                 categories: ["Gainer", "Trasher"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 3
             },
@@ -2978,7 +3048,7 @@ export default {
                 set: "Adventures",
                 types: ["Action"],
                 categories: ["Trasher"],
-                tags: ["Player_Mat"],
+                tags: ["Choice", "Player_Mat"],
                 costType: "Money",
                 cost: 4
             },
@@ -3441,6 +3511,7 @@ export default {
                 set: "Empires",
                 types: ["Treasure"],
                 categories: ["Gainer"],
+                tags: ["Choice"],
                 costType: "Money",
                 cost: 5
             },
@@ -3482,7 +3553,7 @@ export default {
                 set: "Empires",
                 types: ["Action", "Gathering"],
                 categories: ["Terminal Draw"],
-                tags: ["Victory_Token"],
+                tags: ["Choice", "Victory_Token"],
                 costType: "Money",
                 cost: 5
             },
@@ -3500,7 +3571,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Coffers"],
+                tags: ["Overpay"],
                 costType: "Money",
                 cost: 2
             },
@@ -3509,7 +3580,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Village", "Cantrip"],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 2
             },
@@ -3518,7 +3588,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Gainer"],
-                tags: ["Coffers"],
+                tags: ["Overpay"],
                 costType: "Money",
                 cost: 2
             },
@@ -3526,8 +3596,8 @@ export default {
                 name: "Infirmary",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
-                tags: ["Coffers"],
+                categories: ["Trasher"],
+                tags: ["Overpay"],
                 costType: "Money",
                 cost: 3
             },
@@ -3536,7 +3606,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 3
             },
@@ -3545,7 +3614,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 3
             },
@@ -3554,7 +3622,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 4
             },
@@ -3563,7 +3630,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Village"],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 4
             },
@@ -3572,7 +3638,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Coffers"],
+                tags: ["Overpay"],
                 costType: "Money",
                 cost: 4
             },
@@ -3589,8 +3655,7 @@ export default {
                 name: "Remake",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
-                tags: ["Coffers"],
+                categories: ["Trasher"],
                 costType: "Money",
                 cost: 4
             },
@@ -3598,8 +3663,7 @@ export default {
                 name: "Young_Witch",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: [""],
-                tags: ["Coffers"],
+                categories: ["Sifter"],
                 costType: "Money",
                 cost: 4
             },
@@ -3616,7 +3680,7 @@ export default {
                 name: "Butcher",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Trasher", "Terminal Silver"],
                 tags: ["Coffers"],
                 costType: "Money",
                 cost: 5
@@ -3625,8 +3689,7 @@ export default {
                 name: "Carnival",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
-                tags: ["Coffers"],
+                categories: ["Terminal Draw"],
                 costType: "Money",
                 cost: 5
             },
@@ -3635,7 +3698,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Sifter"],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 5
             },
@@ -3643,7 +3705,7 @@ export default {
                 name: "Footpad",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: [""],
+                categories: ["Terminal Silver"],
                 tags: ["Coffers"],
                 costType: "Money",
                 cost: 5
@@ -3653,7 +3715,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Treasure"],
                 categories: ["Gainer"],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 5
             },
@@ -3662,7 +3723,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 5
             },
@@ -3670,8 +3730,7 @@ export default {
                 name: "Jester",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: ["Gainer"],
-                tags: ["Coffers"],
+                categories: ["Gainer", "Terminal Silver"],
                 costType: "Money",
                 cost: 5
             },
@@ -3679,8 +3738,7 @@ export default {
                 name: "Journeyman",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
-                tags: ["Coffers"],
+                categories: ["Sifter", "Terminal Draw"],
                 costType: "Money",
                 cost: 5
             },
@@ -3688,10 +3746,60 @@ export default {
                 name: "Joust",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Gainer"],
                 tags: ["Coffers"],
                 costType: "Money",
                 cost: 5
+            },
+            {
+                name: "Coronet",
+                set: "Cornu & Guilds",
+                types: ["Action", "Treasure", "Reward"],
+                categories: ["Village"],
+                costType: "Money",
+                cost: 0
+            },
+            {
+                name: "Courser",
+                set: "Cornu & Guilds",
+                types: ["Action", "Reward"],
+                categories: ["Village", "Terminal Draw", "Terminal Silver"],
+                tags: ["Choice"],
+                costType: "Money",
+                cost: 0
+            },
+            {
+                name: "Demesne",
+                set: "Cornu & Guilds",
+                types: ["Action", "Victory", "Reward"],
+                categories: ["Village"],
+                costType: "Money",
+                cost: 0
+            },
+            {
+                name: "Housecarl",
+                set: "Cornu & Guilds",
+                types: ["Action", "Reward"],
+                categories: ["Terminal Draw"],
+                costType: "Money",
+                cost: 0
+            },
+            {
+                name: "Huge_Turnip",
+                set: "Cornu & Guilds",
+                types: ["Treasure", "Reward"],
+                categories: [""],
+                tags: ["Coffers"],
+                costType: "Money",
+                cost: 0
+            },
+            {
+                name: "Renown",
+                set: "Cornu & Guilds",
+                types: ["Action", "Reward"],
+                categories: ["Village", "Terminal Draw"],
+                costType: "Money",
+                cost: 0
             },
             {
                 name: "Merchant_Guild",
@@ -3706,8 +3814,7 @@ export default {
                 name: "Soothsayer",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: [""],
-                tags: ["Coffers"],
+                categories: ["Gainers"],
                 costType: "Money",
                 cost: 5
             },
@@ -3716,7 +3823,6 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Victory"],
                 categories: [""],
-                tags: ["Coffers"],
                 costType: "Money",
                 cost: 6
             },
@@ -3827,7 +3933,6 @@ export default {
                 set: "Adventures",
                 types: ["Event"]
             },
-
             {
                 name: "Advance",
                 set: "Empires",
