@@ -66,7 +66,7 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
+                <div v-if="this.insertingGameName != 'Heat' && this.insertingGameName != 'Stratego'" class="playerSection">
                     <label for="winnerScore">Score</label>
                     <Input v-model.number="winnerScore" id="winnerScore"></Input>
                 </div>
@@ -96,7 +96,7 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
+                <div v-if="this.insertingGameName != 'Heat' && this.insertingGameName != 'Stratego'" class="playerSection">
                     <label for="secondScore">Score</label>
                     <Input v-model.number="secondScore" id="secondScore"></Input>
                 </div>
@@ -245,7 +245,7 @@ export default {
             insertingPlayerCount: null,
             filteredNames: [],
             supportedGames: ['Dominion', 'Clank', 'Slay the Spire', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', 
-                'Space Base', '7 Wonders', 'Root', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
+                'Space Base', '7 Wonders', 'Root', 'Stratego', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
             secondName: null,
@@ -287,7 +287,8 @@ export default {
             this.gamePlayerCounts = {
                 'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
                 'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
-                'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players'
+                'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
+                'Stratego' : '2 Players'
             }
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
@@ -321,7 +322,7 @@ export default {
                 this.secondScore ??= 0;
 
             }
-            if (this.insertingGameName === "Heat") {
+            if (this.insertingGameName === "Heat" || this.insertingGameName === "Stratego") {
                 this.winnerScore = 0;
                 this.secondScore = 0;
             }

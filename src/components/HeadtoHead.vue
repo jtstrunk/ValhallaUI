@@ -204,7 +204,7 @@ export default {
             filteredNamesPlayerTwo: [],
             playerOneStats: {},
             playerTwoStats: {},
-            twoPlayerGames: ['Dominion', 'Clank', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', 'Space Base', '7 Wonders', 'Root', 'Dune Imperium'],
+            twoPlayerGames: ['Dominion', 'Clank', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', 'Space Base', '7 Wonders', 'Root', 'Dune Imperium', 'Stratego'],
             headtoheadGames: []
         }
     },
