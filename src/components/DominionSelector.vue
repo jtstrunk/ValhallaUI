@@ -720,7 +720,9 @@ export default {
             this.selectedCards = [];
         },
         selectedFill() {
-            let tempCardList = [...this.filteredCards];
+            let tempCardList = [...this.filteredCards].filter(card => {
+                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") && !card.types?.includes("Reward");
+            });
             let loopCount = this.numGenerateCards;
             if(this.numGenerateCards > 10 - this.selectedCards.length) {
                 loopCount = 10 - this.selectedCards.length
