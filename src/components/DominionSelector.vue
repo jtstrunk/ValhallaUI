@@ -370,6 +370,8 @@ export default {
             containsRiverboat: false,
             numberTraits: 0,
             riverboatCard: "",
+            ferrymanCard: "",
+            baneCard: "",
             obeliskCard: "",
             expansionDisplayNames: {
                 'Cornu & Guilds': 'Cornu & Guilds'
@@ -865,6 +867,8 @@ export default {
                 }
             }
 
+
+            // these need to check if its there already and if so dont replace it
             if (this.selectedCards.some(card => card.name === 'Riverboat')){
                 this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => card.cost == 5 
                     && card.costType == 'Money' && !card.types.includes('Duration') &&
@@ -879,11 +883,45 @@ export default {
                 this.riverboatCard = "";
                 this.containsRiverboat = false;
             }
+
+            if (this.selectedCards.some(card => card.name === 'Ferryman')){
+                this.potentialFerrymanCards = this.selectedExpansionsCardList.filter(card => (
+                    card.cost == 3 || card.cost == 4) && card.costType == 'Money'
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                );
+
+                let ferrymanRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
+                let card = this.potentialFerrymanCards[ferrymanRandomIndex]
+                this.ferrymanCard = card.name;
+                this.containsFerryman = true;
+                console.log('ferryman card', this.ferrymanCard)
+            } else {
+                this.ferrymanCard = "";
+                this.containsFerryman = false;
+            }
+
+            if (this.selectedCards.some(card => card.name === 'Young_Witch')){
+                this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
+                    card.cost == 2 || card.cost == 3) && card.costType == 'Money'
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                );
+
+                let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
+                let card = this.potentialBaneCards[baneRandomIndex]
+                this.baneCard = card.name;
+                this.containsBane = true;
+                console.log('bane card', this.baneCard)
+            } else {
+                this.baneCard = "";
+                this.containsBane = false;
+            }
         },
         generateAdvancedKingdom(){
             this.containsRiverboat = false;
             this.riverboatCard = "";
             this.obeliskCard = "";
+            this.ferrymanCard = "";
+            this.baneCard = "";
             this.numberTraits = 0;
             let maxEffectCount = false;
             this.selectedExpansionsCardList = [...this.cards].filter(card => {
@@ -1253,6 +1291,38 @@ export default {
                 let card = this.potentialRiverboatCards[riverboatRandomIndex]
                 this.riverboatCard = card.name;
                 this.containsRiverboat = true;
+            }
+
+            if (this.selectedCards.some(card => card.name === 'Ferryman')){
+                this.potentialFerrymanCards = this.selectedExpansionsCardList.filter(card => (
+                    card.cost == 3 || card.cost == 4) && card.costType == 'Money'
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                );
+
+                let ferrymanRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
+                let card = this.potentialFerrymanCards[ferrymanRandomIndex]
+                this.ferrymanCard = card.name;
+                this.containsFerryman = true;
+                console.log('ferryman card', this.ferrymanCard)
+            }  else {
+                this.ferrymanCard = "";
+                this.containsFerryman = false;
+            }
+
+            if (this.selectedCards.some(card => card.name === 'Young_Witch')){
+                this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
+                    card.cost == 2 || card.cost == 3) && card.costType == 'Money'
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                );
+
+                let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
+                let card = this.potentialBaneCards[baneRandomIndex]
+                this.baneCard = card.name;
+                this.containsBane = true;
+                console.log('bane card', this.baneCard)
+            }  else {
+                this.baneCard = "";
+                this.containsBane = false;
             }
 
             this.setCount = {
