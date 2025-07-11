@@ -304,12 +304,6 @@
                         :src="getCardImage(card.name)" :class="{ traitCards: traitCards.includes(card), 
                             obeliskcard: obeliskCard === card.name }"  @click="removeCard(card)" />
                 </div>
-                <div v-if="this.containsRiverboat && !isMobile" style="display: flex; align-items: center; margin-left: 10px;">
-                    <div class="card-wrapper" :key="this.riverboatCard">
-                        <img class="riverboatCard" :src="getCardImage(this.riverboatCard)" />
-                        <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateRiverboatCard(this.riverboatCard)" />
-                    </div>
-                </div>
             </div>
             <div id="advancedLandscapes">
                 <div class="card-wrapper" v-for="card in selectedAddons" :key="card.name">
@@ -353,7 +347,7 @@ export default {
             showCategories: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Cornu & Guilds', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Attack', 'Reaction', 'Victory', 'Treasure', 'Duration', 'Command', 'Reserve', 'Castle', 'Gathering', 'Shadow', 'Omen'],
-            categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
+            categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Virtual Coin', 'Terminal Draw'],
             cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Trasher', 'Choice', 'Player Mat', 'Overpay', 'Coffers', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
             // selectedAdvancedExpansions: ['Rising Sun'],
@@ -372,6 +366,7 @@ export default {
             riverboatCard: "",
             ferrymanCard: "",
             baneCard: "",
+            armyCard: "",
             obeliskCard: "",
             splitPileCheck: {
                 'Treasure_Hunter': 'Page',
@@ -1300,7 +1295,6 @@ export default {
                 let card = this.potentialFerrymanCards[ferrymanRandomIndex]
                 this.ferrymanCard = card.name;
                 this.containsFerryman = true;
-                console.log('ferryman card', this.ferrymanCard)
             }  else {
                 this.ferrymanCard = "";
                 this.containsFerryman = false;
@@ -1316,7 +1310,6 @@ export default {
                 let card = this.potentialBaneCards[baneRandomIndex]
                 this.baneCard = card.name;
                 this.containsBane = true;
-                console.log('bane card', this.baneCard)
             }  else {
                 this.baneCard = "";
                 this.containsBane = false;
@@ -1425,7 +1418,19 @@ export default {
                         let cardName = prophecies[prophecyRandomIndex].name;
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
-                            inserted = true
+                            inserted = true;
+
+                            if(cardName == 'Approaching_Army') {
+                                this.containsApproachingArmy = true;
+                                this.potentialArmyCards = this.selectedExpansionsCardList.filter(card => (
+                                   card.types.includes('Attack') && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                                ));
+
+                                let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
+                                let card = this.potentialArmyCards[armyRandomIndex]
+                                this.armyCard = card.name;
+                                this.containsApproachingArmy = true;
+                            }
                         }
                     }
                     attempts++
@@ -1587,7 +1592,7 @@ export default {
                 name: "Vassal",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -1627,7 +1632,7 @@ export default {
                 name: "Militia",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1635,7 +1640,7 @@ export default {
                 name: "Moneylender",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1643,7 +1648,7 @@ export default {
                 name: "Poacher",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1715,7 +1720,7 @@ export default {
                 name: "Market",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1779,7 +1784,7 @@ export default {
                 name: "Lighthouse",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -1804,7 +1809,7 @@ export default {
                 name: "Fishing_Village",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -1860,7 +1865,7 @@ export default {
                 name: "Caravan",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Cantrip"],
+                categories: ["Cantrip", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1868,7 +1873,7 @@ export default {
                 name: "Cutpurse",
                 set: "Seaside",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1917,7 +1922,7 @@ export default {
                 name: "Bazaar",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1925,7 +1930,7 @@ export default {
                 name: "Corsair",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1933,7 +1938,7 @@ export default {
                 name: "Merchant_Ship",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1973,7 +1978,7 @@ export default {
                 name: "Treasury",
                 set: "Seaside",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -2006,7 +2011,7 @@ export default {
                 name: "Pawn",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip"],
+                categories: ["Cantrip", "Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 2
@@ -2031,7 +2036,7 @@ export default {
                 name: "Steward",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin", "Terminal Draw"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 3
@@ -2040,7 +2045,7 @@ export default {
                 name: "Swindler",
                 set: "Intrigue",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -2056,7 +2061,7 @@ export default {
                 name: "Baron",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2064,7 +2069,7 @@ export default {
                 name: "Bridge",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2072,7 +2077,7 @@ export default {
                 name: "Conspirator",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2088,7 +2093,7 @@ export default {
                 name: "Ironworks",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip", "Gainer"],
+                categories: ["Cantrip", "Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2120,7 +2125,7 @@ export default {
                 name: "Courtier",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 5
@@ -2219,7 +2224,7 @@ export default {
                 name : "Bishop",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Trasher"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 4
@@ -2228,7 +2233,7 @@ export default {
                 name : "Clerk",
                 set: "Prosperity",
                 types: ["Action", "Reaction", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2245,7 +2250,7 @@ export default {
                 name : "Monument",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 4
@@ -2278,7 +2283,7 @@ export default {
                 name : "Charlatan",
                 set: "Prosperity",
                 types: ["Action", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -2390,7 +2395,7 @@ export default {
                 name : "Peddler",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 8
             },
@@ -2423,7 +2428,7 @@ export default {
                 name: "Search",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 tags: ["Loot"],
                 costType: "Money",
                 cost: 2
@@ -2432,7 +2437,7 @@ export default {
                 name: "Shaman",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Gainer", "Trasher"],
+                categories: ["Gainer", "Trasher", "Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -2440,7 +2445,7 @@ export default {
                 name: "Secluded_Shrine",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Trasher"],
+                categories: ["Trasher", "Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -2464,7 +2469,7 @@ export default {
                 name: "Taskmaster",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -2497,7 +2502,7 @@ export default {
                 name: "Flagship",
                 set: "Plunder",
                 types: ["Action", "Duration", "Command"],
-                categories: ["Village", "Terminal Silver"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2505,7 +2510,7 @@ export default {
                 name: "Fortune_Hunter",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2521,7 +2526,7 @@ export default {
                 name: "Harbor_Village",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2626,7 +2631,7 @@ export default {
                 name: "Frigate",
                 set: "Plunder",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -2726,7 +2731,7 @@ export default {
                 name: "Mountain_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin", "Terminal Draw"],
                 tags: ["Debt"],
                 costType: "Debt",
                 cost: 5
@@ -2744,7 +2749,7 @@ export default {
                 name: "Artist",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Debt"],
                 costType: "Debt",
                 cost: 8
@@ -2753,7 +2758,7 @@ export default {
                 name: "Fishmonger",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -2811,7 +2816,7 @@ export default {
                 name: "Change",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Debt"],
                 costType: "Money",
                 cost: 4
@@ -2870,7 +2875,7 @@ export default {
                 name: "Kitsune",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Omen"],
-                categories: ["Village", "Terminal Silver"],
+                categories: ["Village", "Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 5
@@ -2920,7 +2925,7 @@ export default {
                 name: "Samurai",
                 set: "Rising Sun",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 6
             },
@@ -2952,7 +2957,7 @@ export default {
                 name: "Treasure_Hunter",
                 set: "Adventures",
                 types: ["Action", "Traveller"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 3
@@ -2970,7 +2975,7 @@ export default {
                 name: "Hero",
                 set: "Adventures",
                 types: ["Action", "Traveller"],
-                categories: ["Gainer", "Terminal Silver"],
+                categories: ["Gainer", "Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 5
@@ -2988,7 +2993,7 @@ export default {
                 name: "Peasant",
                 set: "Adventures",
                 types: ["Action", "Traveller"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -2996,7 +3001,7 @@ export default {
                 name: "Soldier",
                 set: "Adventures",
                 types: ["Action", "Attack", "Traveller"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 3
@@ -3049,7 +3054,7 @@ export default {
                 name: "Amulet",
                 set: "Adventures",
                 types: ["Action", "Duration"],
-                categories: ["Gainer", "Trasher"],
+                categories: ["Gainer", "Trasher", "Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 3
@@ -3108,7 +3113,7 @@ export default {
                 name: "Messenger",
                 set: "Adventures",
                 types: ["Action"],
-                categories: ["Gainer", "Terminal Silver"],
+                categories: ["Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -3116,7 +3121,7 @@ export default {
                 name: "Miser",
                 set: "Adventures",
                 types: ["Action"],
-                categories: ["Trasher"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Choice", "Player_Mat"],
                 costType: "Money",
                 cost: 4
@@ -3150,7 +3155,7 @@ export default {
                 name: "Artificer",
                 set: "Adventures",
                 types: ["Action"],
-                categories: ["Cantrip", "Gainer"],
+                categories: ["Cantrip", "Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3176,7 +3181,7 @@ export default {
                 name: "Giant",
                 set: "Adventures",
                 types: ["Action", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3225,7 +3230,7 @@ export default {
                 name: "Swamp_Hag",
                 set: "Adventures",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3241,7 +3246,7 @@ export default {
                 name: "Wine_Merchant",
                 set: "Adventures",
                 types: ["Action", "Reserve"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 5
@@ -3322,7 +3327,7 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Victory_Token", "Split_Pile"],
+                tags: ["Victory_Token", "Split_Pile", "Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -3340,7 +3345,7 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Victory_Token", "Split_Pile_Card"],
+                tags: ["Victory_Token", "Split_Pile_Card", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3420,7 +3425,7 @@ export default {
                 name: "Opulent_Castle",
                 set: "Empires",
                 types: ["Victory", "Castle"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 7
@@ -3456,7 +3461,7 @@ export default {
                 name: "Catapult_Rocks",
                 set: "Empires",
                 types: ["Action", "Attack"],
-                categories: ["Gainer", "Trasher"],
+                categories: ["Gainer", "Trasher", "Virtual Coin"],
                 tags: ["Split_Pile"],
                 costType: "Money",
                 cost: 3
@@ -3483,7 +3488,7 @@ export default {
                 name: "Chariot_Race",
                 set: "Empires",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 3
@@ -3500,7 +3505,7 @@ export default {
                 name: "Farmers'_Market",
                 set: "Empires",
                 types: ["Action", "Gathering"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 3
@@ -3509,7 +3514,7 @@ export default {
                 name: "Gladiator_Fortune",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Debt", "Split_Pile"],
                 costType: "Money",
                 cost: 3
@@ -3518,7 +3523,7 @@ export default {
                 name: "Gladiator",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 3
@@ -3536,7 +3541,7 @@ export default {
                 name: "Sacrifice",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Village", "Trasher", "Terminal Silver"],
+                categories: ["Village", "Trasher", "Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 4
@@ -3554,7 +3559,7 @@ export default {
                 name: "Villa",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -3613,7 +3618,7 @@ export default {
                 name: "Legionary",
                 set: "Empires",
                 types: ["Action", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3682,7 +3687,7 @@ export default {
                 name: "Shop",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: ["Cantrip"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -3749,7 +3754,7 @@ export default {
                 name: "Butcher",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
@@ -3774,7 +3779,7 @@ export default {
                 name: "Footpad",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
@@ -3799,7 +3804,7 @@ export default {
                 name: "Jester",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: ["Gainer", "Terminal Silver"],
+                categories: ["Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3815,7 +3820,7 @@ export default {
                 name: "Joust",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: ["Gainer"],
+                categories: ["Gainer", "Virtual Coin"],
                 tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
@@ -3832,7 +3837,7 @@ export default {
                 name: "Courser",
                 set: "Cornu & Guilds",
                 types: ["Action", "Reward"],
-                categories: ["Village", "Terminal Draw", "Terminal Silver"],
+                categories: ["Village", "Virtual Coin", "Terminal Draw"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 0
@@ -3874,7 +3879,7 @@ export default {
                 name: "Merchant_Guild",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
@@ -4727,6 +4732,24 @@ img {
     margin: 2px;
     border: 2px solid orange;
 }
+.ferrymanCard {
+    width: 118px;
+    height: 185px;
+    margin: 2px;
+    border: 2px solid white;
+}
+.baneCard {
+    width: 140px;
+    height: 215px;
+    margin: 2px;
+    border: 2px solid maroon;
+}
+.armyCard {
+    width: 140px;
+    height: 215px;
+    margin: 2px;
+    border: 2px solid rgb(102, 163, 199);
+}
 #advancedLandscapes {
     margin-top: 10px;
     display: flex;
@@ -4765,7 +4788,7 @@ img {
 }
 
 .gamepopup {
-    width: 950px;
+    width: 1030px;
     height: 850px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: fixed;
@@ -4791,7 +4814,7 @@ img {
     background-color: #555;
 }
 .popupContainer {
-    width: 930px;
+    width: 1030px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -4831,7 +4854,7 @@ img {
     width: 720px;
 }
 .traitCards {
-    border: 3.5px solid purple;
+    border: 3.5px solid darkorchid;
 }
 .obeliskcard {
     border: 3.5px solid green;
