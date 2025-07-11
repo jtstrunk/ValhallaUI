@@ -373,9 +373,6 @@ export default {
             ferrymanCard: "",
             baneCard: "",
             obeliskCard: "",
-            expansionDisplayNames: {
-                'Cornu & Guilds': 'Cornu & Guilds'
-            },
             splitPileCheck: {
                 'Treasure_Hunter': 'Page',
                 'Warrior': 'Page',
@@ -1001,7 +998,7 @@ export default {
                 this.showRemovedMechanic('Split Pile')
             }
             if (this.selectedAdvancedCardTypes.includes('Player Mat') && !this.selectedAdvancedExpansions.includes('Seaside')
-                && !this.selectedAdvancedExpansions.includes('Adventures')) {
+                && !this.selectedAdvancedExpansions.includes('Adventures') && !this.selectedAdvancedExpansions.includes('Cornu & Guilds')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Player Mat');
                 this.showRemovedMechanic('Player Mat')
             }
@@ -1339,7 +1336,7 @@ export default {
                 this.setCount[card.set] = this.setCount[card.set] + 1;
             })
 
-            if ( this.setCount['Prosperity'] > 2) {
+            if (this.setCount['Prosperity'] > 2) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
             } else if ( this.setCount['Prosperity'] > 1 &&  this.setCount['Empires'] > 2) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
@@ -3634,7 +3631,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 2
             },
@@ -3719,7 +3716,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Village"],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 4
             },
@@ -3744,7 +3741,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3753,7 +3750,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Trasher", "Terminal Silver"],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3778,7 +3775,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
                 categories: ["Terminal Silver"],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3819,7 +3816,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Gainer"],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3861,7 +3858,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Treasure", "Reward"],
                 categories: [""],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 0
             },
@@ -3878,7 +3875,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
