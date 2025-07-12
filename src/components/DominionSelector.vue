@@ -304,6 +304,32 @@
                         :src="getCardImage(card.name)" :class="{ traitCards: traitCards.includes(card), 
                             obeliskcard: obeliskCard === card.name }"  @click="removeCard(card)" />
                 </div>
+                <div style="display: flex; flex-direction: column; height: 446px; flex-wrap: wrap;">
+                    <div v-if="this.containsBane && !isMobile" style="display: flex; align-items: center; margin-left: 1px;">
+                        <div class="card-wrapper" :key="this.baneCard">
+                            <img class="baneCard" :src="getCardImage(this.baneCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateBaneCard(this.baneCard)" />
+                        </div>
+                    </div>
+                    <div v-if="this.containsApproachingArmy && !isMobile" style="display: flex; align-items: center; margin-left: 1px;">
+                        <div class="card-wrapper" :key="this.armyCard">
+                            <img class="armyCard" :src="getCardImage(this.armyCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateApproachingArmyCard(this.armyCard)" />
+                        </div>
+                    </div>
+                    <div v-if="this.containsRiverboat && !isMobile" style="display: flex; align-items: center; padding-top: 15px; padding-left: 11px;">
+                        <div class="card-wrapper" :key="this.riverboatCard">
+                            <img class="riverboatCard" :src="getCardImage(this.riverboatCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateRiverboatCard(this.riverboatCard)" />
+                        </div>
+                    </div>
+                    <div v-if="this.containsFerryman && !isMobile" style="display: flex; align-items: center; padding-top: 30px; padding-left: 11px;">
+                        <div class="card-wrapper" :key="this.ferrymanCard">
+                            <img class="ferrymanCard" :src="getCardImage(this.ferrymanCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateFerrymanCard(this.ferrymanCard)" />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="advancedLandscapes">
                 <div class="card-wrapper" v-for="card in selectedAddons" :key="card.name">
@@ -362,6 +388,9 @@ export default {
             prophecies: [],
             omenCards: [],
             containsRiverboat: false,
+            containsFerryman: false,
+            containsBane: false,
+            containsApproachingArmy: false,
             numberTraits: 0,
             riverboatCard: "",
             ferrymanCard: "",
@@ -1337,6 +1366,28 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
             }
         },
+        regenerateBaneCard(cardName) {
+            console.log('selected filters', this.selectedExpansionsCardList)
+            this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
+                card.cost == 2 || card.cost == 3) && card.costType == 'Money'
+                && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+            );
+            console.log('bane cards', this.potentialBaneCards)
+            let newPotentialBaneCards = this.potentialBaneCards.filter(
+                potentialCard => potentialCard.name !== cardName
+            );
+            let baneRandomIndex = Math.floor(Math.random() * newPotentialBaneCards.length);
+            let card = newPotentialBaneCards[baneRandomIndex]
+            this.baneCard = card.name;
+        },
+        regenerateApproachingArmyCard(cardName) {
+            let newPotentialArmyCards = this.potentialArmyCards.filter(
+                potentialCard => potentialCard.name !== cardName
+            );
+            let armyRandomIndex = Math.floor(Math.random() * newPotentialArmyCards.length);
+            let card = newPotentialArmyCards[armyRandomIndex]
+            this.armyCard = card.name;
+        },
         regenerateRiverboatCard(cardName) {
             let newPotentialRiverboatCards = this.potentialRiverboatCards.filter(
                 potentialCard => potentialCard.name !== cardName
@@ -1344,6 +1395,14 @@ export default {
             let riverboatRandomIndex = Math.floor(Math.random() * newPotentialRiverboatCards.length);
             let card = newPotentialRiverboatCards[riverboatRandomIndex]
             this.riverboatCard = card.name;
+        },
+        regenerateFerrymanCard(cardName) {
+            let newPotentialFerrymanCards = this.potentialFerrymanCards.filter(
+                potentialCard => potentialCard.name !== cardName
+            );
+            let ferrymantRandomIndex = Math.floor(Math.random() * newPotentialFerrymanCards.length);
+            let card = newPotentialFerrymanCards[ferrymantRandomIndex]
+            this.ferrymanCard = card.name;
         },
         regenerateLandscape(card) {
             let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
