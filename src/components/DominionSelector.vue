@@ -1366,43 +1366,74 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
             }
         },
-        regenerateBaneCard(cardName) {
-            console.log('selected filters', this.selectedExpansionsCardList)
-            this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
-                card.cost == 2 || card.cost == 3) && card.costType == 'Money'
-                && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-            );
+        regenerateBaneCard(cardName) {  
+            console.log('selected expansions', this.selectedAdvancedExpansions)
+            this.potentialBaneCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && (card.cost == 2 || card.cost == 3) && card.costType == 'Money'
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.armyCard && card.name !== this.riverboatCard && card.name !== this.ferrymanCard;
+            });
             console.log('bane cards', this.potentialBaneCards)
-            let newPotentialBaneCards = this.potentialBaneCards.filter(
-                potentialCard => potentialCard.name !== cardName
-            );
-            let baneRandomIndex = Math.floor(Math.random() * newPotentialBaneCards.length);
-            let card = newPotentialBaneCards[baneRandomIndex]
+            let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
+            let card = this.potentialBaneCards[baneRandomIndex]
             this.baneCard = card.name;
         },
         regenerateApproachingArmyCard(cardName) {
-            let newPotentialArmyCards = this.potentialArmyCards.filter(
-                potentialCard => potentialCard.name !== cardName
-            );
-            let armyRandomIndex = Math.floor(Math.random() * newPotentialArmyCards.length);
-            let card = newPotentialArmyCards[armyRandomIndex]
+            this.potentialArmyCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && card.types.includes("Attack")
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.baneCard && card.name !== this.riverboatCard && card.name !== this.ferrymanCard;
+            });
+            let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
+            let card = this.potentialArmyCards[armyRandomIndex]
             this.armyCard = card.name;
+
+            // check if omen and if currently no prophecy
         },
         regenerateRiverboatCard(cardName) {
-            let newPotentialRiverboatCards = this.potentialRiverboatCards.filter(
-                potentialCard => potentialCard.name !== cardName
-            );
-            let riverboatRandomIndex = Math.floor(Math.random() * newPotentialRiverboatCards.length);
-            let card = newPotentialRiverboatCards[riverboatRandomIndex]
+            console.log('regen riverboat')
+            this.potentialRiverboatCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && card.costType == 'Money' 
+                    && card.cost == 5 && !card.types.includes('Duration')
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.ferrymanCard;
+            });
+            let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+            let card = this.potentialRiverboatCards[riverboatRandomIndex]
             this.riverboatCard = card.name;
+
+            // check if omen and if currently no prophecy
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'));
+            if(card.types.includes('Omen') && (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.type.includes('Prophecy')))) {
+                console.log('omen')
+                console.log(this.selectedAddons)
+                console.log('card is an omen and there is no prophecy');
+                let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                let cardName = prophecies[prophecyRandomIndex].name;
+                console.log(cardName);
+                this.selectedAddons.push(cardName);
+                // will have to check if approaching army
+            }
         },
         regenerateFerrymanCard(cardName) {
-            let newPotentialFerrymanCards = this.potentialFerrymanCards.filter(
-                potentialCard => potentialCard.name !== cardName
-            );
-            let ferrymantRandomIndex = Math.floor(Math.random() * newPotentialFerrymanCards.length);
-            let card = newPotentialFerrymanCards[ferrymantRandomIndex]
+            this.potentialFerrymanCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && card.costType == 'Money' && (card.cost == 3 || card.cost == 4)
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.riverboatCard;
+            });
+            let ferrymantRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
+            let card = this.potentialFerrymanCards[ferrymantRandomIndex]
             this.ferrymanCard = card.name;
+
+            // check if omen and if currently no prophecy
         },
         regenerateLandscape(card) {
             let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
@@ -4455,67 +4486,67 @@ export default {
                 set: "Rising Sun",
                 types: ["Prophecy"]
             },
-            {
-                name: "Divine_Wind",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Enlightenment",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
+            // {
+            //     name: "Divine_Wind",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Enlightenment",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
 
-            {
-                name: "Flourishing_Trade",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Good_Harvest",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Great_Leader",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Growth",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Harsh_Winter",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Kind_Emperor",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Panic",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Progress",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Rapid_Expansion",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Sickness",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
+            // {
+            //     name: "Flourishing_Trade",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Good_Harvest",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Great_Leader",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Growth",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Harsh_Winter",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Kind_Emperor",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Panic",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Progress",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Rapid_Expansion",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Sickness",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
         ]
     }
 }
