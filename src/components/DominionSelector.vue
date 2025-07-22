@@ -1436,6 +1436,15 @@ export default {
             // check if omen and if currently no prophecy
         },
         regenerateLandscape(card) {
+            console.log('regen card', card)
+            this.selectedExpansionsLandscapeList = [...this.landscapes];
+            if (this.selectedAdvancedExpansions.length > 0) {
+                this.selectedExpansionsLandscapeList = this.selectedExpansionsLandscapeList.filter(card =>
+                    this.selectedAdvancedExpansions.includes(card.set)
+                );
+            }
+
+            let allEvents = this.landscapes.filter(card => card.types.includes('Event'))
             let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
             let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
             let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
@@ -1444,8 +1453,8 @@ export default {
             if(landmarks.some(landmark => landmark.name.includes(card))) {
                 this.obeliskCard = ""
                 let index = this.selectedAddons.findIndex(landmark => landmark.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!landmarks.some(landmark => this.selectedAddons.includes(landmark))) {
                         let landmarkRandomIndex = Math.floor(Math.random() * landmarks.length);
@@ -1464,17 +1473,19 @@ export default {
                 }
             }
 
-            if(events.some(event => event.name.includes(card))) {
+            if(allEvents.some(event => event.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(event => event.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!events.some(event => this.selectedAddons.includes(event))) {
                         let eventRandomIndex = Math.floor(Math.random() * events.length);
                         let cardName = events[eventRandomIndex].name;
+                        console.log('new card', cardName)
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
                             inserted = true
+                            console.log(this.selectedAddons)
                         }
                     }
                     attempts++
@@ -1483,8 +1494,8 @@ export default {
 
             if(traits.some(trait => trait.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(trait => trait.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!traits.some(trait => this.selectedAddons.includes(trait))) {
                         let traitRandomIndex = Math.floor(Math.random() * traits.length);
@@ -1500,8 +1511,8 @@ export default {
 
             if(prophecies.some(prophecy => prophecy.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(prophecy => prophecy.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy))) {
                         let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
