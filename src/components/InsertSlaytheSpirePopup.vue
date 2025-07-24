@@ -28,7 +28,7 @@
                     <label for="playerOneCharacter">Character</label>
                     <Select v-model="playerCharacters[0]" :options="filteredOptions(0)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
@@ -63,7 +63,7 @@
                     <label for="playerTwoCharacter">Character</label>
                     <Select v-model="playerCharacters[1]" :options="filteredOptions(1)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
@@ -98,7 +98,7 @@
                     <label for="playerThreeCharacter">Character</label>
                     <Select v-model="playerCharacters[2]" :options="filteredOptions(2)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
@@ -133,7 +133,7 @@
                     <label for="playerFourCharacter">Character</label>
                     <Select v-model="playerCharacters[3]" :options="filteredOptions(3)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 

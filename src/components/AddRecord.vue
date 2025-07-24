@@ -32,14 +32,17 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+    <div id="overlay" v-if="this.showCoopGame" @click="this.showCoopGame=!this.showCoopGame"></div>
+    <InsertCoopGamePopup v-if="this.showCoopGame" :Type="'Insert'" :gameName="'5 Minute Marvel'"
+        @gameInserted="this.showCoopGame = false"></InsertCoopGamePopup>
     <div id="overlay" v-if="this.showSTS" @click="this.showSTS=!this.showSTS"></div>
     <InsertSlaytheSpirePopup v-if="this.showSTS" :Type="'Insert'"
         @gameInserted="this.showSTS = false"></InsertSlaytheSpirePopup>
     <div id="overlay" v-if="this.showRoot" @click="this.showRoot=!this.showRoot"></div>
     <InsertRootPopup v-if="this.showRoot" :Type="'Insert'"
         @gameInserted="this.showRoot = false"></InsertRootPopup>
-    <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>showRoot
+    <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
             <p v-if="insertingGameName != ''" style="color: white; display: inline-block;">Add a {{ this.insertingGameName }} record</p>
@@ -233,6 +236,7 @@ import Dialog from 'primevue/dialog'
 import { userState } from "@/state/userState"
 import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 import InsertRootPopup from './InsertRootPopup.vue'
+import InsertCoopGamePopup from './InsertCoopGamePopup.vue'
 
 export default {
     name: "Add Record",
@@ -243,6 +247,7 @@ export default {
             showDialog: false,
             showSTS: false,
             showRoot: false,
+            showCoopGame: false,
             isVisitor: false,
             searchGameName: '',
             insertingGameName: '',
@@ -269,7 +274,8 @@ export default {
         Dialog,
         RecentGame,
         InsertSlaytheSpirePopup,
-        InsertRootPopup
+        InsertRootPopup,
+        InsertCoopGamePopup
     },
     computed: {
         filteredGames() {
@@ -307,7 +313,11 @@ export default {
             } else if (gameName == 'Root') {
                 this.showRoot = true;
                 return;
+            } else if (gameName == '5 Minute Marvel') {
+                this.showCoopGame = true;
+                return;
             }
+
             this.insertingPlayerCount = playerCount.charAt(4);
             this.showDialog = !this.showDialog
             this.insertingGameName = gameName;
@@ -369,6 +379,7 @@ export default {
                 this.showDialog = false;
                 this.showSTS = false;
                 this.showRoot = false;
+                this.showCoopGame = false;
                 this.insertingCustomGameName = ''
                 this.winnerName = null;
                 this.winnerScore = null;

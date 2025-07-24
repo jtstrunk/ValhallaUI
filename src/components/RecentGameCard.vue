@@ -68,6 +68,9 @@
             </div>
         </div>
     </div>
+    <div id="overlay" v-if="this.showCoopGame" @click="this.showCoopGame=!this.showCoopGame"></div>
+    <InsertCoopGamePopup v-if="this.showCoopGame" :Type="'Update'" :GameData="gameData"
+        @gameInserted="this.showCoopGame = false"></InsertCoopGamePopup>
     <div id="overlay" v-if="this.showRoot" @click="this.showRoot=!this.showRoot"></div>
     <InsertRootPopup v-if="this.showRoot" :Type="'Update'" :GameData="gameData"
         @gameInserted="this.showRoot = false"></InsertRootPopup>
@@ -256,6 +259,7 @@
 import { userState } from '/src/state/userState'
 import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 import InsertRootPopup from './InsertRootPopup.vue'
+import InsertCoopGamePopup from './InsertCoopGamePopup.vue'
 
 export default {
     name: "Home",
@@ -280,6 +284,7 @@ export default {
             showDialog: false,
             showSTS: false,
             showRoot: false,
+            showCoopGame: false,
             insertingPlayerCount: null,
             insertingGameName: this.gameData.gamename,
             filteredNames: [],
@@ -301,7 +306,8 @@ export default {
     },
     components: {
         InsertSlaytheSpirePopup,
-        InsertRootPopup
+        InsertRootPopup,
+        InsertCoopGamePopup
     },
     methods: {
         navigateToGamePage(name) {
@@ -319,14 +325,17 @@ export default {
             if(this.isVisitor == true) {
                 return;
             }
-            if(gameName == 'Slay the Spire') {
+            if (gameName == 'Slay the Spire') {
                 this.showSTS = true;
                 return;
-            }
-            if(gameName == 'Root') {
+            } else if (gameName == 'Root') {
                 this.showRoot = true;
                 return;
+            } else if (gameName == '5 Minute Marvel') {
+                this.showCoopGame = true;
+                return;
             }
+
             let playerCount = this.gamePlayerCounts[gameName]
             this.gameid = this.gameData.gameid;
             this.insertingPlayerCount = playerCount.charAt(4);
@@ -395,6 +404,7 @@ export default {
                 this.showDialog = false;
                 this.showSTS = false;
                 this.showRoot = false;
+                this.showCoopGame = false;
                 this.winnerName = null;
                 this.winnerScore = null;
                 this.secondName = null;
