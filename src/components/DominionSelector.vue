@@ -451,6 +451,20 @@ export default {
             }
             return true;
         },
+        containsOmen() {
+            let omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
+            if (this.selectedCards.some(card => omenCards.some(omen => omen.name === card.name))) {
+                return true;
+            }
+            return false;
+        },
+        containsProphecy() {
+            let omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
+            if (this.selectedCards.some(card => omenCards.some(omen => omen.name === card.name))) {
+                return true;
+            }
+            return false;
+        },
         isMobile() {
             return window.innerWidth < 420;
         },
@@ -1422,6 +1436,7 @@ export default {
             }
         },
         regenerateFerrymanCard(cardName) {
+            //populate cards wipes ferryman
             this.potentialFerrymanCards = [...this.cards].filter(card => {
                 return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
                     && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
@@ -1433,7 +1448,44 @@ export default {
             let card = this.potentialFerrymanCards[ferrymantRandomIndex]
             this.ferrymanCard = card.name;
 
-            // check if omen and if currently no prophecy
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'));
+            console.log(prophecies)
+            console.log('ferryman card', card)
+
+            if(card.types.includes('Omen') && (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.types.includes('Prophecy')))) {
+                console.log('omen')
+                console.log(this.selectedAddons)
+                console.log('card is an omen and there is no prophecy');
+                let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                let cardName = prophecies[prophecyRandomIndex].name;
+                console.log(cardName);
+                this.selectedAddons.push(cardName);
+                // will have to check if approaching army
+            }
+            
+            // check if no omen in kingdom or ferryman card
+            if (!this.containsOmen && !card.types.includes('Omen')) {
+                this.selectedAddons = this.selectedAddons.filter(addonName => !prophecies.map(card => card.name).includes(addonName));
+            }
+
+            // check if approaching army
+            if (this.selectedAddons.includes('Approaching_Army')) {
+                console.log('get approaching arm')
+                this.containsApproachingArmy = true;
+                console.log('cardlist', this.selectedExpansionsCardList)
+
+                this.potentialArmyCards = [...this.cards].filter(card => {
+                    return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                        && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                        && card.types.includes('Attack') && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                        && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.riverboatCard;
+                });
+
+                let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
+                let card = this.potentialArmyCards[armyRandomIndex]
+                this.armyCard = card.name;
+                this.containsApproachingArmy = true;
+            }
         },
         regenerateLandscape(card) {
             console.log('regen card', card)
@@ -4492,11 +4544,11 @@ export default {
                 set: "Rising Sun",
                 types: ["Prophecy"]
             },
-            {
-                name: "Bureaucracy",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
+            // {
+            //     name: "Bureaucracy",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
             // {
             //     name: "Divine_Wind",
             //     set: "Rising Sun",
