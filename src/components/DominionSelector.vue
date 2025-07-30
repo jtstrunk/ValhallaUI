@@ -292,7 +292,7 @@
                     <img class="colPlatHeader" :src="getLandscapesImage('GraySmallPlatinum')" />
                 </div>
                 <div style="display: flex; flex-direction: row; justify-content: center;">
-                    <button class="btn-selected" :style="firstButtonStyle" @click="generateAdvancedKingdom">Generate Kingdom</button>
+                    <button class="btn-selected" :style="firstButtonStyle" @click="generateAdvancedKingdom()">Generate Kingdom</button>
                     <button class="btn-selected" :style="otherButtonStyle" @click="fillFromExpansions()">Populate Cards</button>
                     <button class="btn-customlist" :style="otherButtonStyle" @click="startCounter()">Start Counter</button>
                 </div>
@@ -459,8 +459,7 @@ export default {
             return false;
         },
         containsProphecy() {
-            let omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
-            if (this.selectedCards.some(card => omenCards.some(omen => omen.name === card.name))) {
+            if (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.types.includes('Prophecy'))) {
                 return true;
             }
             return false;
@@ -548,7 +547,6 @@ export default {
             console.log('test function')
         },
         toggleCollapse(collapseGroup){
-            console.log('collapsing', collapseGroup)
             if (collapseGroup == 'Set') {
                 this.showSets = !this.showSets
             }
@@ -901,59 +899,6 @@ export default {
                     this.selectedAddons.push(cardName);
                 }
             }
-
-            if (this.selectedCards.some(card => card.name === 'Riverboat')) {
-                if (this.containsRiverboat == false) {
-                    this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => card.cost == 5 
-                        && card.costType == 'Money' && !card.types.includes('Duration') &&
-                        !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                    );
-
-                    let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
-                    let card = this.potentialRiverboatCards[riverboatRandomIndex]
-                    this.riverboatCard = card.name;
-                    this.containsRiverboat = true;
-                }
-            } else {
-                this.riverboatCard = "";
-                this.containsRiverboat = false;
-            }
-
-            if (this.selectedCards.some(card => card.name === 'Ferryman')) {
-                if (this.containsFerryman == false) {
-                    this.potentialFerrymanCards = this.selectedExpansionsCardList.filter(card => (
-                        card.cost == 3 || card.cost == 4) && card.costType == 'Money'
-                        && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                    );
-
-                    let ferrymanRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
-                    let card = this.potentialFerrymanCards[ferrymanRandomIndex]
-                    this.ferrymanCard = card.name;
-                    this.containsFerryman = true;
-                    console.log('ferryman card', this.ferrymanCard)
-                }
-            } else {
-                this.ferrymanCard = "";
-                this.containsFerryman = false;
-            }
-
-            if (this.selectedCards.some(card => card.name === 'Young_Witch')) {
-                if (this.containsBane == false) {
-                    this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
-                        card.cost == 2 || card.cost == 3) && card.costType == 'Money'
-                        && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                    );
-
-                    let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
-                    let card = this.potentialBaneCards[baneRandomIndex]
-                    this.baneCard = card.name;
-                    this.containsBane = true;
-                    console.log('bane card', this.baneCard)
-                }
-            } else {
-                this.baneCard = "";
-                this.containsBane = false;
-            }
         },
         generateAdvancedKingdom(){
             this.containsRiverboat = false;
@@ -1147,7 +1092,6 @@ export default {
 
                 if(this.selectedAdvancedCardTypes.includes('Trasher')) {
                     if(loopCount == 1) {
-                        console.log('adding trash')
                         this.addRandomCard(trasherCards)
                     }
                 }
@@ -1320,48 +1264,6 @@ export default {
                 }
             }
 
-            if (this.selectedCards.some(card => card.name === 'Riverboat')){
-                this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => 
-                    card.cost == 5 && card.costType == 'Money' && !card.types.includes('Duration')
-                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                );
-
-                let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
-                let card = this.potentialRiverboatCards[riverboatRandomIndex]
-                this.riverboatCard = card.name;
-                this.containsRiverboat = true;
-            }
-
-            if (this.selectedCards.some(card => card.name === 'Ferryman')){
-                this.potentialFerrymanCards = this.selectedExpansionsCardList.filter(card => (
-                    card.cost == 3 || card.cost == 4) && card.costType == 'Money'
-                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                );
-
-                let ferrymanRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
-                let card = this.potentialFerrymanCards[ferrymanRandomIndex]
-                this.ferrymanCard = card.name;
-                this.containsFerryman = true;
-            }  else {
-                this.ferrymanCard = "";
-                this.containsFerryman = false;
-            }
-
-            if (this.selectedCards.some(card => card.name === 'Young_Witch')){
-                this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
-                    card.cost == 2 || card.cost == 3) && card.costType == 'Money'
-                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                );
-
-                let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
-                let card = this.potentialBaneCards[baneRandomIndex]
-                this.baneCard = card.name;
-                this.containsBane = true;
-            }  else {
-                this.baneCard = "";
-                this.containsBane = false;
-            }
-
             this.setCount = {
                 'Dominion': 0,
                 'Intrigue': 0,
@@ -1385,7 +1287,6 @@ export default {
             }
         },
         regenerateBaneCard(cardName) {  
-            console.log('selected expansions', this.selectedAdvancedExpansions)
             this.potentialBaneCards = [...this.cards].filter(card => {
                 return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
                     && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
@@ -1393,10 +1294,24 @@ export default {
                     && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
                     && card.name !== this.armyCard && card.name !== this.riverboatCard && card.name !== this.ferrymanCard;
             });
-            console.log('bane cards', this.potentialBaneCards)
             let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
             let card = this.potentialBaneCards[baneRandomIndex]
             this.baneCard = card.name;
+
+            if (card.name == 'Riverboat') {
+                this.potentialRiverboatCards = [...this.cards].filter(card => {
+                    return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                        && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                        && !card.types?.includes("Reward") && card.costType == 'Money' 
+                        && card.cost == 5 && !card.types.includes('Duration')
+                        && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                        && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.ferrymanCard;
+                });
+                let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+                let card = this.potentialRiverboatCards[riverboatRandomIndex];
+                this.riverboatCard = card.name;
+                this.containsRiverboat = true;
+            }
         },
         regenerateApproachingArmyCard(cardName) {
             this.potentialArmyCards = [...this.cards].filter(card => {
@@ -1407,11 +1322,10 @@ export default {
                     && card.name !== this.baneCard && card.name !== this.riverboatCard && card.name !== this.ferrymanCard;
             });
             let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
-            let card = this.potentialArmyCards[armyRandomIndex]
+            let card = this.potentialArmyCards[armyRandomIndex];
             this.armyCard = card.name;
         },
         regenerateRiverboatCard(cardName) {
-            console.log('regen riverboat')
             this.potentialRiverboatCards = [...this.cards].filter(card => {
                 return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
                     && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
@@ -1421,24 +1335,21 @@ export default {
                     && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.ferrymanCard;
             });
             let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
-            let card = this.potentialRiverboatCards[riverboatRandomIndex]
+            let card = this.potentialRiverboatCards[riverboatRandomIndex];
             this.riverboatCard = card.name;
 
-            // check if omen and if currently no prophecy
             let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'));
             if(card.types.includes('Omen') && (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.type.includes('Prophecy')))) {
-                console.log('omen')
-                console.log(this.selectedAddons)
-                console.log('card is an omen and there is no prophecy');
                 let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
                 let cardName = prophecies[prophecyRandomIndex].name;
-                console.log(cardName);
                 this.selectedAddons.push(cardName);
-                // will have to check if approaching army
+            }
+
+            if (!this.containsOmen && !card.types.includes('Omen')) {
+                this.selectedAddons = this.selectedAddons.filter(addonName => !prophecies.map(card => card.name).includes(addonName));
             }
         },
         regenerateFerrymanCard(cardName) {
-            //populate cards wipes ferryman
             this.potentialFerrymanCards = [...this.cards].filter(card => {
                 return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
                     && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
@@ -1451,46 +1362,17 @@ export default {
             this.ferrymanCard = card.name;
 
             let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'));
-            console.log(prophecies)
-            console.log('ferryman card', card)
-
             if(card.types.includes('Omen') && (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.types.includes('Prophecy')))) {
-                console.log('omen')
-                console.log(this.selectedAddons)
-                console.log('card is an omen and there is no prophecy');
                 let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
                 let cardName = prophecies[prophecyRandomIndex].name;
-                console.log(cardName);
                 this.selectedAddons.push(cardName);
-                // will have to check if approaching army
             }
             
-            // check if no omen in kingdom or ferryman card
             if (!this.containsOmen && !card.types.includes('Omen')) {
                 this.selectedAddons = this.selectedAddons.filter(addonName => !prophecies.map(card => card.name).includes(addonName));
             }
-
-            // check if approaching army
-            if (this.selectedAddons.includes('Approaching_Army')) {
-                console.log('get approaching arm')
-                this.containsApproachingArmy = true;
-                console.log('cardlist', this.selectedExpansionsCardList)
-
-                this.potentialArmyCards = [...this.cards].filter(card => {
-                    return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
-                        && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
-                        && card.types.includes('Attack') && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
-                        && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.riverboatCard;
-                });
-
-                let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
-                let card = this.potentialArmyCards[armyRandomIndex]
-                this.armyCard = card.name;
-                this.containsApproachingArmy = true;
-            }
         },
         regenerateLandscape(card) {
-            console.log('regen card', card)
             this.selectedExpansionsLandscapeList = [...this.landscapes];
             if (this.selectedAdvancedExpansions.length > 0) {
                 this.selectedExpansionsLandscapeList = this.selectedExpansionsLandscapeList.filter(card =>
@@ -1535,7 +1417,6 @@ export default {
                     if(!events.some(event => this.selectedAddons.includes(event))) {
                         let eventRandomIndex = Math.floor(Math.random() * events.length);
                         let cardName = events[eventRandomIndex].name;
-                        console.log('new card', cardName)
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
                             inserted = true
@@ -1697,6 +1578,94 @@ export default {
         searchType(type) {
             if(type === 'exclusive' && this.selectedExpansions.length > 1) {
                 this.selectedExpansions.length = [];
+            }
+        },
+        selectedCards: {
+            deep: true,
+            handler(newValue) {
+                this.selectedExpansionsCardList = [...this.cards].filter(card => {
+                    return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") && !card.types?.includes("Reward");
+                });
+                this.selectedExpansionsLandscapeList = [...this.landscapes];
+                if (this.selectedAdvancedExpansions.length > 0) {
+                    this.selectedExpansionsCardList = this.selectedExpansionsCardList.filter(card =>
+                        this.selectedAdvancedExpansions.includes(card.set)
+                    );
+                }
+                
+                if (newValue.some(card => card.name === 'Riverboat')) {
+                    if (!this.containsRiverboat && newValue.length == 10) {
+                        this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => 
+                            card.cost == 5 && card.costType == 'Money' &&
+                            !card.types.includes('Duration') &&
+                            !newValue.some(selectedCard => selectedCard.name === card.name)
+                        );
+                        let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+                        let card = this.potentialRiverboatCards[riverboatRandomIndex];
+                        this.riverboatCard = card ? card.name : "";
+                        this.containsRiverboat = true;
+                    }
+                } else {
+                    this.riverboatCard = "";
+                    this.containsRiverboat = false;
+                }
+
+                if (newValue.some(card => card.name === 'Ferryman')) {
+                    if (!this.containsFerryman && newValue.length == 10) {
+                        this.potentialFerrymanCards = this.selectedExpansionsCardList.filter(card => 
+                            (card.cost == 3 || card.cost == 4) && card.costType == 'Money' &&
+                            !newValue.some(selectedCard => selectedCard.name === card.name)
+                        );
+                        let ferrymanRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
+                        let card = this.potentialFerrymanCards[ferrymanRandomIndex];
+                        this.ferrymanCard = card.name;
+                        this.containsFerryman = true;
+                    }
+                } else {
+                    this.ferrymanCard = "";
+                    this.containsFerryman = false;
+                }
+
+                if (this.selectedCards.some(card => card.name === 'Young_Witch')) {
+                    if (!this.containsBane && newValue.length == 10) {
+                        this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
+                            card.cost == 2 || card.cost == 3) && card.costType == 'Money'
+                            && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                        );
+
+                        let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
+                        let card = this.potentialBaneCards[baneRandomIndex]
+                        this.baneCard = card.name;
+                        this.containsBane = true;
+                    }
+                } else {
+                    this.baneCard = "";
+                    this.containsBane = false;
+                }
+            }
+        },
+        selectedAddons: {
+            deep: true,
+                handler(newAddons) {
+                if (newAddons.includes('Approaching_Army')) {
+                    this.containsApproachingArmy = true;
+                    this.potentialArmyCards = [...this.cards].filter(card => {
+                        return this.selectedAdvancedExpansions.includes(card.set) && card.name !== this.riverboatCard
+                        && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card")
+                        && card.types.includes('Attack') && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                        && card.name !== this.ferrymanCard && card.name !== this.armyCard && card.name !== this.baneCard;
+                    });
+
+                    let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
+                    let card = this.potentialArmyCards[armyRandomIndex];
+                    if (card) {
+                    this.armyCard = card.name;
+                    this.containsApproachingArmy = true;
+                    }
+                } else {
+                    this.containsApproachingArmy = false;
+                    this.armyCard = "";
+                }
             }
         }
     },
