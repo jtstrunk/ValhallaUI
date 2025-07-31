@@ -25,14 +25,18 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerOneCharacter">Character</label>
+                    <label for="playerOneCharacter">Faction</label>
                     <Select v-model="playerCharacters[0]" :options="filteredOptions(0)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Faction" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="winnerScore">Score</label>
+                    <Input v-model.number="winnerScore" id="winnerScore" style="width: 80px;"></Input>
                 </div>
             </div>
             <div class="players">
@@ -60,14 +64,18 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerTwoCharacter">Character</label>
+                    <label for="playerTwoCharacter">Faction</label>
                     <Select v-model="playerCharacters[1]" :options="filteredOptions(1)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Faction" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="secondScore">Score</label>
+                    <Input v-model.number="secondScore" id="secondScore" style="width: 80px;"></Input>
                 </div>
             </div>
             <div class="players">
@@ -95,14 +103,18 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerThreeCharacter">Character</label>
+                    <label for="playerThreeCharacter">Faction</label>
                     <Select v-model="playerCharacters[2]" :options="filteredOptions(2)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Faction" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="secondScore">Score</label>
+                    <Input v-model.number="thirdScore" id="thirdScore" style="width: 80px;"></Input>
                 </div>
             </div>
             <div class="players">
@@ -130,33 +142,21 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerFourCharacter">Character</label>
+                    <label for="playerFourCharacter">Faction</label>
                     <Select v-model="playerCharacters[3]" :options="filteredOptions(3)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Faction" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
                 </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="secondScore">Score</label>
+                    <Input v-model.number="fourthScore" id="fourthScore" style="width: 80px;"></Input>
+                </div>
             </div>
             <div style="display: flex; flex-direction: row;">
-                <div class="playerSection">
-                    <label for="act" style="margin-bottom: 4px;">Act Beat</label>
-                    <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Act')">▼</div>
-                        <input v-model="Act" id="act" style="width: 18px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Act')">▲</div>
-                    </span>
-                </div>
-                <div class="playerSection">
-                    <label for="Ascension" style="margin-bottom: 4px;">Ascension </label>
-                    <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Ascension')">▼</div>
-                        <input v-model="Ascension" id="act" style="width: 25px;" >
-                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Ascension')">▲</div>
-                    </span>
-                </div>
                 <button class="btn-primary" v-if="this.popupType == 'Insert'" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
                 <button class="btn-outline" v-if="this.popupType == 'Update'" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="updateRecord" :disabled="isVisitor">Update Record</button>
             </div>
@@ -184,20 +184,22 @@ export default {
             userID: userState.userID,
             isVisitor: false,
             popupType: this.Type || "Insert",
-            insertingGameName: 'Slay the Spire',
+            insertingGameName: 'Root',
             filteredNames: [],
             characterOptions: [
-                { name: 'The Silent', code: 'silent' },
-                { name: 'The Ironclad', code: 'ironclad' },
-                { name: 'The Defect', code: 'defect' },
-                { name: 'The Watcher', code: 'watcher' },
+                { name: 'Marquise de Cat', code: 'marquise' },
+                { name: 'Eyrie Dynasties', code: 'eyrie' },
+                { name: 'Woodland Alliance', code: 'woodland' },
+                { name: 'Vagabond', code: 'vagabond' },
+                { name: 'Lord of the Hundreds', code: 'hundreds' },
+                { name: 'Keepers in Iron', code: 'keepers' },
                 { name: '--', code: 'empty' },
             ],
             playerCharacters: ['empty', 'empty', 'empty', 'empty'],
             Act: 0,
             Ascension: 0,
             gameID: null,
-            gamedata: this.GameData || null
+            gamedata: this.GameData || null,
         }
     },
     methods: {
@@ -227,34 +229,19 @@ export default {
             this.positionMapping[placement] = input.value;
             this[placement + 'Name'] = input.value;
         },
-        increaseCount(field){
-            if(field === 'Act' && this.Act < 4) {
-                this.Act = this.Act + 1;
-            }
-            if(field === 'Ascension' && this.Ascension < 13) {
-                this.Ascension = this.Ascension + 1;
-            }
-        },
-        decreaseCount(field){
-            if(field === 'Act' && this.Act > 0) {
-                this.Act = this.Act - 1;
-            }
-            if(field === 'Ascension' && this.Ascension > 0) {
-                this.Ascension = this.Ascension - 1;
-            }
-        },
         submitRecord() {
+            console.log('submitting record')
             let insertObject = {
                 "posterid": this.userID,
                 "gamename": this.insertingGameName,
                 "winnername": this.winnerName,
-                "winnerscore": this.Act,
-                "secondname": this.secondName || null,
-                "secondscore": this.Ascension,
+                "winnerscore": this.winnerScore,
+                "secondname": this.secondName,
+                "secondscore": this.secondScore,
                 "thirdname": this.thirdName || null,
-                "thirdscore": null,
+                "thirdscore": this.thirdScore || null,
                 "fourthname": this.fourthName || null,
-                "fourthscore": null,
+                "fourthscore": this.fourthScore || null,
                 "fifthname": null,
                 "fifthscore": null,
                 "sixthname": null,
@@ -262,6 +249,9 @@ export default {
                 date: null
             };
 
+            console.log(insertObject)
+
+            
             fetch(`${import.meta.env.VITE_API_URL}/insertgame`, {
                 method: 'POST',
                 headers: {
@@ -291,12 +281,17 @@ export default {
                     "playerSixCharacter": null
                 };
 
+                console.log('charactersObject')
+                console.log(charactersObject)
+
                 this.winnerName = null;
+                this.winnerScore = null;
                 this.secondName = null;
+                this.secondScore = null;
                 this.thirdName = null;
+                this.thirdScore = null;
                 this.fourthName = null;
-                this.Act = 0;
-                this.Ascension = 0;
+                this.fourthScore = null;
                 this.$emit('gameInserted');
 
                 return fetch(`${import.meta.env.VITE_API_URL}/insertgamecharacters`, {
@@ -330,12 +325,13 @@ export default {
             let insertObject = {
                 "gameid": this.gameID,
                 "winnername": this.winnerName,
-                "winnerscore": this.Act,
-                "secondname": this.secondName || null,
-                "secondscore": this.Ascension,
+                "winnerscore": this.winnerScore,
+                "secondname": this.secondName,
+                "secondscore": this.secondScore,
                 "thirdname": this.thirdName || null,
-                "thirdscore": null,
+                "thirdscore": this.thirdScore || null,
                 "fourthname": this.fourthName || null,
+                "fourthscore": this.fourthScore || null,
                 "fourthscore": null,
                 "fifthname": null,
                 "fifthscore": null,
@@ -437,7 +433,8 @@ export default {
                 'Content-Type': 'application/json',
             }})
             .then(response => {
-                this.gameCharacters = response.data
+                this.gameCharacters = response.data;
+                console.log(this.gameCharacters);
                 this.playerCharacters[0] = this.gameCharacters[0].characterOne;
                 this.playerCharacters[1] = this.gameCharacters[0].characterTwo;
                 this.playerCharacters[2] = this.gameCharacters[0].characterThree;
@@ -480,9 +477,13 @@ export default {
             this.Act = this.gamedata.winnerscore;
             this.Ascension = this.gamedata.secondscore;
             this.winnerName = this.gamedata.winnername;
+            this.winnerScore = this.gamedata.winnerscore;
             this.secondName = this.gamedata.secondname;
+            this.secondScore = this.gamedata.secondscore;
             this.thirdName = this.gamedata.thirdname;
+            this.thirdScore = this.gamedata.thirdscore;
             this.fourthName = this.gamedata.fourthname;
+            this.fourthScore = this.gamedata.fourthscore;
             this.gameID = this.gamedata.gameid;
             this.date = this.gamedata.date;
         }
@@ -574,7 +575,7 @@ input {
 }
 
 .gamepopup {
-    width: 450px;
+    width: 500px !important;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 50%;
@@ -586,7 +587,7 @@ input {
     z-index: 1001;
 }
 .popupContainer {
-    width: 450px;
+    width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;

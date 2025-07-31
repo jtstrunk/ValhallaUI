@@ -24,16 +24,6 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div class="playerSection">
-                    <label for="playerOneCharacter">Character</label>
-                    <Select v-model="playerCharacters[0]" :options="filteredOptions(0)"
-                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
-                            overlay: { style: { backgroundColor: '#404040' } },
-                            option: {style: { color: 'white', padding: '4px 8px' } } 
-                        }" 
-                    />
-                </div>
             </div>
             <div class="players">
                 <div class="playerSection">
@@ -58,16 +48,6 @@
                             }
                             
                         }"></AutoComplete>
-                </div>
-                <div class="playerSection">
-                    <label for="playerTwoCharacter">Character</label>
-                    <Select v-model="playerCharacters[1]" :options="filteredOptions(1)"
-                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
-                            overlay: { style: { backgroundColor: '#404040' } },
-                            option: {style: { color: 'white', padding: '4px 8px' } } 
-                        }" 
-                    />
                 </div>
             </div>
             <div class="players">
@@ -94,16 +74,6 @@
                             
                         }"></AutoComplete>
                 </div>
-                <div class="playerSection">
-                    <label for="playerThreeCharacter">Character</label>
-                    <Select v-model="playerCharacters[2]" :options="filteredOptions(2)"
-                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
-                            overlay: { style: { backgroundColor: '#404040' } },
-                            option: {style: { color: 'white', padding: '4px 8px' } } 
-                        }" 
-                    />
-                </div>
             </div>
             <div class="players">
                 <div class="playerSection">
@@ -129,32 +99,39 @@
                             
                         }"></AutoComplete>
                 </div>
+            </div>
+            <div class="players">
                 <div class="playerSection">
-                    <label for="playerFourCharacter">Character</label>
-                    <Select v-model="playerCharacters[3]" :options="filteredOptions(3)"
-                        style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
-                            overlay: { style: { backgroundColor: '#404040' } },
-                            option: {style: { color: 'white', padding: '4px 8px' } } 
-                        }" 
-                    />
+                    <label for="fifthName">Player Five</label>
+                    <AutoComplete v-model="fifthName" :suggestions="filteredNames" optionLabel="name"
+                        @complete="searchName" @item-select="updateName($event, 'fifth')" id="fifthName"
+                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'fifth')" @keydown="handleKeyDown($event, 'fifth')"
+                        :pt="{
+                            root: {
+                                class: 'customAutocomplete',
+                            },
+                            option: 
+                            { 
+                                style: { color: 'white', padding: '4px 8px'}
+                            },
+                            overlay: {
+                                style: { backgroundColor: '#404040', transform: 'translateY(8px)', 
+                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                            },
+                            pcInputText: {
+                                style: { '::placeholder': { color: '#2e6da4' } }
+                            }
+                            
+                        }"></AutoComplete>
                 </div>
             </div>
             <div style="display: flex; flex-direction: row;">
                 <div class="playerSection">
-                    <label for="act" style="margin-bottom: 4px;">Act Beat</label>
+                    <label for="level" style="margin-bottom: 4px;">Level Beat</label>
                     <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Act')">▼</div>
-                        <input v-model="Act" id="act" style="width: 18px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Act')">▲</div>
-                    </span>
-                </div>
-                <div class="playerSection">
-                    <label for="Ascension" style="margin-bottom: 4px;">Ascension </label>
-                    <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Ascension')">▼</div>
-                        <input v-model="Ascension" id="act" style="width: 25px;" >
-                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Ascension')">▲</div>
+                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Level')">▼</div>
+                        <input v-model="Level" id="Level" style="width: 18px;">
+                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Level')">▲</div>
                     </span>
                 </div>
                 <button class="btn-primary" v-if="this.popupType == 'Insert'" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
@@ -170,13 +147,18 @@
 import axios from "axios"
 import { userState } from "@/state/userState"
 import Select from 'primevue/select';
+import { toHandlers } from "vue";
 
 export default {
     inheritAttrs: false,
     name: "Add Record",
     props: {
         Type: String,
-        GameData: Object
+        GameData: Object,
+        gameName: {
+            type: String,
+            default: ''
+        }
     },
     data(){
         return{
@@ -184,18 +166,9 @@ export default {
             userID: userState.userID,
             isVisitor: false,
             popupType: this.Type || "Insert",
-            insertingGameName: 'Slay the Spire',
+            insertingGameName: this.gameName || '',
             filteredNames: [],
-            characterOptions: [
-                { name: 'The Silent', code: 'silent' },
-                { name: 'The Ironclad', code: 'ironclad' },
-                { name: 'The Defect', code: 'defect' },
-                { name: 'The Watcher', code: 'watcher' },
-                { name: '--', code: 'empty' },
-            ],
-            playerCharacters: ['empty', 'empty', 'empty', 'empty'],
-            Act: 0,
-            Ascension: 0,
+            Level: 0,
             gameID: null,
             gamedata: this.GameData || null
         }
@@ -228,19 +201,13 @@ export default {
             this[placement + 'Name'] = input.value;
         },
         increaseCount(field){
-            if(field === 'Act' && this.Act < 4) {
-                this.Act = this.Act + 1;
-            }
-            if(field === 'Ascension' && this.Ascension < 13) {
-                this.Ascension = this.Ascension + 1;
+            if(field === 'Level' && this.Level < 4) {
+                this.Level = this.Level + 1;
             }
         },
         decreaseCount(field){
-            if(field === 'Act' && this.Act > 0) {
-                this.Act = this.Act - 1;
-            }
-            if(field === 'Ascension' && this.Ascension > 0) {
-                this.Ascension = this.Ascension - 1;
+            if(field === 'Level' && this.Level > 0) {
+                this.Level = this.Level - 1;
             }
         },
         submitRecord() {
@@ -248,14 +215,14 @@ export default {
                 "posterid": this.userID,
                 "gamename": this.insertingGameName,
                 "winnername": this.winnerName,
-                "winnerscore": this.Act,
+                "winnerscore": this.Level,
                 "secondname": this.secondName || null,
-                "secondscore": this.Ascension,
+                "secondscore": 0,
                 "thirdname": this.thirdName || null,
                 "thirdscore": null,
                 "fourthname": this.fourthName || null,
                 "fourthscore": null,
-                "fifthname": null,
+                "fifthname": this.fifthName || null,
                 "fifthscore": null,
                 "sixthname": null,
                 "sixthscore": null,
@@ -278,61 +245,16 @@ export default {
             })
             .then(data => {
                 console.log('Success:', data);
-                this.gameID = data.gameid;
-
-                const isEmptyString = (value) => value === "empty" || value === "";
-                let charactersObject = {
-                    "gameid": this.gameID,
-                    "playerOneCharacter": isEmptyString(this.playerCharacters[0]) ? null : this.playerCharacters[0],
-                    "playerTwoCharacter": isEmptyString(this.playerCharacters[1]) ? null : this.playerCharacters[1],
-                    "playerThreeCharacter": isEmptyString(this.playerCharacters[2]) ? null : this.playerCharacters[2],
-                    "playerFourCharacter": isEmptyString(this.playerCharacters[3]) ? null : this.playerCharacters[3],
-                    "playerFiveCharacter": null,
-                    "playerSixCharacter": null
-                };
-
-                this.winnerName = null;
-                this.secondName = null;
-                this.thirdName = null;
-                this.fourthName = null;
-                this.Act = 0;
-                this.Ascension = 0;
                 this.$emit('gameInserted');
-
-                return fetch(`${import.meta.env.VITE_API_URL}/insertgamecharacters`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(charactersObject)
-                });
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                this.playerCharacters[0] = null;
-                this.playerCharacters[1] = null;
-                this.playerCharacters[2] = null;
-                this.playerCharacters[3] = null;
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
         },
         updateRecord(){
             let insertObject = {
                 "gameid": this.gameID,
                 "winnername": this.winnerName,
-                "winnerscore": this.Act,
+                "winnerscore": this.Level,
                 "secondname": this.secondName || null,
-                "secondscore": this.Ascension,
+                "secondscore": 0,
                 "thirdname": this.thirdName || null,
                 "thirdscore": null,
                 "fourthname": this.fourthName || null,
@@ -356,52 +278,9 @@ export default {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
-            })
-            .then(data => {
                 console.log('Success:', data);
-   
-                const isEmptyString = (value) => value === "empty" || value === "";
-                let charactersObject = {
-                    "gameid": this.gameID,
-                    "playerOneCharacter": isEmptyString(this.playerCharacters[0]) ? null : this.playerCharacters[0],
-                    "playerTwoCharacter": isEmptyString(this.playerCharacters[1]) ? null : this.playerCharacters[1],
-                    "playerThreeCharacter": isEmptyString(this.playerCharacters[2]) ? null : this.playerCharacters[2],
-                    "playerFourCharacter": isEmptyString(this.playerCharacters[3]) ? null : this.playerCharacters[3],
-                    "playerFiveCharacter": null,
-                    "playerSixCharacter": null
-                };
-
-                this.winnerName = null;
-                this.secondName = null;
-                this.thirdName = null;
-                this.fourthName = null;
-                this.Act = 0;
-                this.Ascension = 0;
                 this.$emit('gameInserted');
-
-                return fetch(`${import.meta.env.VITE_API_URL}/updategamecharacters`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(charactersObject)
-                });
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                this.playerCharacters[0] = null;
-                this.playerCharacters[1] = null;
-                this.playerCharacters[2] = null;
-                this.playerCharacters[3] = null;
                 return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -425,23 +304,6 @@ export default {
                         { name: 'Player 1' }, { name: 'Player 2' }, { name: 'Player 3' }, { name: 'Player 4' }, { name: 'Player 5' }, { name: 'Player 6' }];
                 }
 
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-            });
-        },
-        async fetchGameCharacters(gameid) {
-            axios.get(`${import.meta.env.VITE_API_URL}/getgamecharacters/${gameid}`, {
-            withCredentials: false,
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(response => {
-                this.gameCharacters = response.data
-                this.playerCharacters[0] = this.gameCharacters[0].characterOne;
-                this.playerCharacters[1] = this.gameCharacters[0].characterTwo;
-                this.playerCharacters[2] = this.gameCharacters[0].characterThree;
-                this.playerCharacters[3] = this.gameCharacters[0].characterFour;
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -476,13 +338,13 @@ export default {
         this.fetchUsersPlayedWith(searchName);
 
         if(this.popupType == 'Update') {
-            this.fetchGameCharacters(this.gamedata.gameid)
-            this.Act = this.gamedata.winnerscore;
-            this.Ascension = this.gamedata.secondscore;
+            console.log(this.gamedata)
+            this.Level = this.gamedata.winnerscore;
             this.winnerName = this.gamedata.winnername;
             this.secondName = this.gamedata.secondname;
             this.thirdName = this.gamedata.thirdname;
             this.fourthName = this.gamedata.fourthname;
+            this.fifthName = this.gamedata.fifthName;
             this.gameID = this.gamedata.gameid;
             this.date = this.gamedata.date;
         }

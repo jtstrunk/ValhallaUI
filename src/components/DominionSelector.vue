@@ -292,7 +292,7 @@
                     <img class="colPlatHeader" :src="getLandscapesImage('GraySmallPlatinum')" />
                 </div>
                 <div style="display: flex; flex-direction: row; justify-content: center;">
-                    <button class="btn-selected" :style="firstButtonStyle" @click="generateAdvancedKingdom">Generate Kingdom</button>
+                    <button class="btn-selected" :style="firstButtonStyle" @click="generateAdvancedKingdom()">Generate Kingdom</button>
                     <button class="btn-selected" :style="otherButtonStyle" @click="fillFromExpansions()">Populate Cards</button>
                     <button class="btn-customlist" :style="otherButtonStyle" @click="startCounter()">Start Counter</button>
                 </div>
@@ -304,10 +304,30 @@
                         :src="getCardImage(card.name)" :class="{ traitCards: traitCards.includes(card), 
                             obeliskcard: obeliskCard === card.name }"  @click="removeCard(card)" />
                 </div>
-                <div v-if="this.containsRiverboat && !isMobile" style="display: flex; align-items: center; margin-left: 10px;">
-                    <div class="card-wrapper" :key="this.riverboatCard">
-                        <img class="riverboatCard" :src="getCardImage(this.riverboatCard)" />
-                        <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateRiverboatCard(this.riverboatCard)" />
+                <div style="display: flex; flex-direction: column; height: 446px; flex-wrap: wrap;">
+                    <div v-if="this.containsBane && !isMobile" style="display: flex; align-items: center; margin-left: 1px;">
+                        <div class="card-wrapper" :key="this.baneCard">
+                            <img class="baneCard" :src="getCardImage(this.baneCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateBaneCard(this.baneCard)" />
+                        </div>
+                    </div>
+                    <div v-if="this.containsApproachingArmy && !isMobile" style="display: flex; align-items: center; margin-left: 1px;">
+                        <div class="card-wrapper" :key="this.armyCard">
+                            <img class="armyCard" :src="getCardImage(this.armyCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateApproachingArmyCard(this.armyCard)" />
+                        </div>
+                    </div>
+                    <div v-if="this.containsRiverboat && !isMobile" style="display: flex; align-items: center; padding-top: 15px; padding-left: 11px;">
+                        <div class="card-wrapper" :key="this.riverboatCard">
+                            <img class="riverboatCard" :src="getCardImage(this.riverboatCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateRiverboatCard(this.riverboatCard)" />
+                        </div>
+                    </div>
+                    <div v-if="this.containsFerryman && !isMobile" style="display: flex; align-items: center; padding-top: 30px; padding-left: 11px;">
+                        <div class="card-wrapper" :key="this.ferrymanCard">
+                            <img class="ferrymanCard" :src="getCardImage(this.ferrymanCard)" />
+                            <img src="../assets/icons/refresh.webp" class="icon refresh-icon" @click="regenerateFerrymanCard(this.ferrymanCard)" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -353,7 +373,7 @@ export default {
             showCategories: false,
             expansions: ['Dominion', 'Intrigue', 'Seaside', 'Prosperity', 'Cornu & Guilds', 'Adventures', 'Empires', 'Plunder', 'Rising Sun'],
             types: ['Action', 'Attack', 'Reaction', 'Victory', 'Treasure', 'Duration', 'Command', 'Reserve', 'Castle', 'Gathering', 'Shadow', 'Omen'],
-            categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Terminal Draw', 'Terminal Silver'],
+            categories: ['Village', 'Cantrip', 'Gainer', 'Trasher', 'Sifter', 'Virtual Coin', 'Terminal Draw'],
             cardTypes: ['Victory', 'Treasure', 'Gathering', 'Shadow', 'Trasher', 'Choice', 'Player Mat', 'Overpay', 'Coffers', 'Split Pile', 'Debt', 'Loot', 'Event', 'Landmark', 'Trait', 'Prophecy',],
             selectedAdvancedExpansions: ['Dominion', 'Intrigue', 'Seaside', 'Adventures' , 'Empires', 'Plunder'],
             // selectedAdvancedExpansions: ['Rising Sun'],
@@ -368,12 +388,15 @@ export default {
             prophecies: [],
             omenCards: [],
             containsRiverboat: false,
+            containsFerryman: false,
+            containsBane: false,
+            containsApproachingArmy: false,
             numberTraits: 0,
             riverboatCard: "",
+            ferrymanCard: "",
+            baneCard: "",
+            armyCard: "",
             obeliskCard: "",
-            expansionDisplayNames: {
-                'Cornu & Guilds': 'Cornu & Guilds'
-            },
             splitPileCheck: {
                 'Treasure_Hunter': 'Page',
                 'Warrior': 'Page',
@@ -427,6 +450,19 @@ export default {
                 return false;
             }
             return true;
+        },
+        containsOmen() {
+            let omenCards = this.selectedExpansionsCardList.filter(card => card.types.includes('Omen'))
+            if (this.selectedCards.some(card => omenCards.some(omen => omen.name === card.name))) {
+                return true;
+            }
+            return false;
+        },
+        containsProphecy() {
+            if (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.types.includes('Prophecy'))) {
+                return true;
+            }
+            return false;
         },
         isMobile() {
             return window.innerWidth < 420;
@@ -511,7 +547,6 @@ export default {
             console.log('test function')
         },
         toggleCollapse(collapseGroup){
-            console.log('collapsing', collapseGroup)
             if (collapseGroup == 'Set') {
                 this.showSets = !this.showSets
             }
@@ -720,7 +755,9 @@ export default {
             this.selectedCards = [];
         },
         selectedFill() {
-            let tempCardList = [...this.filteredCards];
+            let tempCardList = [...this.filteredCards].filter(card => {
+                return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") && !card.types?.includes("Reward");
+            });
             let loopCount = this.numGenerateCards;
             if(this.numGenerateCards > 10 - this.selectedCards.length) {
                 loopCount = 10 - this.selectedCards.length
@@ -862,26 +899,13 @@ export default {
                     this.selectedAddons.push(cardName);
                 }
             }
-
-            if (this.selectedCards.some(card => card.name === 'Riverboat')){
-                this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => card.cost == 5 
-                    && card.costType == 'Money' && !card.types.includes('Duration') &&
-                    !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                );
-
-                let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
-                let card = this.potentialRiverboatCards[riverboatRandomIndex]
-                this.riverboatCard = card.name;
-                this.containsRiverboat = true;
-            } else {
-                this.riverboatCard = "";
-                this.containsRiverboat = false;
-            }
         },
         generateAdvancedKingdom(){
             this.containsRiverboat = false;
             this.riverboatCard = "";
             this.obeliskCard = "";
+            this.ferrymanCard = "";
+            this.baneCard = "";
             this.numberTraits = 0;
             let maxEffectCount = false;
             this.selectedExpansionsCardList = [...this.cards].filter(card => {
@@ -961,7 +985,7 @@ export default {
                 this.showRemovedMechanic('Split Pile')
             }
             if (this.selectedAdvancedCardTypes.includes('Player Mat') && !this.selectedAdvancedExpansions.includes('Seaside')
-                && !this.selectedAdvancedExpansions.includes('Adventures')) {
+                && !this.selectedAdvancedExpansions.includes('Adventures') && !this.selectedAdvancedExpansions.includes('Cornu & Guilds')) {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== 'Player Mat');
                 this.showRemovedMechanic('Player Mat')
             }
@@ -1068,7 +1092,6 @@ export default {
 
                 if(this.selectedAdvancedCardTypes.includes('Trasher')) {
                     if(loopCount == 1) {
-                        console.log('adding trash')
                         this.addRandomCard(trasherCards)
                     }
                 }
@@ -1241,18 +1264,6 @@ export default {
                 }
             }
 
-            if (this.selectedCards.some(card => card.name === 'Riverboat')){
-                this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => 
-                    card.cost == 5 && card.costType == 'Money' && !card.types.includes('Duration')
-                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
-                );
-
-                let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
-                let card = this.potentialRiverboatCards[riverboatRandomIndex]
-                this.riverboatCard = card.name;
-                this.containsRiverboat = true;
-            }
-
             this.setCount = {
                 'Dominion': 0,
                 'Intrigue': 0,
@@ -1267,7 +1278,7 @@ export default {
                 this.setCount[card.set] = this.setCount[card.set] + 1;
             })
 
-            if ( this.setCount['Prosperity'] > 2) {
+            if (this.setCount['Prosperity'] > 2) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
             } else if ( this.setCount['Prosperity'] > 1 &&  this.setCount['Empires'] > 2) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
@@ -1275,15 +1286,101 @@ export default {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
             }
         },
+        regenerateBaneCard(cardName) {  
+            this.potentialBaneCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && (card.cost == 2 || card.cost == 3) && card.costType == 'Money'
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.armyCard && card.name !== this.riverboatCard && card.name !== this.ferrymanCard;
+            });
+            let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
+            let card = this.potentialBaneCards[baneRandomIndex]
+            this.baneCard = card.name;
+
+            if (card.name == 'Riverboat') {
+                this.potentialRiverboatCards = [...this.cards].filter(card => {
+                    return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                        && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                        && !card.types?.includes("Reward") && card.costType == 'Money' 
+                        && card.cost == 5 && !card.types.includes('Duration')
+                        && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                        && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.ferrymanCard;
+                });
+                let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+                let card = this.potentialRiverboatCards[riverboatRandomIndex];
+                this.riverboatCard = card.name;
+                this.containsRiverboat = true;
+            }
+        },
+        regenerateApproachingArmyCard(cardName) {
+            this.potentialArmyCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && card.types.includes("Attack")
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.baneCard && card.name !== this.riverboatCard && card.name !== this.ferrymanCard;
+            });
+            let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
+            let card = this.potentialArmyCards[armyRandomIndex];
+            this.armyCard = card.name;
+        },
         regenerateRiverboatCard(cardName) {
-            let newPotentialRiverboatCards = this.potentialRiverboatCards.filter(
-                potentialCard => potentialCard.name !== cardName
-            );
-            let riverboatRandomIndex = Math.floor(Math.random() * newPotentialRiverboatCards.length);
-            let card = newPotentialRiverboatCards[riverboatRandomIndex]
+            this.potentialRiverboatCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && card.costType == 'Money' 
+                    && card.cost == 5 && !card.types.includes('Duration')
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.ferrymanCard;
+            });
+            let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+            let card = this.potentialRiverboatCards[riverboatRandomIndex];
             this.riverboatCard = card.name;
+
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'));
+            if(card.types.includes('Omen') && (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.type.includes('Prophecy')))) {
+                let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                let cardName = prophecies[prophecyRandomIndex].name;
+                this.selectedAddons.push(cardName);
+            }
+
+            if (!this.containsOmen && !card.types.includes('Omen')) {
+                this.selectedAddons = this.selectedAddons.filter(addonName => !prophecies.map(card => card.name).includes(addonName));
+            }
+        },
+        regenerateFerrymanCard(cardName) {
+            this.potentialFerrymanCards = [...this.cards].filter(card => {
+                return this.selectedAdvancedExpansions.includes(card.set) && card.name !== cardName
+                    && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") 
+                    && !card.types?.includes("Reward") && card.costType == 'Money' && (card.cost == 3 || card.cost == 4)
+                    && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                    && card.name !== this.armyCard && card.name !== this.baneCard && card.name !== this.riverboatCard;
+            });
+            let ferrymantRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
+            let card = this.potentialFerrymanCards[ferrymantRandomIndex]
+            this.ferrymanCard = card.name;
+
+            let prophecies = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Prophecy'));
+            if(card.types.includes('Omen') && (this.selectedAddons.length === 0 || this.selectedAddons.some(addon => !addon.types.includes('Prophecy')))) {
+                let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
+                let cardName = prophecies[prophecyRandomIndex].name;
+                this.selectedAddons.push(cardName);
+            }
+            
+            if (!this.containsOmen && !card.types.includes('Omen')) {
+                this.selectedAddons = this.selectedAddons.filter(addonName => !prophecies.map(card => card.name).includes(addonName));
+            }
         },
         regenerateLandscape(card) {
+            this.selectedExpansionsLandscapeList = [...this.landscapes];
+            if (this.selectedAdvancedExpansions.length > 0) {
+                this.selectedExpansionsLandscapeList = this.selectedExpansionsLandscapeList.filter(card =>
+                    this.selectedAdvancedExpansions.includes(card.set)
+                );
+            }
+
+            let allEvents = this.landscapes.filter(card => card.types.includes('Event'))
             let landmarks = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Landmark'))
             let events = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Event'))
             let traits = this.selectedExpansionsLandscapeList.filter(card => card.types.includes('Trait'))
@@ -1292,8 +1389,8 @@ export default {
             if(landmarks.some(landmark => landmark.name.includes(card))) {
                 this.obeliskCard = ""
                 let index = this.selectedAddons.findIndex(landmark => landmark.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!landmarks.some(landmark => this.selectedAddons.includes(landmark))) {
                         let landmarkRandomIndex = Math.floor(Math.random() * landmarks.length);
@@ -1312,10 +1409,10 @@ export default {
                 }
             }
 
-            if(events.some(event => event.name.includes(card))) {
+            if(allEvents.some(event => event.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(event => event.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!events.some(event => this.selectedAddons.includes(event))) {
                         let eventRandomIndex = Math.floor(Math.random() * events.length);
@@ -1323,6 +1420,7 @@ export default {
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
                             inserted = true
+                            console.log(this.selectedAddons)
                         }
                     }
                     attempts++
@@ -1331,8 +1429,8 @@ export default {
 
             if(traits.some(trait => trait.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(trait => trait.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!traits.some(trait => this.selectedAddons.includes(trait))) {
                         let traitRandomIndex = Math.floor(Math.random() * traits.length);
@@ -1348,15 +1446,27 @@ export default {
 
             if(prophecies.some(prophecy => prophecy.name.includes(card))) {
                 let index = this.selectedAddons.findIndex(prophecy => prophecy.includes(card));
-                let attempts = 0, inserted = false
-                    while (inserted == false && attempts < 20) {
+                let attempts = 0, inserted = false;
+                while (inserted == false && attempts < 20) {
 
                     if(!prophecies.some(prophecy => this.selectedAddons.includes(prophecy))) {
                         let prophecyRandomIndex = Math.floor(Math.random() * prophecies.length);
                         let cardName = prophecies[prophecyRandomIndex].name;
                         if (!this.selectedAddons.includes(cardName)) {
                             this.selectedAddons[index] = cardName;
-                            inserted = true
+                            inserted = true;
+
+                            if(cardName == 'Approaching_Army') {
+                                this.containsApproachingArmy = true;
+                                this.potentialArmyCards = this.selectedExpansionsCardList.filter(card => (
+                                   card.types.includes('Attack') && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                                ));
+
+                                let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
+                                let card = this.potentialArmyCards[armyRandomIndex]
+                                this.armyCard = card.name;
+                                this.containsApproachingArmy = true;
+                            }
                         }
                     }
                     attempts++
@@ -1469,6 +1579,94 @@ export default {
             if(type === 'exclusive' && this.selectedExpansions.length > 1) {
                 this.selectedExpansions.length = [];
             }
+        },
+        selectedCards: {
+            deep: true,
+            handler(newValue) {
+                this.selectedExpansionsCardList = [...this.cards].filter(card => {
+                    return !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card") && !card.types?.includes("Reward");
+                });
+                this.selectedExpansionsLandscapeList = [...this.landscapes];
+                if (this.selectedAdvancedExpansions.length > 0) {
+                    this.selectedExpansionsCardList = this.selectedExpansionsCardList.filter(card =>
+                        this.selectedAdvancedExpansions.includes(card.set)
+                    );
+                }
+                
+                if (newValue.some(card => card.name === 'Riverboat')) {
+                    if (!this.containsRiverboat && newValue.length == 10) {
+                        this.potentialRiverboatCards = this.selectedExpansionsCardList.filter(card => 
+                            card.cost == 5 && card.costType == 'Money' &&
+                            !card.types.includes('Duration') &&
+                            !newValue.some(selectedCard => selectedCard.name === card.name)
+                        );
+                        let riverboatRandomIndex = Math.floor(Math.random() * this.potentialRiverboatCards.length);
+                        let card = this.potentialRiverboatCards[riverboatRandomIndex];
+                        this.riverboatCard = card ? card.name : "";
+                        this.containsRiverboat = true;
+                    }
+                } else {
+                    this.riverboatCard = "";
+                    this.containsRiverboat = false;
+                }
+
+                if (newValue.some(card => card.name === 'Ferryman')) {
+                    if (!this.containsFerryman && newValue.length == 10) {
+                        this.potentialFerrymanCards = this.selectedExpansionsCardList.filter(card => 
+                            (card.cost == 3 || card.cost == 4) && card.costType == 'Money' &&
+                            !newValue.some(selectedCard => selectedCard.name === card.name)
+                        );
+                        let ferrymanRandomIndex = Math.floor(Math.random() * this.potentialFerrymanCards.length);
+                        let card = this.potentialFerrymanCards[ferrymanRandomIndex];
+                        this.ferrymanCard = card.name;
+                        this.containsFerryman = true;
+                    }
+                } else {
+                    this.ferrymanCard = "";
+                    this.containsFerryman = false;
+                }
+
+                if (this.selectedCards.some(card => card.name === 'Young_Witch')) {
+                    if (!this.containsBane && newValue.length == 10) {
+                        this.potentialBaneCards = this.selectedExpansionsCardList.filter(card => (
+                            card.cost == 2 || card.cost == 3) && card.costType == 'Money'
+                            && !this.selectedCards.some(selectedCard => selectedCard.name === card.name) 
+                        );
+
+                        let baneRandomIndex = Math.floor(Math.random() * this.potentialBaneCards.length);
+                        let card = this.potentialBaneCards[baneRandomIndex]
+                        this.baneCard = card.name;
+                        this.containsBane = true;
+                    }
+                } else {
+                    this.baneCard = "";
+                    this.containsBane = false;
+                }
+            }
+        },
+        selectedAddons: {
+            deep: true,
+                handler(newAddons) {
+                if (newAddons.includes('Approaching_Army')) {
+                    this.containsApproachingArmy = true;
+                    this.potentialArmyCards = [...this.cards].filter(card => {
+                        return this.selectedAdvancedExpansions.includes(card.set) && card.name !== this.riverboatCard
+                        && !this.banned.includes(card.name) && !card.tags?.includes("Split_Pile_Card")
+                        && card.types.includes('Attack') && !this.selectedCards.some(selectedCard => selectedCard.name === card.name)
+                        && card.name !== this.ferrymanCard && card.name !== this.armyCard && card.name !== this.baneCard;
+                    });
+
+                    let armyRandomIndex = Math.floor(Math.random() * this.potentialArmyCards.length);
+                    let card = this.potentialArmyCards[armyRandomIndex];
+                    if (card) {
+                    this.armyCard = card.name;
+                    this.containsApproachingArmy = true;
+                    }
+                } else {
+                    this.containsApproachingArmy = false;
+                    this.armyCard = "";
+                }
+            }
         }
     },
     created() {
@@ -1518,7 +1716,7 @@ export default {
                 name: "Vassal",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -1558,7 +1756,7 @@ export default {
                 name: "Militia",
                 set: "Dominion",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1566,7 +1764,7 @@ export default {
                 name: "Moneylender",
                 set: "Dominion",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1574,7 +1772,7 @@ export default {
                 name: "Poacher",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1646,7 +1844,7 @@ export default {
                 name: "Market",
                 set: "Dominion",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1710,7 +1908,7 @@ export default {
                 name: "Lighthouse",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -1735,7 +1933,7 @@ export default {
                 name: "Fishing_Village",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -1791,7 +1989,7 @@ export default {
                 name: "Caravan",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Cantrip"],
+                categories: ["Cantrip", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1799,7 +1997,7 @@ export default {
                 name: "Cutpurse",
                 set: "Seaside",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1848,7 +2046,7 @@ export default {
                 name: "Bazaar",
                 set: "Seaside",
                 types: ["Action"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1856,7 +2054,7 @@ export default {
                 name: "Corsair",
                 set: "Seaside",
                 types: ["Action", "Duration", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1864,7 +2062,7 @@ export default {
                 name: "Merchant_Ship",
                 set: "Seaside",
                 types: ["Action", "Duration"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1904,7 +2102,7 @@ export default {
                 name: "Treasury",
                 set: "Seaside",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -1937,7 +2135,7 @@ export default {
                 name: "Pawn",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip"],
+                categories: ["Cantrip", "Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 2
@@ -1962,7 +2160,7 @@ export default {
                 name: "Steward",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin", "Terminal Draw"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 3
@@ -1971,7 +2169,7 @@ export default {
                 name: "Swindler",
                 set: "Intrigue",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -1987,7 +2185,7 @@ export default {
                 name: "Baron",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -1995,7 +2193,7 @@ export default {
                 name: "Bridge",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2003,7 +2201,7 @@ export default {
                 name: "Conspirator",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2019,7 +2217,7 @@ export default {
                 name: "Ironworks",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: ["Cantrip", "Gainer"],
+                categories: ["Cantrip", "Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2051,7 +2249,7 @@ export default {
                 name: "Courtier",
                 set: "Intrigue",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 5
@@ -2150,7 +2348,7 @@ export default {
                 name : "Bishop",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Trasher"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 4
@@ -2159,7 +2357,7 @@ export default {
                 name : "Clerk",
                 set: "Prosperity",
                 types: ["Action", "Reaction", "Attack"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2176,7 +2374,7 @@ export default {
                 name : "Monument",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 4
@@ -2209,7 +2407,7 @@ export default {
                 name : "Charlatan",
                 set: "Prosperity",
                 types: ["Action", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -2321,7 +2519,7 @@ export default {
                 name : "Peddler",
                 set: "Prosperity",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 8
             },
@@ -2354,7 +2552,7 @@ export default {
                 name: "Search",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 tags: ["Loot"],
                 costType: "Money",
                 cost: 2
@@ -2363,7 +2561,7 @@ export default {
                 name: "Shaman",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Gainer", "Trasher"],
+                categories: ["Gainer", "Trasher", "Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -2371,7 +2569,7 @@ export default {
                 name: "Secluded_Shrine",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Trasher"],
+                categories: ["Trasher", "Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -2395,7 +2593,7 @@ export default {
                 name: "Taskmaster",
                 set: "Plunder",
                 types: ["Action", "Duration"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -2428,7 +2626,7 @@ export default {
                 name: "Flagship",
                 set: "Plunder",
                 types: ["Action", "Duration", "Command"],
-                categories: ["Village", "Terminal Silver"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2436,7 +2634,7 @@ export default {
                 name: "Fortune_Hunter",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2452,7 +2650,7 @@ export default {
                 name: "Harbor_Village",
                 set: "Plunder",
                 types: ["Action"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -2557,7 +2755,7 @@ export default {
                 name: "Frigate",
                 set: "Plunder",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -2657,7 +2855,7 @@ export default {
                 name: "Mountain_Shrine",
                 set: "Rising Sun",
                 types: ["Action", "Omen"],
-                categories: ["Trasher", "Terminal Draw", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin", "Terminal Draw"],
                 tags: ["Debt"],
                 costType: "Debt",
                 cost: 5
@@ -2675,7 +2873,7 @@ export default {
                 name: "Artist",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Debt"],
                 costType: "Debt",
                 cost: 8
@@ -2684,7 +2882,7 @@ export default {
                 name: "Fishmonger",
                 set: "Rising Sun",
                 types: ["Action", "Shadow"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -2742,7 +2940,7 @@ export default {
                 name: "Change",
                 set: "Rising Sun",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Debt"],
                 costType: "Money",
                 cost: 4
@@ -2801,7 +2999,7 @@ export default {
                 name: "Kitsune",
                 set: "Rising Sun",
                 types: ["Action", "Attack", "Omen"],
-                categories: ["Village", "Terminal Silver"],
+                categories: ["Village", "Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 5
@@ -2851,7 +3049,7 @@ export default {
                 name: "Samurai",
                 set: "Rising Sun",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 6
             },
@@ -2883,7 +3081,7 @@ export default {
                 name: "Treasure_Hunter",
                 set: "Adventures",
                 types: ["Action", "Traveller"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 3
@@ -2901,7 +3099,7 @@ export default {
                 name: "Hero",
                 set: "Adventures",
                 types: ["Action", "Traveller"],
-                categories: ["Gainer", "Terminal Silver"],
+                categories: ["Gainer", "Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 5
@@ -2919,7 +3117,7 @@ export default {
                 name: "Peasant",
                 set: "Adventures",
                 types: ["Action", "Traveller"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -2927,7 +3125,7 @@ export default {
                 name: "Soldier",
                 set: "Adventures",
                 types: ["Action", "Attack", "Traveller"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 3
@@ -2980,7 +3178,7 @@ export default {
                 name: "Amulet",
                 set: "Adventures",
                 types: ["Action", "Duration"],
-                categories: ["Gainer", "Trasher"],
+                categories: ["Gainer", "Trasher", "Virtual Coin"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 3
@@ -3039,7 +3237,7 @@ export default {
                 name: "Messenger",
                 set: "Adventures",
                 types: ["Action"],
-                categories: ["Gainer", "Terminal Silver"],
+                categories: ["Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -3047,7 +3245,7 @@ export default {
                 name: "Miser",
                 set: "Adventures",
                 types: ["Action"],
-                categories: ["Trasher"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Choice", "Player_Mat"],
                 costType: "Money",
                 cost: 4
@@ -3081,7 +3279,7 @@ export default {
                 name: "Artificer",
                 set: "Adventures",
                 types: ["Action"],
-                categories: ["Cantrip", "Gainer"],
+                categories: ["Cantrip", "Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3107,7 +3305,7 @@ export default {
                 name: "Giant",
                 set: "Adventures",
                 types: ["Action", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3156,7 +3354,7 @@ export default {
                 name: "Swamp_Hag",
                 set: "Adventures",
                 types: ["Action", "Duration", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3172,7 +3370,7 @@ export default {
                 name: "Wine_Merchant",
                 set: "Adventures",
                 types: ["Action", "Reserve"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Player_Mat"],
                 costType: "Money",
                 cost: 5
@@ -3253,7 +3451,7 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Victory_Token", "Split_Pile"],
+                tags: ["Victory_Token", "Split_Pile", "Virtual Coin"],
                 costType: "Money",
                 cost: 2
             },
@@ -3271,7 +3469,7 @@ export default {
                 set: "Empires",
                 types: ["Action"],
                 categories: ["Cantrip"],
-                tags: ["Victory_Token", "Split_Pile_Card"],
+                tags: ["Victory_Token", "Split_Pile_Card", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3351,7 +3549,7 @@ export default {
                 name: "Opulent_Castle",
                 set: "Empires",
                 types: ["Victory", "Castle"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 7
@@ -3387,7 +3585,7 @@ export default {
                 name: "Catapult_Rocks",
                 set: "Empires",
                 types: ["Action", "Attack"],
-                categories: ["Gainer", "Trasher"],
+                categories: ["Gainer", "Trasher", "Virtual Coin"],
                 tags: ["Split_Pile"],
                 costType: "Money",
                 cost: 3
@@ -3414,7 +3612,7 @@ export default {
                 name: "Chariot_Race",
                 set: "Empires",
                 types: ["Action"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 3
@@ -3431,7 +3629,7 @@ export default {
                 name: "Farmers'_Market",
                 set: "Empires",
                 types: ["Action", "Gathering"],
-                categories: ["Terminal Silver"],
+                categories: ["Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 3
@@ -3440,7 +3638,7 @@ export default {
                 name: "Gladiator_Fortune",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Debt", "Split_Pile"],
                 costType: "Money",
                 cost: 3
@@ -3449,7 +3647,7 @@ export default {
                 name: "Gladiator",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
+                categories: ["Trasher", "Virtual Coin"],
                 tags: ["Split_Pile_Card"],
                 costType: "Money",
                 cost: 3
@@ -3467,7 +3665,7 @@ export default {
                 name: "Sacrifice",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Village", "Trasher", "Terminal Silver"],
+                categories: ["Village", "Trasher", "Virtual Coin"],
                 tags: ["Victory_Token"],
                 costType: "Money",
                 cost: 4
@@ -3485,7 +3683,7 @@ export default {
                 name: "Villa",
                 set: "Empires",
                 types: ["Action"],
-                categories: ["Village"],
+                categories: ["Village", "Virtual Coin"],
                 costType: "Money",
                 cost: 4
             },
@@ -3544,7 +3742,7 @@ export default {
                 name: "Legionary",
                 set: "Empires",
                 types: ["Action", "Attack"],
-                categories: [""],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3562,7 +3760,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 2
             },
@@ -3613,7 +3811,7 @@ export default {
                 name: "Shop",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: ["Cantrip"],
+                categories: ["Virtual Coin"],
                 costType: "Money",
                 cost: 3
             },
@@ -3647,7 +3845,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: ["Village"],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 4
             },
@@ -3672,7 +3870,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Action"],
                 categories: [""],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3680,8 +3878,8 @@ export default {
                 name: "Butcher",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: ["Trasher", "Terminal Silver"],
-                tags: ["Coffers"],
+                categories: ["Trasher", "Virtual Coin"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3705,8 +3903,8 @@ export default {
                 name: "Footpad",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: ["Terminal Silver"],
-                tags: ["Coffers"],
+                categories: ["Virtual Coin"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3730,7 +3928,7 @@ export default {
                 name: "Jester",
                 set: "Cornu & Guilds",
                 types: ["Action", "Attack"],
-                categories: ["Gainer", "Terminal Silver"],
+                categories: ["Gainer", "Virtual Coin"],
                 costType: "Money",
                 cost: 5
             },
@@ -3746,8 +3944,8 @@ export default {
                 name: "Joust",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: ["Gainer"],
-                tags: ["Coffers"],
+                categories: ["Gainer", "Virtual Coin"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -3763,7 +3961,7 @@ export default {
                 name: "Courser",
                 set: "Cornu & Guilds",
                 types: ["Action", "Reward"],
-                categories: ["Village", "Terminal Draw", "Terminal Silver"],
+                categories: ["Village", "Virtual Coin", "Terminal Draw"],
                 tags: ["Choice"],
                 costType: "Money",
                 cost: 0
@@ -3789,7 +3987,7 @@ export default {
                 set: "Cornu & Guilds",
                 types: ["Treasure", "Reward"],
                 categories: [""],
-                tags: ["Coffers"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 0
             },
@@ -3805,8 +4003,8 @@ export default {
                 name: "Merchant_Guild",
                 set: "Cornu & Guilds",
                 types: ["Action"],
-                categories: [""],
-                tags: ["Coffers"],
+                categories: ["Virtual Coin"],
+                tags: ["Coffers", "Player_Mat"],
                 costType: "Money",
                 cost: 5
             },
@@ -4317,72 +4515,72 @@ export default {
                 set: "Rising Sun",
                 types: ["Prophecy"]
             },
-            {
-                name: "Bureaucracy",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Divine_Wind",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Enlightenment",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
+            // {
+            //     name: "Bureaucracy",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Divine_Wind",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Enlightenment",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
 
-            {
-                name: "Flourishing_Trade",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Good_Harvest",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Great_Leader",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Growth",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Harsh_Winter",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Kind_Emperor",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Panic",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Progress",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Rapid_Expansion",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
-            {
-                name: "Sickness",
-                set: "Rising Sun",
-                types: ["Prophecy"]
-            },
+            // {
+            //     name: "Flourishing_Trade",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Good_Harvest",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Great_Leader",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Growth",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Harsh_Winter",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Kind_Emperor",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Panic",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Progress",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Rapid_Expansion",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
+            // {
+            //     name: "Sickness",
+            //     set: "Rising Sun",
+            //     types: ["Prophecy"]
+            // },
         ]
     }
 }
@@ -4658,6 +4856,24 @@ img {
     margin: 2px;
     border: 2px solid orange;
 }
+.ferrymanCard {
+    width: 118px;
+    height: 185px;
+    margin: 2px;
+    border: 2px solid white;
+}
+.baneCard {
+    width: 140px;
+    height: 215px;
+    margin: 2px;
+    border: 2px solid maroon;
+}
+.armyCard {
+    width: 140px;
+    height: 215px;
+    margin: 2px;
+    border: 2px solid rgb(102, 163, 199);
+}
 #advancedLandscapes {
     margin-top: 10px;
     display: flex;
@@ -4696,7 +4912,7 @@ img {
 }
 
 .gamepopup {
-    width: 950px;
+    width: 1030px;
     height: 850px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: fixed;
@@ -4722,7 +4938,7 @@ img {
     background-color: #555;
 }
 .popupContainer {
-    width: 930px;
+    width: 1030px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -4762,7 +4978,7 @@ img {
     width: 720px;
 }
 .traitCards {
-    border: 3.5px solid purple;
+    border: 3.5px solid darkorchid;
 }
 .obeliskcard {
     border: 3.5px solid green;

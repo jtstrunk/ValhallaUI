@@ -33,10 +33,16 @@
             </div>
         </div>
     </div>
-    <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
+    <div id="overlay" v-if="this.showCoopGame" @click="this.showCoopGame=!this.showCoopGame"></div>
+    <InsertCoopGamePopup v-if="this.showCoopGame" :Type="'Insert'" :gameName="'5 Minute Marvel'"
+        @gameInserted="this.showCoopGame = false"></InsertCoopGamePopup>
     <div id="overlay" v-if="this.showSTS" @click="this.showSTS=!this.showSTS"></div>
     <InsertSlaytheSpirePopup v-if="this.showSTS" :Type="'Insert'"
         @gameInserted="this.showSTS = false"></InsertSlaytheSpirePopup>
+    <div id="overlay" v-if="this.showRoot" @click="this.showRoot=!this.showRoot"></div>
+    <InsertRootPopup v-if="this.showRoot" :Type="'Insert'"
+        @gameInserted="this.showRoot = false"></InsertRootPopup>
+    <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
             <p v-if="insertingGameName != ''" style="color: white; display: inline-block;">Add a {{ this.insertingGameName }} record</p>
@@ -229,6 +235,8 @@ import RecentGame from './RecentGame.vue'
 import Dialog from 'primevue/dialog'
 import { userState } from "@/state/userState"
 import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
+import InsertRootPopup from './InsertRootPopup.vue'
+import InsertCoopGamePopup from './InsertCoopGamePopup.vue'
 
 export default {
     name: "Add Record",
@@ -238,6 +246,8 @@ export default {
             userID: userState.userID,
             showDialog: false,
             showSTS: false,
+            showRoot: false,
+            showCoopGame: false,
             isVisitor: false,
             searchGameName: '',
             insertingGameName: '',
@@ -245,7 +255,7 @@ export default {
             insertingPlayerCount: null,
             filteredNames: [],
             supportedGames: ['Dominion', 'Clank', 'Slay the Spire', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', 
-                'Space Base', '7 Wonders', 'Root', 'Stratego', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
+                'Space Base', '5 Minute Marvel', '7 Wonders', 'Root', 'Stratego', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
             secondName: null,
@@ -263,7 +273,9 @@ export default {
     components: {
         Dialog,
         RecentGame,
-        InsertSlaytheSpirePopup
+        InsertSlaytheSpirePopup,
+        InsertRootPopup,
+        InsertCoopGamePopup
     },
     computed: {
         filteredGames() {
@@ -288,17 +300,24 @@ export default {
                 'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
                 'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
                 'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
-                'Stratego' : '2 Players'
+                'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players'
             }
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
             }
         },
         createPopup(gameName, playerCount){
-            if(gameName == 'Slay the Spire') {
+            if (gameName == 'Slay the Spire') {
                 this.showSTS = true;
                 return;
+            } else if (gameName == 'Root') {
+                this.showRoot = true;
+                return;
+            } else if (gameName == '5 Minute Marvel') {
+                this.showCoopGame = true;
+                return;
             }
+
             this.insertingPlayerCount = playerCount.charAt(4);
             this.showDialog = !this.showDialog
             this.insertingGameName = gameName;
@@ -359,6 +378,8 @@ export default {
                 }
                 this.showDialog = false;
                 this.showSTS = false;
+                this.showRoot = false;
+                this.showCoopGame = false;
                 this.insertingCustomGameName = ''
                 this.winnerName = null;
                 this.winnerScore = null;
