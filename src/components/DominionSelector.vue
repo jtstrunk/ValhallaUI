@@ -4515,72 +4515,71 @@ export default {
                 set: "Rising Sun",
                 types: ["Prophecy"]
             },
-            // {
-            //     name: "Bureaucracy",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Divine_Wind",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Enlightenment",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-
-            // {
-            //     name: "Flourishing_Trade",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Good_Harvest",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Great_Leader",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Growth",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Harsh_Winter",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Kind_Emperor",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Panic",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Progress",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Rapid_Expansion",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Sickness",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
+            {
+                name: "Bureaucracy",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Divine_Wind",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Enlightenment",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Flourishing_Trade",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Good_Harvest",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Great_Leader",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Growth",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Harsh_Winter",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Kind_Emperor",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Panic",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Progress",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Rapid_Expansion",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Sickness",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
         ]
     }
 }
