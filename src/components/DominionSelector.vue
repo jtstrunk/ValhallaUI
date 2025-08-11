@@ -899,6 +899,30 @@ export default {
                     this.selectedAddons.push(cardName);
                 }
             }
+
+            this.setCount = {
+                'Dominion': 0,
+                'Intrigue': 0,
+                'Seaside': 0,
+                'Prosperity': 0,
+                'Adventures': 0,
+                'Empires': 0,
+                'Plunder': 0,
+                'Rising Sun': 0,
+            }
+            this.selectedCards.forEach(card => {
+                this.setCount[card.set] = this.setCount[card.set] + 1;
+            })
+
+            if (this.setCount['Prosperity'] > 3) {
+                this.selectedAdvancedCardTypes.push("Col & Plat")
+            } else if (this.selectedAdvancedCardTypes.includes('Coffers')){
+                // do nothing
+            } else if ((this.setCount['Prosperity'] + this.setCount['Empires'] >= 4) && this.setCount['Prosperity'] >= 1) {
+                this.selectedAdvancedCardTypes.push("Col & Plat")
+            } else {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
+            }
         },
         generateAdvancedKingdom(){
             this.containsRiverboat = false;
@@ -1278,9 +1302,11 @@ export default {
                 this.setCount[card.set] = this.setCount[card.set] + 1;
             })
 
-            if (this.setCount['Prosperity'] > 2) {
+            if (this.setCount['Prosperity'] > 3) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
-            } else if ( this.setCount['Prosperity'] > 1 &&  this.setCount['Empires'] > 2) {
+            } else if (this.selectedAdvancedCardTypes.includes('Coffers')){
+                // do nothing
+            } else if ((this.setCount['Prosperity'] + this.setCount['Empires'] >= 4) && this.setCount['Prosperity'] >= 1) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
             } else {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
