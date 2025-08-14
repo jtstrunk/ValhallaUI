@@ -899,6 +899,30 @@ export default {
                     this.selectedAddons.push(cardName);
                 }
             }
+
+            this.setCount = {
+                'Dominion': 0,
+                'Intrigue': 0,
+                'Seaside': 0,
+                'Prosperity': 0,
+                'Adventures': 0,
+                'Empires': 0,
+                'Plunder': 0,
+                'Rising Sun': 0,
+            }
+            this.selectedCards.forEach(card => {
+                this.setCount[card.set] = this.setCount[card.set] + 1;
+            })
+
+            if (this.setCount['Prosperity'] > 3) {
+                this.selectedAdvancedCardTypes.push("Col & Plat")
+            } else if (this.selectedAdvancedCardTypes.includes('Coffers')){
+                // do nothing
+            } else if ((this.setCount['Prosperity'] + this.setCount['Empires'] >= 4) && this.setCount['Prosperity'] >= 1) {
+                this.selectedAdvancedCardTypes.push("Col & Plat")
+            } else {
+                this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
+            }
         },
         generateAdvancedKingdom(){
             this.containsRiverboat = false;
@@ -1278,9 +1302,11 @@ export default {
                 this.setCount[card.set] = this.setCount[card.set] + 1;
             })
 
-            if (this.setCount['Prosperity'] > 2) {
+            if (this.setCount['Prosperity'] > 3) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
-            } else if ( this.setCount['Prosperity'] > 1 &&  this.setCount['Empires'] > 2) {
+            } else if (this.selectedAdvancedCardTypes.includes('Coffers')){
+                // do nothing
+            } else if ((this.setCount['Prosperity'] + this.setCount['Empires'] >= 4) && this.setCount['Prosperity'] >= 1) {
                 this.selectedAdvancedCardTypes.push("Col & Plat")
             } else {
                 this.selectedAdvancedCardTypes = this.selectedAdvancedCardTypes.filter(type => type !== "Col & Plat");
@@ -4515,72 +4541,71 @@ export default {
                 set: "Rising Sun",
                 types: ["Prophecy"]
             },
-            // {
-            //     name: "Bureaucracy",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Divine_Wind",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Enlightenment",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-
-            // {
-            //     name: "Flourishing_Trade",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Good_Harvest",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Great_Leader",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Growth",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Harsh_Winter",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Kind_Emperor",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Panic",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Progress",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Rapid_Expansion",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
-            // {
-            //     name: "Sickness",
-            //     set: "Rising Sun",
-            //     types: ["Prophecy"]
-            // },
+            {
+                name: "Bureaucracy",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Divine_Wind",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Enlightenment",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Flourishing_Trade",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Good_Harvest",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Great_Leader",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Growth",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Harsh_Winter",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Kind_Emperor",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Panic",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Progress",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Rapid_Expansion",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
+            {
+                name: "Sickness",
+                set: "Rising Sun",
+                types: ["Prophecy"]
+            },
         ]
     }
 }

@@ -179,7 +179,9 @@ export default {
                 fifthname: null,
                 fifthscore: null,
                 sixthname: null,
-                sixthscore: null
+                sixthscore: null,
+                seventhname: null,
+                seventhscore: null
             }
         }
     },
@@ -281,7 +283,9 @@ export default {
                 fifthname: players[4]?.name || null,
                 fifthscore: players[4]?.score || null,
                 sixthname: players[5]?.name || null,
-                sixthscore: players[5]?.score || null
+                sixthscore: players[5]?.score || null,
+                seventhname: players[6]?.name || null,
+                seventhscore: players[6]?.score || null
             };
 
             this.showPopup = true;

@@ -247,6 +247,35 @@
                     <Input v-model.number="sixthScore" id="sixthScore"></Input>
                 </div>
             </div>
+            <div v-if="this.insertingPlayerCount > 6" class="players">
+                <div class="playerSection">
+                    <label for="SeventhName">Seventh</label>
+                    <AutoComplete v-model="seventhName" :suggestions="filteredNames" optionLabel="name"
+                        @complete="searchName" @item-select="updateName($event, 'seventh')" id="SeventhName"
+                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'seventh')" @keydown="handleKeyDown($event, 'seventh')"
+                        :pt="{
+                            root: {
+                                class: 'customAutocomplete',
+                            },
+                            option: 
+                            { 
+                                style: { color: 'white', padding: '4px 8px'}
+                            },
+                            overlay: {
+                                style: { backgroundColor: '#404040', transform: 'translateY(8px)', 
+                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                            },
+                            pcInputText: {
+                                style: { '::placeholder': { color: '#2e6da4' } }
+                            }
+                            
+                        }"></AutoComplete>
+                </div>
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
+                    <label for="seventhScore">Score</label>
+                    <Input v-model.number="seventhScore" id="seventhScore"></Input>
+                </div>
+            </div>
             <div style="display: flex; flex-direction: row; justify-content: space-around; width: 80%;">
                 <Input v-model="date" id="date"></Input>
                 <button class="btn-outline" @click="updateRecord">Update Record</button>
@@ -300,6 +329,8 @@ export default {
             fifthScore: this.gameData.fifthscore || null,
             sixthName: this.gameData.sixthname || null,
             sixthScore: this.gameData.sixthscore || null,
+            seventhName: this.gameData.seventhname || null,
+            seventhScore: this.gameData.seventhscore || null,
             date: this.gameData.date,
             userMapping: { 1: 'josh', 2: 'john', 3: 'thetwinmeister', 4: 'ethangambles', 13: 'Hibby'}
         }
@@ -386,6 +417,8 @@ export default {
                 "fifthscore": this.fifthScore,
                 "sixthname": this.sixthName,
                 "sixthscore": this.sixthScore,
+                "seventhname": this.seventhName,
+                "seventhscore": this.seventhName,
                 "date": this.date
             }
 
@@ -417,6 +450,8 @@ export default {
                 this.fifthScore = null;
                 this.sixthName = null;
                 this.sixthScore = null;
+                this.seventhName = null;
+                this.seventhScore = null;
                 return response.json();
             })
             .then(data => {

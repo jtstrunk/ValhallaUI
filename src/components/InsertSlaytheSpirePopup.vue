@@ -259,6 +259,8 @@ export default {
                 "fifthscore": null,
                 "sixthname": null,
                 "sixthscore": null,
+                "seventhname": null,
+                "seventhscore": null,
                 date: null
             };
 
@@ -341,6 +343,8 @@ export default {
                 "fifthscore": null,
                 "sixthname": null,
                 "sixthscore": null,
+                "seventhname": null,
+                "seventhscore": null,
                 "date": this.date
             };
 
