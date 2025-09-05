@@ -223,6 +223,35 @@
                     <Input v-model.number="sixthScore" id="sixthScore"></Input>
                 </div>
             </div>
+            <div v-if="this.insertingPlayerCount > 6" class="players">
+                <div class="playerSection">
+                    <label for="SeventhName">Seventh</label>
+                    <AutoComplete v-model="seventhName" :suggestions="filteredNames" optionLabel="name"
+                        @complete="searchName" @item-select="updateName($event, 'seventh')" id="SeventhName"
+                        class="custom-autocomplete" optionValue="name" @change="inputName($event, 'seventh')" @keydown="handleKeyDown($event, 'seventh')"
+                        :pt="{
+                            root: {
+                                class: 'customAutocomplete',
+                            },
+                            option: 
+                            { 
+                                style: { color: 'white', padding: '4px 8px'}
+                            },
+                            overlay: {
+                                style: { backgroundColor: '#404040', transform: 'translateY(8px)', 
+                                borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px'}
+                            },
+                            pcInputText: {
+                                style: { '::placeholder': { color: '#2e6da4' } }
+                            }
+                            
+                        }"></AutoComplete>
+                </div>
+                <div v-if="this.insertingGameName != 'Heat'" class="playerSection">
+                    <label for="seventhScore">Score</label>
+                    <Input v-model.number="seventhScore" id="seventhScore"></Input>
+                </div>
+            </div>
             <button class="btn-primary" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
         </div>
     </div>
@@ -254,7 +283,7 @@ export default {
             insertingCustomGameName: '',
             insertingPlayerCount: null,
             filteredNames: [],
-            supportedGames: ['Dominion', 'Clank', 'Slay the Spire', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', 
+            supportedGames: ['Dominion', 'Clank', 'Slay the Spire', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', '7 Wonders Duel',
                 'Space Base', '5 Minute Marvel', '7 Wonders', 'Root', 'Stratego', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
@@ -267,7 +296,9 @@ export default {
             fifthName: null,
             fifthScore: null,
             sixthName: null,
-            sixthScore: null
+            sixthScore: null,
+            seventhName: null,
+            seventhScore: null
         }
     },
     components: {
@@ -300,7 +331,7 @@ export default {
                 'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
                 'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
                 'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
-                'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players'
+                'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players', '7 Wonders Duel': '2 Players'
             }
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
@@ -361,6 +392,8 @@ export default {
                 "fifthscore": this.fifthScore,
                 "sixthname": this.sixthName,
                 "sixthscore": this.sixthScore,
+                "seventhname": this.seventhName,
+                "seventhscore": this.seventhScore,
                 date: null
             }
 
@@ -393,6 +426,8 @@ export default {
                 this.fifthScore = null;
                 this.sixthName = null;
                 this.sixthScore = null;
+                this.seventhName = null;
+                this.seventhScore = null;
                 return response.json();
             })
             .then(data => {
@@ -419,7 +454,6 @@ export default {
                     this.suggestedNames = [
                         { name: 'Player 1' }, { name: 'Player 2' }, { name: 'Player 3' }, { name: 'Player 4' }, { name: 'Player 5' }, { name: 'Player 6' }];
                 }
-
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
