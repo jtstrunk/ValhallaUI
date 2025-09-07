@@ -24,6 +24,9 @@
         <router-link to="/headtohead" class="dropdown-item">
             1v1 Statistics
         </router-link>
+        <router-link to="/7wonderduelcounter" class="dropdown-item">
+            7 Wonders Counter
+        </router-link>
         <router-link to="/dominioncounter" class="dropdown-item">
             Dominion Counter
         </router-link>
@@ -102,7 +105,7 @@ export default {
 
 .dropdown-content-mobile {
     position: absolute;
-    bottom: 91px;
+    bottom: 95px;
     left: 20px;
     display: flex;
     flex-direction: column;
@@ -114,7 +117,7 @@ export default {
     margin-bottom: 4px;
     background-color: #18191A;
     border-radius: 5%;
-    width: 136px;
+    width: 140px;
     text-decoration: none;
     color: white;
     text-align: center;

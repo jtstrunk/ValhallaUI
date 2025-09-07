@@ -5,7 +5,7 @@
                 <p style="font-size: 26px; margin-left: 5px;">{{ typeof playerName === 'string' ? playerName : playerName.name }}</p>
                 <div style="display: flex; flex-direction: row; margin-right: 15px;">
                     <p style="font-size: 30px; margin-left: 5px;">{{ victoryPoints }}</p>
-                    <img src="/src/assets/icons/vp.png" id="VPSymbol">
+                    <img src="/src/assets/icons/7wvp.png" id="VPSymbol">
                 </div>
             </div>
             <div style="width: 352px; display: flex; flex-direction: row; flex-wrap: wrap;">
@@ -70,26 +70,13 @@ export default {
     },
     computed: {
         victoryPoints() {
-            let playerScore = this.cardCounts['Civilian']
-            + this.cardCounts['Scientific']
-            + this.cardCounts['Commercial']
-            + this.cardCounts['Guilds']
-            + this.cardCounts['Wonders']
-            + (Math.floor(this.cardCounts['Coins'] / 3)) 
+            let playerScore = this.cardCounts['Civilian'] + this.cardCounts['Scientific']
+            + this.cardCounts['Commercial'] + Math.floor(this.cardCounts['Coins'] / 3)
+            + this.cardCounts['Wonders'] + this.cardCounts['Guilds']
 
             this.$emit('updateScore', playerScore, this.playerNumber)
             return playerScore
         }
-    },
-    watch: {
-        selectedAltVPCards: {
-            handler(newValue) {
-            console.log('selectedAltVPCards changed:', newValue);
-            },
-        }
-    },
-    created() {
-        
     }
 }
 </script>
@@ -138,8 +125,8 @@ export default {
 }
 
 #VPSymbol{
-    height: 25px;
-    width: 25px;
+    height: 27px;
+    width: 26px;
     margin-top: 5px;
     margin-left: 5px;
     user-select: none;
