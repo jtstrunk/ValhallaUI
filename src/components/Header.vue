@@ -12,6 +12,7 @@
                     <router-link style="width: 140px;" to="/headtohead">1v1 Statistics</router-link>
                     <router-link style="width: 140px;" to="/dominionselector">Dominion Selector</router-link>
                     <router-link style="width: 140px;" to="/dominioncounter">Dominion Counter</router-link>
+                    <router-link style="width: 140px;" to="/7wonderduelcounter">7 Wonders Counter</router-link>
                 </div>
             </div>
             <router-link :class="['nav-link']" :to="`/profile/${this.userName}`" class="">Your Profile</router-link>
