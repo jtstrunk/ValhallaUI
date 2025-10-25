@@ -1,6 +1,6 @@
 <template>
     <!-- <div id="popups" class="gamepopup" v-if="this.insertPopup">  -->
-    <div id="popups" class="gamepopup" > 
+    <div id="popups" class="gamepopup" style="width: 560px !important;"> 
         <div class="popupContainer">
             <p style="color: white; display: inline-block;">{{ this.popupType }} a {{ this.insertingGameName }} record</p>
             <div class="players">
@@ -25,14 +25,22 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerOneCharacter">Character</label>
+                    <label for="playerOneCharacter">Boss</label>
                     <Select v-model="playerCharacters[0]" :options="filteredOptions(0)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Boss" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="winnerScore">Score</label>
+                    <Input v-model.number="winnerScore" id="winnerScore" style="width: 60px;"></Input>
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="winnerWounds">Wounds</label>
+                    <Input v-model.number="winnerWounds" id="winnerWounds" style="width: 60px;"></Input>
                 </div>
             </div>
             <div class="players">
@@ -60,14 +68,22 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerTwoCharacter">Character</label>
+                    <label for="playerTwoCharacter">Boss</label>
                     <Select v-model="playerCharacters[1]" :options="filteredOptions(1)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Boss" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="secondScore">Score</label>
+                    <Input v-model.number="secondScore" id="secondScore" style="width: 60px;"></Input>
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="secondWounds">Wounds</label>
+                    <Input v-model.number="secondWounds" id="secondWounds" style="width: 60px;"></Input>
                 </div>
             </div>
             <div class="players">
@@ -95,14 +111,22 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerThreeCharacter">Character</label>
+                    <label for="playerThreeCharacter">Boss</label>
                     <Select v-model="playerCharacters[2]" :options="filteredOptions(2)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Boss" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="secondScore">Score</label>
+                    <Input v-model.number="thirdScore" id="thirdScore" style="width: 60px;"></Input>
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="thirdWounds">Wounds</label>
+                    <Input v-model.number="thirdWounds" id="thirdWounds" style="width: 60px;"></Input>
                 </div>
             </div>
             <div class="players">
@@ -130,33 +154,25 @@
                         }"></AutoComplete>
                 </div>
                 <div class="playerSection">
-                    <label for="playerFourCharacter">Character</label>
+                    <label for="playerFourCharacter">Boss</label>
                     <Select v-model="playerCharacters[3]" :options="filteredOptions(3)"
                         style="background-color: #404040; width: 160px; padding-top: 7px; padding-bottom: 7px; color: white; border-radius: 5px; padding-right: 10px;"
-                        optionLabel="name" optionValue="code" placeholder="Select a Character" :pt="{
+                        optionLabel="name" optionValue="code" placeholder="Select a Boss" :pt="{
                             overlay: { style: { backgroundColor: '#404040' } },
                             option: {style: { color: 'white', padding: '4px 8px' } } 
                         }" 
                     />
                 </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="secondScore">Score</label>
+                    <Input v-model.number="fourthScore" id="fourthScore" style="width: 60px;"></Input>
+                </div>
+                <div class="playerSection" style="margin-left: 15px;">
+                    <label for="fourthWounds">Wounds</label>
+                    <Input v-model.number="fourthWounds" id="fourthWounds" style="width: 60px;"></Input>
+                </div>
             </div>
             <div style="display: flex; flex-direction: row;">
-                <div class="playerSection">
-                    <label for="act" style="margin-bottom: 4px;">Act Beat</label>
-                    <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Act')">▼</div>
-                        <input v-model="Act" id="act" style="width: 18px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Act')">▲</div>
-                    </span>
-                </div>
-                <div class="playerSection">
-                    <label for="Ascension" style="margin-bottom: 4px;">Ascension</label>
-                    <span class="number-wrapper" style="display: flex; flex-direction: row; background-color: #404040; border-radius: 5px; padding: 0 5px;">
-                        <div style="color: lightgray; user-select: none; margin-top: 8px;"  @click="decreaseCount('Ascension')">▼</div>
-                        <input v-model="Ascension" id="act" style="width: 25px;" >
-                        <div style="color: lightgray; user-select: none; margin-top: 6px;"  @click="increaseCount('Ascension')">▲</div>
-                    </span>
-                </div>
                 <button class="btn-primary" v-if="this.popupType == 'Insert'" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
                 <button class="btn-outline" v-if="this.popupType == 'Update'" style="height: 32px; width: 160px; margin-top: 23px; margin-left: 15px;" @click="updateRecord" :disabled="isVisitor">Update Record</button>
             </div>
@@ -164,7 +180,6 @@
         </div>
     </div>
 </template>
-
 
 <script>
 import axios from "axios"
@@ -184,20 +199,35 @@ export default {
             userID: userState.userID,
             isVisitor: false,
             popupType: this.Type || "Insert",
-            insertingGameName: 'Slay the Spire',
+            insertingGameName: 'Boss Monster',
             filteredNames: [],
             characterOptions: [
-                { name: 'The Silent', code: 'silent' },
-                { name: 'The Ironclad', code: 'ironclad' },
-                { name: 'The Defect', code: 'defect' },
-                { name: 'The Watcher', code: 'watcher' },
+                { name: 'King Croak', code: 'King Croak' },
+                { name: 'Gorgona', code: 'Gorgona' },
+                { name: 'Xyzax', code: 'Xyzax' },
+                { name: 'Cleopatra', code: 'Cleopatra' },
+                { name: 'Cerebellus', code: 'Cerebellus' },
+                { name: "Torix Uz'Kali", code: "Torix Uz'Kali" },
+                { name: 'The Brothers Wise', code: 'The Brothers Wise' },
                 { name: '--', code: 'empty' },
             ],
             playerCharacters: ['empty', 'empty', 'empty', 'empty'],
             Act: 0,
             Ascension: 0,
             gameID: null,
-            gamedata: this.GameData || null
+            gamedata: this.GameData || null,
+            winnerName: null,
+            secondName: null,
+            thirdName: null,
+            fourthName: null,
+            winnerScore: null,
+            secondScore: null,
+            thirdScore: null,
+            fourthScore: null,
+            winnerWounds: null,
+            secondWounds: null,
+            thirdWounds: null,
+            fourthWounds: null,
         }
     },
     methods: {
@@ -227,34 +257,19 @@ export default {
             this.positionMapping[placement] = input.value;
             this[placement + 'Name'] = input.value;
         },
-        increaseCount(field){
-            if(field === 'Act' && this.Act < 4) {
-                this.Act = this.Act + 1;
-            }
-            if(field === 'Ascension' && this.Ascension < 13) {
-                this.Ascension = this.Ascension + 1;
-            }
-        },
-        decreaseCount(field){
-            if(field === 'Act' && this.Act > 0) {
-                this.Act = this.Act - 1;
-            }
-            if(field === 'Ascension' && this.Ascension > 0) {
-                this.Ascension = this.Ascension - 1;
-            }
-        },
         submitRecord() {
+            console.log('submitting record')
             let insertObject = {
                 "posterid": this.userID,
                 "gamename": this.insertingGameName,
                 "winnername": this.winnerName,
-                "winnerscore": this.Act,
-                "secondname": this.secondName || null,
-                "secondscore": this.Ascension,
-                "thirdname": this.thirdName || null,
-                "thirdscore": null,
-                "fourthname": this.fourthName || null,
-                "fourthscore": null,
+                "winnerscore": this.winnerScore,
+                "secondname": this.secondName,
+                "secondscore": this.secondScore,
+                "thirdname": this.thirdName ?? null,
+                "thirdscore": this.thirdScore ?? null,
+                "fourthname": this.fourthName ?? null,
+                "fourthscore": this.fourthScore ?? null,
                 "fifthname": null,
                 "fifthscore": null,
                 "sixthname": null,
@@ -263,7 +278,7 @@ export default {
                 "seventhscore": null,
                 date: null
             };
-
+           
             fetch(`${import.meta.env.VITE_API_URL}/insertgame`, {
                 method: 'POST',
                 headers: {
@@ -294,12 +309,13 @@ export default {
                 };
 
                 this.winnerName = null;
+                this.winnerScore = null;
                 this.secondName = null;
+                this.secondScore = null;
                 this.thirdName = null;
+                this.thirdScore = null;
                 this.fourthName = null;
-                this.Act = 0;
-                this.Ascension = 0;
-                this.$emit('gameInserted');
+                this.fourthScore = null;
 
                 return fetch(`${import.meta.env.VITE_API_URL}/insertgamecharacters`, {
                     method: 'POST',
@@ -323,6 +339,33 @@ export default {
             })
             .then(data => {
                 console.log('Success:', data);
+
+                let altScoreObject = {
+                    "gameid": this.gameID,
+                    "gamename": 'Boss Monster',
+                    "alttype": 'Wounds',
+                    "playerOneAltScore": this.winnerWounds,
+                    "playerTwoAltScore": this.secondWounds ?? null,
+                    "playerThreeAltScore": this.thirdWounds ?? null,
+                    "playerFourAltScore": this.fourthWounds ?? null,
+                    "playerFiveAltScore": null,
+                    "playerSixAltScore": null
+                };
+
+                fetch(`${import.meta.env.VITE_API_URL}/insertalternatescore`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(altScoreObject)
+                })
+                .then(data => {
+                    this.$emit('gameInserted');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -332,12 +375,13 @@ export default {
             let insertObject = {
                 "gameid": this.gameID,
                 "winnername": this.winnerName,
-                "winnerscore": this.Act,
-                "secondname": this.secondName || null,
-                "secondscore": this.Ascension,
-                "thirdname": this.thirdName || null,
-                "thirdscore": null,
-                "fourthname": this.fourthName || null,
+                "winnerscore": this.winnerScore,
+                "secondname": this.secondName,
+                "secondscore": this.secondScore,
+                "thirdname": this.thirdName ?? null,
+                "thirdscore": this.thirdScore ?? null,
+                "fourthname": this.fourthName ?? null,
+                "fourthscore": this.fourthScore ?? null,
                 "fourthscore": null,
                 "fifthname": null,
                 "fifthscore": null,
@@ -441,11 +485,30 @@ export default {
                 'Content-Type': 'application/json',
             }})
             .then(response => {
-                this.gameCharacters = response.data
+                this.gameCharacters = response.data;
+                console.log(this.gameCharacters);
                 this.playerCharacters[0] = this.gameCharacters[0].characterOne;
                 this.playerCharacters[1] = this.gameCharacters[0].characterTwo;
                 this.playerCharacters[2] = this.gameCharacters[0].characterThree;
                 this.playerCharacters[3] = this.gameCharacters[0].characterFour;
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async fetchAltGameScores(gameid) {
+            axios.get(`${import.meta.env.VITE_API_URL}/getalternatescore/${gameid}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                this.altgameScores = response.data;
+                console.log(this.altgameScores);
+                this.winnerWounds = this.altgameScores[0].scoreOne;
+                this.secondWounds = this.altgameScores[0].scoreTwo;
+                this.thirdWounds = this.altgameScores[0].scoreThree;
+                this.fourthWounds = this.altgameScores[0].scoreFour;
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
@@ -479,14 +542,19 @@ export default {
         this.createMapping();
         this.fetchUsersPlayedWith(searchName);
 
+        console.log('gamedata', this.gamedata)
+
         if(this.popupType == 'Update') {
-            this.fetchGameCharacters(this.gamedata.gameid)
-            this.Act = this.gamedata.winnerscore;
-            this.Ascension = this.gamedata.secondscore;
+            this.fetchGameCharacters(this.gamedata.gameid);
+            this.fetchAltGameScores(this.gamedata.gameid);
             this.winnerName = this.gamedata.winnername;
+            this.winnerScore = this.gamedata.winnerscore;
             this.secondName = this.gamedata.secondname;
+            this.secondScore = this.gamedata.secondscore;
             this.thirdName = this.gamedata.thirdname;
+            this.thirdScore = this.gamedata.thirdscore;
             this.fourthName = this.gamedata.fourthname;
+            this.fourthScore = this.gamedata.fourthscore;
             this.gameID = this.gamedata.gameid;
             this.date = this.gamedata.date;
         }
@@ -578,7 +646,7 @@ input {
 }
 
 .gamepopup {
-    width: 450px;
+    width: 500px !important;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: fixed;
     top: 50%;
@@ -590,7 +658,7 @@ input {
     z-index: 1001;
 }
 .popupContainer {
-    width: 450px;
+    width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;

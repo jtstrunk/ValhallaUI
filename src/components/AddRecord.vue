@@ -42,6 +42,9 @@
     <div id="overlay" v-if="this.showRoot" @click="this.showRoot=!this.showRoot"></div>
     <InsertRootPopup v-if="this.showRoot" :Type="'Insert'"
         @gameInserted="this.showRoot = false"></InsertRootPopup>
+    <div id="overlay" v-if="this.showBossMonster" @click="this.showBossMonster=!this.showBossMonster"></div>
+    <InsertBossMonsterPopup v-if="this.showBossMonster" :Type="'Insert'"
+        @gameInserted="this.showBossMonster = false"></InsertBossMonsterPopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
@@ -266,6 +269,7 @@ import { userState } from "@/state/userState"
 import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 import InsertRootPopup from './InsertRootPopup.vue'
 import InsertCoopGamePopup from './InsertCoopGamePopup.vue'
+import InsertBossMonsterPopup from './InsertBossMonsterPopup.vue'
 
 export default {
     name: "Add Record",
@@ -276,6 +280,7 @@ export default {
             showDialog: false,
             showSTS: false,
             showRoot: false,
+            showBossMonster: false,
             showCoopGame: false,
             isVisitor: false,
             searchGameName: '',
@@ -306,7 +311,8 @@ export default {
         RecentGame,
         InsertSlaytheSpirePopup,
         InsertRootPopup,
-        InsertCoopGamePopup
+        InsertCoopGamePopup,
+        InsertBossMonsterPopup
     },
     computed: {
         filteredGames() {
@@ -346,6 +352,9 @@ export default {
                 return;
             } else if (gameName == '5 Minute Marvel') {
                 this.showCoopGame = true;
+                return;
+            } else if (gameName == 'Boss Monster') {
+                this.showBossMonster = true;
                 return;
             }
 
@@ -412,6 +421,7 @@ export default {
                 this.showDialog = false;
                 this.showSTS = false;
                 this.showRoot = false;
+                this.showBossMonster = false;
                 this.showCoopGame = false;
                 this.insertingCustomGameName = ''
                 this.winnerName = null;

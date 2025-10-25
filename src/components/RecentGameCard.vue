@@ -77,6 +77,9 @@
     <div id="overlay" v-if="this.showSTS" @click="this.showSTS=!this.showSTS"></div>
     <InsertSlaytheSpirePopup v-if="this.showSTS" :Type="'Update'" :GameData="gameData"
         @gameInserted="this.showSTS = false"></InsertSlaytheSpirePopup>
+    <div id="overlay" v-if="this.showBossMonster" @click="this.showBossMonster=!this.showBossMonster"></div>
+    <InsertBossMonsterPopup v-if="this.showBossMonster" :Type="'Update'" :GameData="gameData"
+        @gameInserted="this.showBossMonster = false"></InsertBossMonsterPopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div style="width: 450px; display: flex; flex-direction: column; align-items: center; margin-bottom: 25px;">
@@ -289,6 +292,7 @@ import { userState } from '/src/state/userState'
 import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
 import InsertRootPopup from './InsertRootPopup.vue'
 import InsertCoopGamePopup from './InsertCoopGamePopup.vue'
+import InsertBossMonsterPopup from './InsertBossMonsterPopup.vue'
 
 export default {
     name: "Home",
@@ -313,6 +317,7 @@ export default {
             showDialog: false,
             showSTS: false,
             showRoot: false,
+            showBossMonster: false,
             showCoopGame: false,
             insertingPlayerCount: null,
             insertingGameName: this.gameData.gamename,
@@ -338,7 +343,8 @@ export default {
     components: {
         InsertSlaytheSpirePopup,
         InsertRootPopup,
-        InsertCoopGamePopup
+        InsertCoopGamePopup,
+        InsertBossMonsterPopup
     },
     methods: {
         navigateToGamePage(name) {
@@ -364,6 +370,9 @@ export default {
                 return;
             } else if (gameName == '5 Minute Marvel') {
                 this.showCoopGame = true;
+                return;
+            } else if (gameName == 'Boss Monster') {
+                this.showBossMonster = true;
                 return;
             }
 
@@ -439,6 +448,7 @@ export default {
                 this.showDialog = false;
                 this.showSTS = false;
                 this.showRoot = false;
+                this.showBossMonster = false;
                 this.showCoopGame = false;
                 this.winnerName = null;
                 this.winnerScore = null;
