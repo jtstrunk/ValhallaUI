@@ -75,12 +75,16 @@
                 <p>{{ playerOneScore + playerTwoScore === 0 ? '0.00'
                     : (playerOneScore / (playerOneWins + playerTwoWins)).toFixed(0)}}
                 </p>
+                <p v-if="gameName == 'Boss Monster'">{{ bossmonsterPlayerOneStats.wounds }}</p>
+                <p v-if="gameName == 'Boss Monster'">{{ bossmonsterPlayerOneStats.average.toFixed(2) }}</p>
             </div>
             <div class="statInfo">
                 <p>Player</p>
                 <p>Wins</p>
                 <p>Points</p>
                 <p>Average Points</p>
+                <p v-if="gameName == 'Boss Monster'">Wounds</p>
+                <p v-if="gameName == 'Boss Monster'">Average Wounds</p>
             </div>
             <div class="statInfo">
                 <p>{{ playerTwoName }}</p>
@@ -89,6 +93,8 @@
                 <p>{{ playerTwoScore + playerTwoScore === 0 ? '0.00'
                     : (playerTwoScore / (playerOneWins + playerTwoWins)).toFixed(0)}}
                 </p>
+                <p v-if="gameName == 'Boss Monster'">{{ bossmonsterPlayerTwoStats.wounds }}</p>
+                <p v-if="gameName == 'Boss Monster'">{{ bossmonsterPlayerTwoStats.average.toFixed(2) }}</p>
             </div>
         </div>
     </div>
@@ -204,8 +210,15 @@ export default {
             filteredNamesPlayerTwo: [],
             playerOneStats: {},
             playerTwoStats: {},
-            twoPlayerGames: ['Dominion', 'Clank', 'Moonrakers', 'Heat', 'Race for the Galaxy', 'Lords of Waterdeep', 'Space Base', '7 Wonders', 'Root', 'Dune Imperium', 'Stratego'],
-            headtoheadGames: []
+            twoPlayerGames: ['Dominion', '7 Wonders Duel', 'Race for the Galaxy', 'Boss Monster', 'Stratego', 'Clank', 'Moonrakers', 'Heat', 'Lords of Waterdeep', 'Space Base', 'Root', 'Dune Imperium'],
+            headtoheadGames: [],
+            bossMonsterGames: [],
+            playerOneWounds: 0,
+            playerTwoWounds: 0,
+            playerOneWinWounds: [],
+            playerOneWinWounds: [],
+            bossmonsterPlayerOneStats: {},
+            bossmonsterPlayerTwoStats: {}
         }
     },
     components: {
@@ -227,6 +240,9 @@ export default {
         },
         fetchSpecificInformation() {
             this.fetchSpecificHeadtoHeadStats(this.playerOneName, this.playerTwoName, this.gameName);
+            if(this.gameName == 'Boss Monster') {
+                this.fetchBossMonsterUserStats(this.playerOneName, this.playerTwoName);
+            }
         },
         searchName(event, placement) {
             const query = (event && typeof event.query === 'string') ? event.query.toLowerCase() : '';
@@ -368,6 +384,49 @@ export default {
                     lowestDifference: Math.min(...this.playerTwoWinDiffs),
                 };
 
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+        async fetchBossMonsterUserStats(userone, usertwo) {
+            console.log(userone, usertwo)
+            axios.get(`${import.meta.env.VITE_API_URL}/getbossmonsteruserstats/${userone}/${usertwo}`, {
+            withCredentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(response => {
+                console.log("HERE")
+                console.log(response.data);
+                this.bossmonsterGames = response.data;
+
+                function getPlayerWoundStats(games, player) {
+                    let wounds = 0;
+                    let gameCount = 0;
+                    games.forEach(game => {
+                        console.log(game.winnername, game.secoondname, player);
+
+                        if (game.winnername === player) {
+                        wounds += Number(game.winnerwounds) || 0;
+                        gameCount++;
+                        }
+                        if (game.secoondname === player) {
+                        wounds += Number(game.secoondwounds) || 0;
+                        gameCount++;
+                        }
+                    });
+                    const average = gameCount > 0 ? (wounds / gameCount) : 0;
+                    return { wounds, average };
+                }
+
+                // Usage:
+                this.bossmonsterPlayerOneStats = getPlayerWoundStats(this.bossmonsterGames, this.playerOneName); // this.userone must be "Sierra"
+                this.bossmonsterPlayerTwoStats = getPlayerWoundStats(this.bossmonsterGames, this.playerTwoName);   // this.usertwo must be "josh"
+                console.log('Total wounds Sierra:', this.bossmonsterPlayerOneStats.wounds);
+                console.log('Average wounds Sierra per game:', this.bossmonsterPlayerOneStats.average.toFixed(2));
+                console.log('Total wounds josh:', this.bossmonsterPlayerTwoStats.wounds);
+                console.log('Average wounds josh per game:', this.bossmonsterPlayerTwoStats.average.toFixed(2));
             })
             .catch(error => {
                 console.error("Error fetching data:", error);
