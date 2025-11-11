@@ -24,6 +24,9 @@
         <router-link to="/headtohead" class="dropdown-item">
             1v1 Statistics
         </router-link>
+        <router-link to="/autoclank" class="dropdown-item">
+            Auto Clank
+        </router-link>
         <router-link to="/7wonderduelcounter" class="dropdown-item">
             7 Wonders Counter
         </router-link>

@@ -57,10 +57,15 @@ const router = createRouter({
       name: 'HeadtoHead',
       component: () => import("../components/HeadtoHead.vue"),
     },
-        {
+    {
       path: '/7wonderduelcounter',
       name: '7WonderDuelCounter',
       component: () => import("../components/7WDCounter.vue"),
+    },
+    {
+      path: '/autoclank',
+      name: 'AutoClank',
+      component: () => import("../components/AutoClank.vue"),
     },
   ],
 })
