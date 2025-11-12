@@ -118,6 +118,7 @@
                 <p :style="{ fontSize: fixedPlayerFourName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerFourName }} - {{ playerFourScore }}</p>
             </div>
         </div>
+        <ClankSection v-if="showCounters"></ClankSection>
         <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px; margin-bottom: 10px;" @click="endGame">Submit Current Scores</button>
         <div id="counterContainer">
             <DynamicScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :pointTypes="regularArray" @updateScore="updatePlayerScore"></DynamicScoreCounter>
@@ -126,7 +127,7 @@
             <DynamicScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :pointTypes="regularArray" @updateScore="updatePlayerScore"></DynamicScoreCounter>
         </div>
         <div id="overlay" v-if="this.showPopup" @click="this.showPopup=!this.showPopup"></div>
-        <InsertRecordPopup :insertPopup="showPopup" :gameInformationObject="insertObject" :gameName="'Dominion'"
+        <InsertRecordPopup :insertPopup="showPopup" :gameInformationObject="insertObject" :gameName="'Clank'"
             :insertingPlayerCount="playerCount" @gameInserted="resetGameState" ></InsertRecordPopup>
     </div>
 </template>
@@ -134,6 +135,7 @@
 <script>
 import axios from "axios"
 import { userState } from '/src/state/userState'
+import ClankSection from './ClankSection.vue'
 import DynamicScoreCounter from './DynamicScoreCounter.vue'
 import InsertRecordPopup from './InsertRecordPopup.vue'
 
@@ -180,6 +182,7 @@ export default {
         }
     },
     components: {
+        ClankSection,
         DynamicScoreCounter,
         InsertRecordPopup
     },
