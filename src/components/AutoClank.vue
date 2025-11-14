@@ -1,7 +1,7 @@
 <template>
     <div style="display: flex; flex-direction: column; align-items: center; overflow-x: hidden;">
         <div v-if="!showCounters" class="section" style="width: 400px; display: flex; flex-direction: column; align-items: center;">
-            <h2>Dominion Counter</h2>
+            <h2>Auto Clank</h2>
             <h3>Select a Player Count</h3>
             <div style="width: 350px; display: flex; flex-direction: row; justify-content: space-around;">
                 <button @click="this.playerCount = 2"  :class="{ 'btn': playerCount === 2, 'btn-outline': playerCount !== 2 }">Two</button>
@@ -102,11 +102,6 @@
                     </div>
                 </div>
             </div>
-            <h3>Select altername VP cards present</h3>
-            <div style="width: 380px; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
-                <button :class="{'btn': selectedAltVPCards.includes(button), 'btn-dark': !selectedAltVPCards.includes(button)}"
-                    v-for="button in altVPCards" @click="addCard(button)" style="margin: 4px;">{{ button }}</button>
-            </div>
             <button class="btn-outline" @click="startGame" style="margin-top: 8px;">Start Game</button>
         </div>
         <div v-if="showCounters" id="counterList" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
@@ -125,10 +120,10 @@
         </div>
         <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px; margin-bottom: 10px;" @click="endGame">Submit Current Scores</button>
         <div id="counterContainer">
-            <ScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-            <ScoreCounter v-if="showCounters" :playerName="playerTwoName" :playerNumber="2" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-            <ScoreCounter v-if="showCounters && playerCount > 2" :playerName="playerThreeName" :playerNumber="3" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
-            <ScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :selectedAltVPCards="regularArray" @updateScore="updatePlayerScore"></ScoreCounter>
+            <DynamicScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :pointTypes="regularArray" @updateScore="updatePlayerScore"></DynamicScoreCounter>
+            <DynamicScoreCounter v-if="showCounters" :playerName="playerTwoName" :playerNumber="2" :pointTypes="regularArray" @updateScore="updatePlayerScore"></DynamicScoreCounter>
+            <DynamicScoreCounter v-if="showCounters && playerCount > 2" :playerName="playerThreeName" :playerNumber="3" :pointTypes="regularArray" @updateScore="updatePlayerScore"></DynamicScoreCounter>
+            <DynamicScoreCounter v-if="showCounters && playerCount > 3" :playerName="playerFourName" :playerNumber="4" :pointTypes="regularArray" @updateScore="updatePlayerScore"></DynamicScoreCounter>
         </div>
         <div id="overlay" v-if="this.showPopup" @click="this.showPopup=!this.showPopup"></div>
         <InsertRecordPopup :insertPopup="showPopup" :gameInformationObject="insertObject" :gameName="'Dominion'"
@@ -139,7 +134,7 @@
 <script>
 import axios from "axios"
 import { userState } from '/src/state/userState'
-import ScoreCounter from './ScoreCounter.vue'
+import DynamicScoreCounter from './DynamicScoreCounter.vue'
 import InsertRecordPopup from './InsertRecordPopup.vue'
 
 export default {
@@ -164,8 +159,7 @@ export default {
             playerThreeScore: 3,
             playerFourName: null,
             playerFourScore: 3,
-            altVPCards: ['Colony', 'Tokens', 'Gardens', 'Duke', 'Harem', 'Mill', 'Nobles', 'Island', 'Castles', 'Distant Lands'],
-            selectedAltVPCards: [],
+            selectedAltVPCards: ['Artifacts', 'Secrets', 'Items', 'Cards', 'Gold'],
             regularArray: [],
             insertObject: {
                 winnername: null,
@@ -186,7 +180,7 @@ export default {
         }
     },
     components: {
-        ScoreCounter,
+        DynamicScoreCounter,
         InsertRecordPopup
     },
     methods: {
@@ -242,13 +236,6 @@ export default {
                 this.$nextTick(() => {
                     input.setSelectionRange(newValue.length, newValue.length);
                 });
-            }
-        },
-        addCard(cardName) {
-            if(this.selectedAltVPCards.includes(cardName)) {
-                this.selectedAltVPCards = this.selectedAltVPCards.filter(card => card !== cardName);
-            } else {
-                this.selectedAltVPCards.push(cardName);
             }
         },
         startGame() {
@@ -362,44 +349,7 @@ export default {
         this.fetchUsersPlayedWith(this.userName);
         this.positionMapping = {
             'one': this.playerOneName, 'two': this.playerTwoName, 'three': this.playerThreeName, 'four': this.playerFourName
-        }
-        
-        if(this.eventName.length > 0) {
-            let tokenEvents = ["Conquest", "Dominate", "Salt_the_Earth", "Ritual", "Triumph", "Wedding"]
-            if(this.eventName.some(event => tokenEvents.includes(event))) {
-                if(!this.selectedAltVPCards.includes('Tokens')) {
-                    this.selectedAltVPCards.push('Tokens')
-                }
-            }
-        }
-        if(this.landmarkName != "") {
-            let tokenLandmarks = ["Aqueduct", "Arena", "Basilica", "Baths", "Battlefield", "Colonnade", "Defiled_Shrine", "Labyrinth", "Mountain_Pass", "Tomb"]
-            if(tokenLandmarks.includes(this.landmarkName)) {
-                if(!this.selectedAltVPCards.includes('Tokens')) {
-                    this.selectedAltVPCards.push('Tokens')
-                }
-            }
-            this.selectedAltVPCards.push(this.landmarkName)
-        }
-        if(this.colonyGame == true){
-            this.selectedAltVPCards.push('Colony')
-        }
-        if(this.selectedCards.length > 0) {
-            this.selectedCards.forEach(card => {
-                if (this.altVPCards.includes(card.name)){
-                    this.selectedAltVPCards.push(card.name)
-                    if(card.name == 'Castles' && !this.selectedAltVPCards.includes('Tokens')) {
-                        this.selectedAltVPCards.push('Tokens')
-                    }
-                } else if (card.name == 'Monument' || card.name == 'Bishop' || card.name == 'Chariot_Race' || card.name == "Patrician_Emporium" 
-                        || card.name == "Farmers'_Market" || card.name == 'Groundskeeper' || card.name == 'Plunder' || card.name == 'Sacrifice' 
-                        || card.name == 'Temple' || card.name == 'Wild_Hunt') {
-                    if(!this.selectedAltVPCards.includes('Tokens')) {
-                        this.selectedAltVPCards.push('Tokens')
-                    }
-                }
-            });
-        }        
+        }      
     }
 }
 </script>
