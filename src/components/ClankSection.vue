@@ -1,20 +1,21 @@
 <template>
     <div class="section" id="Clanker">
         <p>Current Clank</p>   
-        <div style="display: flex; flex-direction: row; justify-content: space-around; margin-bottom: 8px;">
-            <button class="btn-outline" @click="addClank('green')">Add Green</button>
-            <button class="btn-outline" @click="addClank('red')">Add Red</button>
-            <button class="btn-outline" @click="addClank('blue')">Add Blue</button>
-            <button class="btn-outline" @click="addClank('yellow')">Add Yellow</button>
-        </div>
-        <div style="display: flex; flex-direction: row; width: 350px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: row; width: 350px; flex-wrap: wrap; margin-bottom: 5px;">
             <div v-for="clank in showingClank" style="width: 15px; height: 15px; margin: 3px;" :style="{ backgroundColor: getColorStyle(clank) }"></div>
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: space-around; margin-bottom: 8px;">
+            <button v-if="usedColors.includes('yellow')" class="btn-outline" @click="addClank('yellow')">Add Yellow</button>
+            <button v-if="usedColors.includes('green')" class="btn-outline" @click="addClank('green')">Add Green</button>
+            <button v-if="usedColors.includes('red')" class="btn-outline" @click="addClank('red')">Add Red</button>
+            <button v-if="usedColors.includes('blue')" class="btn-outline" @click="addClank('blue')">Add Blue</button>
         </div>
         <div style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
             <div class="cardCounter">
-                <p @click="removeDragonLevel(cardType)" class="subtracting">-</p>
+                <p @click="removeDragonLevel()" class="subtracting">-</p>
                 <p class="score">{{ pullcount }}</p>
-                <p @click="addDragonLevel(cardType)" class="adding">+</p>
+                <img src="/src/assets/icons/ClankDanger.png" id="VPSymbol">
+                <p @click="addDragonLevel()" class="adding">+</p>
             </div>
             <button class="btn" @click="pullFromBag(pullcount)">Dragon Attack</button>
         </div>
@@ -28,14 +29,22 @@ export default {
     inheritAttrs: false,
     name: "Home",
     props: {
-
+        playerCount: {
+            type: Number,
+            required: true
+        },
+        colors: {
+            type: Object,
+            required: true
+        },
     },
     data(){
         return{
             userName: userState.username,
             showingClank: [],
             baggedClank: Array(24).fill('black'),
-            pullcount: 2
+            pullcount: 0,
+            usedColors: []
         }
     },
     methods: {
@@ -55,11 +64,15 @@ export default {
         pullFromBag(count){
             console.log('pulling this amount', count)
         },
-        removeDragonLevel(type) {
-            this.pullcount--;
+        removeDragonLevel() {
+            if( this.pullcount > 1) {
+                this.pullcount--;
+            }
         },
-        addDragonLevel(type) {
-            this.pullcount++;
+        addDragonLevel() {
+            if( this.pullcount < 14) {
+                this.pullcount++;
+            }
         },
     },
     computed: {
@@ -81,7 +94,21 @@ export default {
         }
     },
     created() {
-       console.log(this.baggedClank)
+        if(this.playerCount == 2) {
+            this.pullcount = 3;
+        } else {
+            this.pullcount = 2;
+        }
+        this.usedColors = this.colors.filter(item => item !== 'empty');
+
+        const counts = [3, 2, 1];
+        counts.forEach((count, index) => {
+            if (this.usedColors[index]) {
+                for (let i = 0; i < count; i++) {
+                this.showingClank.push(this.usedColors[index]);
+                }
+            }
+        });
     }
 }
 </script>
@@ -127,18 +154,26 @@ export default {
 }
 .score {
     padding: 0px 4px;
-    width: 30px;
     text-align: center;
-    font-size: 20px;
+    font-size: 26px;
     margin-top: 5px !important;
     user-select: none;
 }
 .subtracting {
-    font-size: 24px;
+    font-size: 28px;
     user-select: none;
 }
 .adding {
-    font-size: 24px;
+    font-size: 32px;
     user-select: none;
+}
+
+#VPSymbol{
+    height: 30px;
+    width: 30px;
+    margin-top: 5px;
+    margin-right: 2px;
+    user-select: none;
+    border-radius: 30%;
 }
 </style>

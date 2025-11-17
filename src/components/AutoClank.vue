@@ -31,6 +31,12 @@
                                     style: { '::placeholder': { color: '#2e6da4' } }
                                 }
                             }"></AutoComplete>
+                        <Select v-model="playerColors[0]" :options="filteredColors(0)" class="selectFilter"
+                            optionLabel="name" optionValue="code" placeholder="Select a Color" :pt="{
+                                overlay: { style: { backgroundColor: '#404040' } },
+                                option: {style: { color: 'white', padding: '4px 8px' } } 
+                            }" 
+                        />
                     </div>
                     <div style="padding: 8px; display: flex; flex-direction: column;">
                         <label for="playerTwoName">Second Name</label>
@@ -53,6 +59,12 @@
                                     style: { '::placeholder': { color: '#2e6da4' } }
                                 }
                             }"></AutoComplete>
+                        <Select v-model="playerColors[1]" :options="filteredColors(1)" class="selectFilter"
+                            optionLabel="name" optionValue="code" placeholder="Select a Color" :pt="{
+                                overlay: { style: { backgroundColor: '#404040' } },
+                                option: {style: { color: 'white', padding: '4px 8px' } } 
+                            }" 
+                        />
                     </div>
                 </div>
                 <div v-if="playerCount > 2" style="display: flex; flex-direction: row;">
@@ -77,6 +89,12 @@
                                     style: { '::placeholder': { color: '#2e6da4' } }
                                 }
                             }"></AutoComplete>
+                        <Select v-model="playerColors[2] ":options="filteredColors(2)" class="selectFilter" 
+                            optionLabel="name" optionValue="code" placeholder="Select a Color" :pt="{
+                                overlay: { style: { backgroundColor: '#404040' } },
+                                option: {style: { color: 'white', padding: '4px 8px' } } 
+                            }" 
+                        />
                     </div>
                     <div v-if="playerCount > 3" style="padding: 8px; display: flex; flex-direction: column;">
                         <label for="playerFourName">Fourth Name</label>
@@ -99,6 +117,12 @@
                                     style: { '::placeholder': { color: '#2e6da4' } }
                                 }
                             }"></AutoComplete>
+                        <Select v-model="playerColors[3]" :options="filteredColors(3)" class="selectFilter"
+                            optionLabel="name" optionValue="code" placeholder="Select a Color" :pt="{
+                                overlay: { style: { backgroundColor: '#404040' } },
+                                option: {style: { color: 'white', padding: '4px 8px' } } 
+                            }" 
+                        />
                     </div>
                 </div>
             </div>
@@ -118,7 +142,7 @@
                 <p :style="{ fontSize: fixedPlayerFourName.length > 8 ? '23px' : '30px' }">{{ fixedPlayerFourName }} - {{ playerFourScore }}</p>
             </div>
         </div>
-        <ClankSection v-if="showCounters"></ClankSection>
+        <ClankSection v-if="showCounters" :playerCount="playerCount" :colors="playerColors"></ClankSection>
         <button v-if="showCounters" class="btn-outline" style="width: 160px; margin-top: 10px; margin-bottom: 10px;" @click="endGame">Submit Current Scores</button>
         <div id="counterContainer">
             <DynamicScoreCounter v-if="showCounters" :playerName="playerOneName" :playerNumber="1" :pointTypes="regularArray" @updateScore="updatePlayerScore"></DynamicScoreCounter>
@@ -178,7 +202,15 @@ export default {
                 sixthscore: null,
                 seventhname: null,
                 seventhscore: null
-            }
+            },
+            playerColors: ['empty', 'empty', 'empty', 'empty'],
+            colorOptions: [
+                { name: '--', code: 'empty' },
+                { name: 'Yellow', code: 'yellow' },   
+                { name: 'Red', code: 'red' },   
+                { name: 'Blue', code: 'blue' },   
+                { name: 'Green', code: 'green' }
+            ]
         }
     },
     components: {
@@ -187,6 +219,15 @@ export default {
         InsertRecordPopup
     },
     methods: {
+        filteredColors(index) {
+            // Get all codes picked by other players, except 'empty'
+            const picked = this.playerColors
+            .filter((code, i) => i !== index && code !== 'empty');
+            // Always include the 'empty' option
+            return this.colorOptions.filter(
+            opt => opt.code === 'empty' || !picked.includes(opt.code)
+            );
+        },
         updatePlayerScore(score, playerNumber) {           
             switch(playerNumber) {
                 case 1:
@@ -466,38 +507,12 @@ label {
     }
 }
 
-/* .counter{
-    display: flex;
-    flex-direction: column;
+.selectFilter{
+    margin-top: 5px;
+    background-color: #404040;
+    width: 174px;
+    padding: 7px 10px;
+    color: white;
+    border-radius: 5px;
 }
-.counter span {
-    color: #fff;
-    font-size: 26px;
-}
-.counter p {
-    margin: 0px;
-}
-.type {
-    margin: 10px;
-}
-.cardCounter {
-    display: flex;
-    flex-direction: row;
-}
-.cardCounter p {
-    margin: 0px;
-}
-.score {
-    padding: 0px 4px;
-    width: 30px;
-    text-align: center;
-    font-size: 20px;
-    margin-top: 5px !important;
-}
-.subtracting {
-    font-size: 24px;
-}
-.adding {
-    font-size: 24px;
-} */
 </style>
