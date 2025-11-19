@@ -11,7 +11,7 @@
             <div>
                 <div style="display: flex; flex-direction: row;">
                     <div style="padding: 8px; display: flex; flex-direction: column;">
-                        <label for="playerOneName">First Name</label>
+                        <label for="playerOneName">Player One</label>
                         <AutoComplete v-model="playerOneName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteOne"
                             @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerOneName" @focus="showSuggestionsOne"
                             class="custom-autocomplete" optionValue="name" @change="inputName($event, 'one')" @keydown="handleKeyDown($event, 'one')"
@@ -39,7 +39,7 @@
                         />
                     </div>
                     <div style="padding: 8px; display: flex; flex-direction: column;">
-                        <label for="playerTwoName">Second Name</label>
+                        <label for="playerTwoName">Player Two</label>
                         <AutoComplete v-model="playerTwoName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteTwo"
                             @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerTwoName" @focus="showSuggestionsTwo"
                             class="custom-autocomplete" optionValue="name" @change="inputName($event, 'two')" @keydown="handleKeyDown($event, 'two')"
@@ -69,7 +69,7 @@
                 </div>
                 <div v-if="playerCount > 2" style="display: flex; flex-direction: row;">
                     <div style="padding: 8px; display: flex; flex-direction: column;">
-                        <label for="playerThreeName">Third Name</label>
+                        <label for="playerThreeName">Player Three</label>
                         <AutoComplete v-model="playerThreeName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteThree"
                             @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerThreeName" @focus="showSuggestionsThree"
                             class="custom-autocomplete" optionValue="name" @change="inputName($event, 'three')" @keydown="handleKeyDown($event, 'three')"
@@ -97,7 +97,7 @@
                         />
                     </div>
                     <div v-if="playerCount > 3" style="padding: 8px; display: flex; flex-direction: column;">
-                        <label for="playerFourName">Fourth Name</label>
+                        <label for="playerFourName">Player Four</label>
                         <AutoComplete v-model="playerFourName" :suggestions="filteredNames" optionLabel="name" ref="autoCompleteFour"
                             @complete="searchName" @item-select="updateName($event, 'fifth')" id="playerFourName" @focus="showSuggestionsFour"
                             class="custom-autocomplete" optionValue="name" @change="inputName($event, 'four')" @keydown="handleKeyDown($event, 'four')"

@@ -1,14 +1,22 @@
 <template>
     <div class="section" id="Clanker">
-        <p>Current Clank</p>   
+        <p style="margin: 0 0 6px 0;">Current Clank</p>   
         <div style="display: flex; flex-direction: row; width: 350px; flex-wrap: wrap; margin-bottom: 5px;">
             <div v-for="clank in showingClank" style="width: 15px; height: 15px; margin: 3px;" :style="{ backgroundColor: getColorStyle(clank) }"></div>
         </div>
-        <div style="display: flex; flex-direction: row; justify-content: space-around; margin-bottom: 8px;">
-            <button v-if="usedColors.includes('yellow')" class="btn-outline" @click="addClank('yellow')">Add Yellow</button>
-            <button v-if="usedColors.includes('green')" class="btn-outline" @click="addClank('green')">Add Green</button>
-            <button v-if="usedColors.includes('red')" class="btn-outline" @click="addClank('red')">Add Red</button>
-            <button v-if="usedColors.includes('blue')" class="btn-outline" @click="addClank('blue')">Add Blue</button>
+        <span style="color: white;">Add Clank</span>
+        <div style="display: flex; flex-direction: row; justify-content: space-around; margin-bottom: 8px; margin-top: 2px;">
+            <button v-if="usedColors.includes('yellow')" class="btn-outline" @click="addClank('yellow')">Yellow</button>
+            <button v-if="usedColors.includes('green')" class="btn-outline" @click="addClank('green')">Green</button>
+            <button v-if="usedColors.includes('red')" class="btn-outline" @click="addClank('red')">Red</button>
+            <button v-if="usedColors.includes('blue')" class="btn-outline" @click="addClank('blue')">Blue</button>
+        </div>
+        <span style="color: white;">Remove Clank</span>
+        <div style="display: flex; flex-direction: row; justify-content: space-around; margin-bottom: 8px; margin-top: 2px;">
+            <button v-if="usedColors.includes('yellow')" class="btn-outline" @click="removeClank('yellow')">Yellow</button>
+            <button v-if="usedColors.includes('green')" class="btn-outline" @click="removeClank('green')">Green</button>
+            <button v-if="usedColors.includes('red')" class="btn-outline" @click="removeClank('red')">Red</button>
+            <button v-if="usedColors.includes('blue')" class="btn-outline" @click="removeClank('blue')">Blue</button>
         </div>
         <div style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
             <div class="cardCounter">
@@ -17,7 +25,7 @@
                 <img src="/src/assets/icons/ClankDanger.png" id="VPSymbol">
                 <p @click="addDragonLevel()" class="adding">+</p>
             </div>
-            <button class="btn" @click="pullFromBag(pullcount)">Dragon Attack</button>
+            <button class="btn" @click="pullFromBag(pullcount)" style="margin-top: 5px;">Dragon Attack</button>
         </div>
     </div>
 </template>
@@ -60,6 +68,12 @@ export default {
         },
         addClank(color) {
             this.showingClank.push(color);
+        },
+        removeClank(color) {
+            const idx = this.showingClank.lastIndexOf(color);
+            if (idx !== -1) {
+                this.showingClank.splice(idx, 1);
+            }
         },
         pullFromBag(count){
             console.log('pulling this amount', count)
@@ -169,9 +183,9 @@ export default {
 }
 
 #VPSymbol{
-    height: 30px;
-    width: 30px;
-    margin-top: 5px;
+    height: 27px;
+    width: 27px;
+    margin-top: 7px;
     margin-right: 2px;
     user-select: none;
     border-radius: 30%;
