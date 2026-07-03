@@ -279,6 +279,22 @@
                     <Input v-model.number="seventhScore" id="seventhScore"></Input>
                 </div>
             </div>
+            <div v-if="this.insertingGameName == '7 Wonders Duel'" class="players">
+                <div class="playerSection" style="margin-right: 50px;">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
+                        <label for="scienceVictory" style="font-size: large; margin-top: 2px;">Science Victory</label>
+                        <input type="checkbox" :checked="victoryType === 'Science'" @change="toggleVictoryType('Science')" class="label-checkbox"
+                            id="scienceVictory" aria-label="Science victory" />
+                    </div>
+                </div>
+                <div class="playerSection">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
+                        <label for="militaryVictory" style="font-size: large; margin-top: 2px;">Military Victory</label>
+                        <input type="checkbox" :checked="victoryType === 'Military'" @change="toggleVictoryType('Military')" class="label-checkbox"
+                            id="militaryVictory" aria-label="Military victory" />
+                    </div>
+                </div>
+            </div>
             <div style="display: flex; flex-direction: row; justify-content: space-around; width: 80%;">
                 <Input v-model="date" id="date"></Input>
                 <button class="btn-outline" @click="updateRecord">Update Record</button>
@@ -323,20 +339,21 @@ export default {
             insertingGameName: this.gameData.gamename,
             filteredNames: [],
             winnerName: this.gameData.winnername || null,
-            winnerScore: this.gameData.winnerscore || null,
+            winnerScore: this.gameData.winnerscore ?? null,
             secondName: this.gameData.secondname || null,
-            secondScore: this.gameData.secondscore || null,
+            secondScore: this.gameData.secondscore ?? null,
             thirdName: this.gameData.thirdname || null,
-            thirdScore: this.gameData.thirdscore || null,
+            thirdScore: this.gameData.thirdscore ?? null,
             fourthName: this.gameData.fourthname || null,
-            fourthScore: this.gameData.fourthscore || null,
+            fourthScore: this.gameData.fourthscore ?? null,
             fifthName: this.gameData.fifthname || null,
-            fifthScore: this.gameData.fifthscore || null,
+            fifthScore: this.gameData.fifthscore ?? null,
             sixthName: this.gameData.sixthname || null,
-            sixthScore: this.gameData.sixthscore || null,
+            sixthScore: this.gameData.sixthscore ?? null,
             seventhName: this.gameData.seventhname || null,
-            seventhScore: this.gameData.seventhscore || null,
+            seventhScore: this.gameData.seventhscore ?? null,
             date: this.gameData.date,
+            victoryType: null,
             userMapping: { 1: 'josh', 2: 'john', 3: 'thetwinmeister', 4: 'ethangambles', 13: 'Hibby'}
         }
     },
@@ -405,6 +422,24 @@ export default {
             });
             }
         },
+        toggleVictoryType(type) {
+            this.victoryType = this.victoryType === type ? null : type;
+        },
+        async fetchWondersDuelVictory() {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/getwondersduelvictory/${this.gameData.gameid}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Fetched Wonders Duel victory:', result);
+                const victoryRecord = Array.isArray(result) ? result[0] : result;
+                this.victoryType = victoryRecord?.type ?? victoryRecord?.wintype ?? null;
+            } catch (error) {
+                console.error('Error fetching Wonders Duel victory:', error);
+            }
+        },
         updateRecord(){
             if (this.insertingGameName === "Heat") {
                 this.winnerScore = 0;
@@ -445,11 +480,35 @@ export default {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
+                let duelObject = {
+                    "gameid": this.gameid,
+                    "type": this.victoryType,
+                    "winnername": this.winnerName,
+                    "losername": this.secondName,
+                }
+
+                return fetch(`${import.meta.env.VITE_API_URL}/updatewondersduelvictory`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(duelObject)
+                }).then(duelResponse => {
+                    if (!duelResponse.ok) {
+                        throw new Error(`HTTP error! status: ${duelResponse.status}`);
+                    }
+                    return duelResponse.json();
+                });
+            })
+            .then(response => {
                 this.showDialog = false;
                 this.showSTS = false;
                 this.showRoot = false;
                 this.showBossMonster = false;
                 this.showCoopGame = false;
+                this.victoryType = null;
                 this.winnerName = null;
                 this.winnerScore = null;
                 this.secondName = null;
@@ -464,7 +523,7 @@ export default {
                 this.sixthScore = null;
                 this.seventhName = null;
                 this.seventhScore = null;
-                return response.json();
+                return response;
             })
             .then(data => {
                 console.log('Success:', data);
@@ -511,6 +570,11 @@ export default {
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
         }
+
+        if (this.gameData.gamename === '7 Wonders Duel' && this.gameData.gameid) {
+            this.fetchWondersDuelVictory();
+        }
+        
 
         if(this.isVisitor == true) {
             this.winnerName = 'Player 1';
@@ -581,6 +645,14 @@ export default {
 }
 .gameInformation p {
     color: white;
+}
+.label-checkbox {
+    margin-top: 6px;
+    align-self: flex-start;
+    width: 16px;
+    height: 16px;
+    background-color: transparent;
+    border: 1px solid #ccc;
 }
 .slaythespireInformation { 
     display: flex;

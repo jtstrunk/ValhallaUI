@@ -255,7 +255,26 @@
                     <Input v-model.number="seventhScore" id="seventhScore"></Input>
                 </div>
             </div>
-            <button class="btn-primary" @click="submitRecord" :disabled="isVisitor">Submit Record</button>
+            <div v-if="this.insertingGameName == '7 Wonders Duel'" class="players">
+                <div class="playerSection">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; width: 90%;">
+                        <label for="scienceVictory" style="font-size: large; margin-top: 2px;">Science Victory</label>
+                        <input type="checkbox" :checked="victoryType === 'Science'" @change="toggleVictoryType('Science')" class="label-checkbox" 
+                            id="scienceVictory" aria-label="Science victory" />
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; width: 90%; margin-top: 5px;">
+                        <label for="militaryVictory" style="font-size: large; margin-top: 2px;">Military Victory</label>
+                        <input type="checkbox" :checked="victoryType === 'Military'" @change="toggleVictoryType('Military')" class="label-checkbox"
+                            id="militaryVictory" aria-label="Military victory" />
+                    </div>
+                </div>
+                <div class="playerSection" style="margin-top: 12px;">
+                    <button class="btn-primary" @click="submit7WondersDuelRecord" :disabled="isVisitor">Submit Record</button>
+                </div>
+            </div>
+            <button class="btn-primary" @click="submitRecord" :disabled="isVisitor" 
+                v-if="this.insertingGameName != '7 Wonders Duel'">Submit Record</button>
         </div>
     </div>
 </template>
@@ -303,7 +322,8 @@ export default {
             sixthName: null,
             sixthScore: null,
             seventhName: null,
-            seventhScore: null
+            seventhScore: null,
+            victoryType: null
         }
     },
     components: {
@@ -361,6 +381,7 @@ export default {
             this.insertingPlayerCount = playerCount.charAt(4);
             this.showDialog = !this.showDialog
             this.insertingGameName = gameName;
+            this.victoryType = null;
         },
         searchName(event) {
             this.filteredNames = this.suggestedNames.filter(x => x.name.toLowerCase().includes(event.query.toLowerCase()));
@@ -373,6 +394,115 @@ export default {
         inputName(input, placement) {
             this.positionMapping[placement] = input.value;
             this[placement + 'Name'] = input.value;
+        },
+        toggleVictoryType(type) {
+            this.victoryType = this.victoryType === type ? null : type;
+        },
+        submit7WondersDuelRecord(){
+            if(this.insertingCustomGameName != '') {
+                this.insertingGameName = this.insertingCustomGameName
+                this.winnerScore ??= 0;
+                this.secondScore ??= 0;
+
+            }
+            if (this.insertingGameName === "Heat" || this.insertingGameName === "Stratego") {
+                this.winnerScore = 0;
+                this.secondScore = 0;
+            }
+
+            let insertObject = {
+                "posterid": this.userID,
+                "gamename": this.insertingGameName,
+                "winnername": this.winnerName,
+                "winnerscore": this.winnerScore,
+                "secondname": this.secondName,
+                "secondscore": this.secondScore,
+                "thirdname": this.thirdName,
+                "thirdscore": this.thirdScore,
+                "fourthname": this.fourthName,
+                "fourthscore": this.fourthScore,
+                "fifthname": this.fifthName,
+                "fifthscore": this.fifthScore,
+                "sixthname": this.sixthName,
+                "sixthscore": this.sixthScore,
+                "seventhname": this.seventhName,
+                "seventhscore": this.seventhScore,
+                date: null
+            }
+
+            fetch(`${import.meta.env.VITE_API_URL}/insertgame`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(insertObject)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+
+                let duelObject = {
+                    "gameid": data.gameid,
+                    "type": this.victoryType,
+                    "winnername": this.winnerName,
+                    "losername": this.secondName,
+                }
+
+                console.log('Duel Object:', duelObject);
+
+                fetch(`${import.meta.env.VITE_API_URL}/insertwondersduelvictory`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(duelObject)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    this.victoryType = null;
+                    this.showDialog = false;
+                    this.showSTS = false;
+                    this.showRoot = false;
+                    this.showBossMonster = false;
+                    this.showCoopGame = false;
+                    this.insertingCustomGameName = ''
+                    this.winnerName = null;
+                    this.winnerScore = null;
+                    this.secondName = null;
+                    this.secondScore = null;
+                    this.thirdName = null;
+                    this.thirdScore = null;
+                    this.fourthName = null;
+                    this.fourthScore = null;
+                    this.fifthName = null;
+                    this.fifthScore = null;
+                    this.sixthName = null;
+                    this.sixthScore = null;
+                    this.seventhName = null;
+                    this.seventhScore = null;
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);       
+                    console.log('Victory type submitted successfully:', this.victoryType);           
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         },
         submitRecord(){
             if(this.insertingCustomGameName != '') {
@@ -563,6 +693,14 @@ img {
 .playerSection label {
     color: white;
     margin-bottom: 8px;
+}
+input[type="checkbox"], .label-checkbox {
+    margin-top: 6px;
+    align-self: flex-start;
+    width: 16px;
+    height: 16px;
+    background-color: transparent;
+    border: 1px solid #ccc;
 }
 input {
     background-color: #404040;
