@@ -481,26 +481,29 @@ export default {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                let duelObject = {
-                    "gameid": this.gameid,
-                    "type": this.victoryType,
-                    "winnername": this.winnerName,
-                    "losername": this.secondName,
-                }
-
-                return fetch(`${import.meta.env.VITE_API_URL}/updatewondersduelvictory`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(duelObject)
-                }).then(duelResponse => {
-                    if (!duelResponse.ok) {
-                        throw new Error(`HTTP error! status: ${duelResponse.status}`);
+                if (this.insertingGameName === "7 Wonders Duel") {
+                    let duelObject = {
+                        "gameid": this.gameid,
+                        "type": this.victoryType,
+                        "winnername": this.winnerName,
+                        "losername": this.secondName,
                     }
-                    return duelResponse.json();
-                });
+
+                    return fetch(`${import.meta.env.VITE_API_URL}/updatewondersduelvictory`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(duelObject)
+                    }).then(duelResponse => {
+                        if (!duelResponse.ok) {
+                            throw new Error(`HTTP error! status: ${duelResponse.status}`);
+                        }
+                        return duelResponse.json();
+                    });
+                } 
+
             })
             .then(response => {
                 this.showDialog = false;
@@ -565,7 +568,8 @@ export default {
             'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
             'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
             'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 6 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
-            'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players', '7 Wonders Duel': '2 Players', 'Boss Monster': '1 - 4 Players'
+            'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players', '7 Wonders Duel': '2 Players', 'Boss Monster': '1 - 4 Players', 
+            'Star Wars The Deckbuilding Game': '2 Players', 'Clank Catacombs': '2 - 4 Players'
         }
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
