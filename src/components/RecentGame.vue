@@ -397,6 +397,27 @@ export default {
                 console.error('Error fetching Wonders Duel victory:', error);
             }
         },
+        syncGameDataFromForm() {
+            const updatedValues = {
+                winnername: this.winnerName,
+                winnerscore: this.winnerScore,
+                secondname: this.secondName,
+                secondscore: this.secondScore,
+                thirdname: this.thirdName,
+                thirdscore: this.thirdScore,
+                fourthname: this.fourthName,
+                fourthscore: this.fourthScore,
+                fifthname: this.fifthName,
+                fifthscore: this.fifthScore,
+                sixthname: this.sixthName,
+                sixthscore: this.sixthScore,
+                seventhname: this.seventhName,
+                seventhscore: this.seventhScore,
+                date: this.date
+            };
+
+            Object.assign(this.gameData, updatedValues);
+        },
         updateRecord(){
             if (this.insertingGameName === "Heat") {
                 this.winnerScore = 0;
@@ -419,7 +440,7 @@ export default {
                 "sixthname": this.sixthName,
                 "sixthscore": this.sixthScore,
                 "seventhname": this.seventhName,
-                "seventhscore": this.seventhName,
+                "seventhscore": this.seventhScore,
                 "date": this.date
             }
             
@@ -464,26 +485,13 @@ export default {
                 });
             })
             .then(data => {
+                this.syncGameDataFromForm();
                 this.showDialog = false;
                 this.showSTS = false;
                 this.showRoot = false;
                 this.showBossMonster = false;
                 this.showCoopGame = false;
                 this.victoryType = null;
-                this.winnerName = null;
-                this.winnerScore = null;
-                this.secondName = null;
-                this.secondScore = null;
-                this.thirdName = null;
-                this.thirdScore = null;
-                this.fourthName = null;
-                this.fourthScore = null;
-                this.fifthName = null;
-                this.fifthScore = null;
-                this.sixthName = null;
-                this.sixthScore = null;
-                this.seventhName = null;
-                this.seventhScore = null;
                 console.log('Success:', data);
             })
             .catch(error => {
