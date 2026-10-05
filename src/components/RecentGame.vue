@@ -397,6 +397,27 @@ export default {
                 console.error('Error fetching Wonders Duel victory:', error);
             }
         },
+        syncGameDataFromForm() {
+            const updatedValues = {
+                winnername: this.winnerName,
+                winnerscore: this.winnerScore,
+                secondname: this.secondName,
+                secondscore: this.secondScore,
+                thirdname: this.thirdName,
+                thirdscore: this.thirdScore,
+                fourthname: this.fourthName,
+                fourthscore: this.fourthScore,
+                fifthname: this.fifthName,
+                fifthscore: this.fifthScore,
+                sixthname: this.sixthName,
+                sixthscore: this.sixthScore,
+                seventhname: this.seventhName,
+                seventhscore: this.seventhScore,
+                date: this.date
+            };
+
+            Object.assign(this.gameData, updatedValues);
+        },
         updateRecord(){
             if (this.insertingGameName === "Heat") {
                 this.winnerScore = 0;
@@ -419,7 +440,7 @@ export default {
                 "sixthname": this.sixthName,
                 "sixthscore": this.sixthScore,
                 "seventhname": this.seventhName,
-                "seventhscore": this.seventhName,
+                "seventhscore": this.seventhScore,
                 "date": this.date
             }
             
@@ -464,26 +485,13 @@ export default {
                 });
             })
             .then(data => {
+                this.syncGameDataFromForm();
                 this.showDialog = false;
                 this.showSTS = false;
                 this.showRoot = false;
                 this.showBossMonster = false;
                 this.showCoopGame = false;
                 this.victoryType = null;
-                this.winnerName = null;
-                this.winnerScore = null;
-                this.secondName = null;
-                this.secondScore = null;
-                this.thirdName = null;
-                this.thirdScore = null;
-                this.fourthName = null;
-                this.fourthScore = null;
-                this.fifthName = null;
-                this.fifthScore = null;
-                this.sixthName = null;
-                this.sixthScore = null;
-                this.seventhName = null;
-                this.seventhScore = null;
                 console.log('Success:', data);
             })
             .catch(error => {
@@ -537,7 +545,8 @@ export default {
             'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
             'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
             'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 6 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
-            'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players', '7 Wonders Duel': '2 Players', 'Boss Monster': '1 - 4 Players'
+            'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players', '7 Wonders Duel': '2 Players', 'Boss Monster': '1 - 4 Players', 
+            'Star Wars The Deckbuilding Game': '2 Players', 'Clank Catacombs': '2 - 4 Players'
         }
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
