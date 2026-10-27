@@ -81,6 +81,7 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import { userState } from '/src/state/userState'
+import { getGamePlayerCounts } from '@/lib/helpers'
 
 export default {
     name: "Profile",
@@ -199,12 +200,7 @@ export default {
             this.fetchGameInformation(searchName, this.gameName);
         }
         
-        this.gamePlayerCounts = {
-            'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
-            'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', 'Root' : '2 - 4 Players', 'Puerto Rico' : '3 - 5 Players',
-            'Cosmic Encounter': '3 - 5 Players', 'Catan': '2 - 4 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players', 
-            'Star Wars The Deckbuilding Game': '2 Players', 'Clank Catacombs': '2 - 4 Players'
-        }
+        this.gamePlayerCounts = getGamePlayerCounts();
     }
 }
 </script>

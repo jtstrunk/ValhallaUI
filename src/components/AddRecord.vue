@@ -45,6 +45,9 @@
     <div id="overlay" v-if="this.showBossMonster" @click="this.showBossMonster=!this.showBossMonster"></div>
     <InsertBossMonsterPopup v-if="this.showBossMonster" :Type="'Insert'"
         @gameInserted="this.showBossMonster = false"></InsertBossMonsterPopup>
+    <div id="overlay" v-if="this.showDuelForMiddleEarth" @click="this.showDuelForMiddleEarth=!this.showDuelForMiddleEarth"></div>
+    <InsertDuelForMiddleEarthPopup v-if="this.showDuelForMiddleEarth" :Type="'Insert'"
+        @gameInserted="this.showDuelForMiddleEarth = false"></InsertDuelForMiddleEarthPopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
@@ -274,7 +277,7 @@
                 </div>
             </div>
             <button class="btn-primary" @click="submitRecord" :disabled="isVisitor" 
-                v-if="this.insertingGameName != '7 Wonders Duel'">Submit Record</button>
+                v-if="this.insertingGameName != '7 Wonders Duel' && this.insertingGameName != 'Duel for Middle-Earth'">Submit Record</button>
         </div>
     </div>
 </template>
@@ -285,10 +288,12 @@ import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import Dialog from 'primevue/dialog'
 import { userState } from "@/state/userState"
-import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
-import InsertRootPopup from './InsertRootPopup.vue'
-import InsertCoopGamePopup from './InsertCoopGamePopup.vue'
-import InsertBossMonsterPopup from './InsertBossMonsterPopup.vue'
+import { getGamePlayerCounts } from '@/lib/helpers'
+import InsertSlaytheSpirePopup from './GamePopups/InsertSlaytheSpirePopup.vue'
+import InsertRootPopup from './GamePopups/InsertRootPopup.vue'
+import InsertCoopGamePopup from './GamePopups/InsertCoopGamePopup.vue'
+import InsertBossMonsterPopup from './GamePopups/InsertBossMonsterPopup.vue'
+import InsertDuelForMiddleEarthPopup from './GamePopups/InsertDuelForMiddleEarthPopup.vue'
 
 export default {
     name: "Add Record",
@@ -300,6 +305,7 @@ export default {
             showSTS: false,
             showRoot: false,
             showBossMonster: false,
+            showDuelForMiddleEarth: false,
             showCoopGame: false,
             isVisitor: false,
             searchGameName: '',
@@ -307,7 +313,7 @@ export default {
             insertingCustomGameName: '',
             insertingPlayerCount: null,
             filteredNames: [],
-            supportedGames: ['Dominion', 'Race for the Galaxy', 'Clank Catacombs', '7 Wonders Duel', 'Clank', 'Lords of Waterdeep', 'Star Wars The Deckbuilding Game', 'Catan', 'Slay the Spire', 
+            supportedGames: ['Dominion', 'Race for the Galaxy', 'Duel for Middle-Earth', 'Clank Catacombs', '7 Wonders Duel', 'Clank', 'Lords of Waterdeep', 'Star Wars The Deckbuilding Game', 'Catan', 'Slay the Spire', 
                 'Moonrakers', 'Heat', 'Space Base', 'Boss Monster', '5 Minute Marvel', '7 Wonders', 'Root', 'Stratego', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
@@ -332,7 +338,8 @@ export default {
         InsertSlaytheSpirePopup,
         InsertRootPopup,
         InsertCoopGamePopup,
-        InsertBossMonsterPopup
+        InsertBossMonsterPopup,
+        InsertDuelForMiddleEarthPopup
     },
     computed: {
         filteredGames() {
@@ -353,13 +360,7 @@ export default {
             this.$router.push(`/game/${name}`);
         },
         createMapping(){
-            this.gamePlayerCounts = {
-                'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
-                'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
-                'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 6 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
-                'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players', '7 Wonders Duel': '2 Players', 'Boss Monster': '1 - 4 Players', 'Star Wars The Deckbuilding Game': '2 Players',
-                'Clank Catacombs': '2 - 4 Players'
-            }
+            this.gamePlayerCounts = getGamePlayerCounts();
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
             }
@@ -376,6 +377,9 @@ export default {
                 return;
             } else if (gameName == 'Boss Monster') {
                 this.showBossMonster = true;
+                return;
+            } else if (gameName == 'Duel for Middle-Earth') {
+                this.showDuelForMiddleEarth = true;
                 return;
             }
 
@@ -767,7 +771,7 @@ input {
     color: white;
     padding: 6px;
     border-radius: 5px;
-    width: 90%;
+    width: 100%;
 }
 
 #searchGameName {

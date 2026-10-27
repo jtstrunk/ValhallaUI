@@ -212,6 +212,7 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import { userState } from "@/state/userState"
+import { getGamePlayerCounts } from '@/lib/helpers'
 
 export default {
     inheritAttrs: false,
@@ -253,12 +254,7 @@ export default {
     },
     methods: {
         createMapping(){
-            this.gamePlayerCounts = {
-                'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 4 Players', 
-                'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', ' Puerto Rico' : '3 - 5 Players',
-                'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 6 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
-                'Star Wars The Deckbuilding Game': '2 Players', 'Clank Catacombs': '2 - 4 Players'
-            }
+            this.gamePlayerCounts = getGamePlayerCounts();
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName, 'sixth': this.sixthName, 'seventh': this.seventhName,
             }
