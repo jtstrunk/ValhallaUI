@@ -23,6 +23,9 @@
     <div id="overlay" v-if="this.showBossMonster" @click="this.showBossMonster=!this.showBossMonster"></div>
     <InsertBossMonsterPopup v-if="this.showBossMonster" :Type="'Update'" :GameData="gameData"
         @gameInserted="this.showBossMonster = false"></InsertBossMonsterPopup>
+    <div id="overlay" v-if="this.showDuelForMiddleEarth" @click="this.showDuelForMiddleEarth=!this.showDuelForMiddleEarth"></div>
+    <InsertDuelForMiddleEarthPopup v-if="this.showDuelForMiddleEarth" :Type="'Update'" :GameData="gameData"
+        @gameInserted="this.showDuelForMiddleEarth = false"></InsertDuelForMiddleEarthPopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div style="width: 450px; display: flex; flex-direction: column; align-items: center; margin-bottom: 25px;">
@@ -252,10 +255,12 @@
 </template>
 
 <script>
-import InsertSlaytheSpirePopup from './InsertSlaytheSpirePopup.vue'
-import InsertRootPopup from './InsertRootPopup.vue'
-import InsertCoopGamePopup from './InsertCoopGamePopup.vue'
-import InsertBossMonsterPopup from './InsertBossMonsterPopup.vue'
+import { getGamePlayerCounts } from '@/lib/helpers'
+import InsertSlaytheSpirePopup from './GamePopups/InsertSlaytheSpirePopup.vue'
+import InsertRootPopup from './GamePopups/InsertRootPopup.vue'
+import InsertCoopGamePopup from './GamePopups/InsertCoopGamePopup.vue'
+import InsertBossMonsterPopup from './GamePopups/InsertBossMonsterPopup.vue'
+import InsertDuelForMiddleEarthPopup from './GamePopups/InsertDuelForMiddleEarthPopup.vue'
 
 export default {
     name: "Home",
@@ -297,6 +302,7 @@ export default {
             showSTS: false,
             showRoot: false,
             showBossMonster: false,
+            showDuelForMiddleEarth: false,
             showCoopGame: false,
             insertingPlayerCount: null,
             insertingGameName: this.gameData.gamename,
@@ -323,7 +329,8 @@ export default {
         InsertSlaytheSpirePopup,
         InsertRootPopup,
         InsertCoopGamePopup,
-        InsertBossMonsterPopup
+        InsertBossMonsterPopup,
+        InsertDuelForMiddleEarthPopup
     },
     methods: {
         navigateToGamePage(name) {
@@ -344,6 +351,9 @@ export default {
                 return;
             } else if (gameName == 'Boss Monster') {
                 this.showBossMonster = true;
+                return;
+            } else if (gameName == 'Duel for Middle-Earth') {
+                this.showDuelForMiddleEarth = true;
                 return;
             }
 
@@ -541,13 +551,7 @@ export default {
         }
     },
     created() {
-        this.gamePlayerCounts = {
-            'Dominion': '2 - 4 Players', 'Moonrakers': '1 - 5 Players', 'Clank': '2 - 4 Players', 'Lords of Waterdeep': '2 - 6 Players', 'Slay the Spire': '1 - 4 Players',
-            'Race for the Galaxy': '2 - 4 Players', 'Heat': '1 - 6 Players', 'Space Base': '2 - 5 Players', '7 Wonders' : '2 - 7 Players', 'Root' : '2 - 6 Players', 
-            'Puerto Rico' : '3 - 5 Players', 'Cosmic Encounter': '3 - 5 Players', 'Catan': '3 - 6 Players', 'Munchkin': '3 - 6 Players',  'Dune Imperium': '1 - 4 Players',
-            'Stratego' : '2 Players', '5 Minute Marvel': '2 - 5 Players', '7 Wonders Duel': '2 Players', 'Boss Monster': '1 - 4 Players', 
-            'Star Wars The Deckbuilding Game': '2 Players', 'Clank Catacombs': '2 - 4 Players'
-        }
+        this.gamePlayerCounts = getGamePlayerCounts();
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
         }
