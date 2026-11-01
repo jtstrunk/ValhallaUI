@@ -242,12 +242,6 @@ export default {
                 "thirdscore": this.thirdScore || null,
                 "fourthname": this.fourthName || null,
                 "fourthscore": this.fourthScore || null,
-                "fifthname": null,
-                "fifthscore": null,
-                "sixthname": null,
-                "sixthscore": null,
-                "seventhname": null,
-                "seventhscore": null,
                 date: null
             };
 
@@ -334,13 +328,6 @@ export default {
                 "thirdscore": this.thirdScore || null,
                 "fourthname": this.fourthName || null,
                 "fourthscore": this.fourthScore || null,
-                "fourthscore": null,
-                "fifthname": null,
-                "fifthscore": null,
-                "sixthname": null,
-                "sixthscore": null,
-                "seventhname": null,
-                "seventhscore": null,
                 "date": this.date
             };
 

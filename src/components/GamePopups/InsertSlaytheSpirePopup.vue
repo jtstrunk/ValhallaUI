@@ -252,15 +252,7 @@ export default {
                 "secondname": this.secondName || null,
                 "secondscore": this.Ascension,
                 "thirdname": this.thirdName || null,
-                "thirdscore": null,
                 "fourthname": this.fourthName || null,
-                "fourthscore": null,
-                "fifthname": null,
-                "fifthscore": null,
-                "sixthname": null,
-                "sixthscore": null,
-                "seventhname": null,
-                "seventhscore": null,
                 date: null
             };
 
@@ -336,15 +328,7 @@ export default {
                 "secondname": this.secondName || null,
                 "secondscore": this.Ascension,
                 "thirdname": this.thirdName || null,
-                "thirdscore": null,
                 "fourthname": this.fourthName || null,
-                "fourthscore": null,
-                "fifthname": null,
-                "fifthscore": null,
-                "sixthname": null,
-                "sixthscore": null,
-                "seventhname": null,
-                "seventhscore": null,
                 "date": this.date
             };
 
