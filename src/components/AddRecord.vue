@@ -624,6 +624,14 @@ export default {
         }
         this.createMapping();
         this.fetchUsersPlayedWith('josh');
+        const game = this.$route.query.game;
+        if (game !== undefined) {
+            if (typeof game !== 'string' || !this.supportedGames.includes(game)) {
+                console.error('Cannot quick add an unsupported game:', game);
+            } else {
+                this.createPopup(game, this.gamePlayerCounts[game]);
+            }
+        }
     }
 }
 </script>

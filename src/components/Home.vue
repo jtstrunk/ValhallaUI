@@ -1,10 +1,10 @@
 <template>
     <div id="content" @scroll="handleScroll">
         <div class="section MobileHide" style="display: flex; flex-direction: column; align-items: center; height: 530px; position: sticky; top: 60px;">
-            <div>
+            <div style="margin-top: 10px;">
                 <img :src="profileImageSrc" id="profile" @click="navigateToProfile(this.userName)">
             </div>
-            <p style="color: white; margin-top: 5px; margin-bottom: 8px;">{{ this.userName }}</p>
+            <p style="color: white; margin-top: 5px; margin-bottom: 8px; font-size: 20px; font-family: 'Manolo Mono', sans-serif !important;">{{ this.userName }}</p>
             <div>
                 <div class="stat">
                     <img class="icon" src="/src/assets/icons/mostplayed.png">
@@ -22,9 +22,8 @@
             <div>
                 <div id="latestGame" v-for="game in recentGames.slice(0, 1)">
                     <p>Latest Game</p>
-                    <span style="font-size: large;">{{ game.gamename.slice(0, 13) }}{{ game.gamename.length > 14 ? '...' : '' }}</span>
-                    <span style="color: white;"> - </span>
-                    <span style="font-size: medium;">{{ formattedDate }}</span>
+                    <span style="font-size: 24px; font-family: 'Manolo Mono', sans-serif !important;">{{ game.gamename }}</span>
+                    <span style="font-size: medium; margin-top: 6px;">{{ formattedDate }}</span>
                 </div>
                 <div id="latestGame" v-if="recentGames.length == 0">
                     <p>Latest Game</p>
@@ -33,10 +32,6 @@
             </div>
             <div @click="$router.push('/gamerecords')" class="quickLink">
                 <span style="color: white;">View Your Games</span>
-                <img src="/src/assets/icons/arrow.png" class="arrow">
-            </div>
-            <div class="quickLink" >
-                <span style="color: white;">Dominion Selector</span>
                 <img src="/src/assets/icons/arrow.png" class="arrow">
             </div>
         </div>
@@ -79,41 +74,41 @@
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Dominion</p>
-                        <button id="addDominion" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addDominion" class="btn btn-outline quickadd" @click="$router.push({ name: 'AddRecord', query: { game: 'Dominion' } })">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/Dominion.webp">
                 </div>
 
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
-                        <p class="gameTitle">Heat</p>
-                        <button id="addHeat" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <p class="gameTitle">Race for the Galaxy</p>
+                        <button id="addRace" style="width: 160px; outline: none;" class="btn btn-outline quickadd" @click="$router.push({ name: 'AddRecord', query: { game: 'Race for the Galaxy' } })">Quick Add</button>
                     </div>
-                    <img src="/src/assets/addgame/Heat.webp">
-                </div>
-
-                <div class="quickgame">
-                    <div style="margin-left: 5px; margin-top: 3px;">
-                        <p class="gameTitle">Clank</p>
-                        <button id="addClank" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
-                    </div>
-                    <img src="/src/assets/addgame/Clank.webp">
+                    <img src="/src/assets/addgame/RacefortheGalaxy.webp">
                 </div>
 
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
                         <p class="gameTitle">Lords of Waterdeep</p>
-                        <button id="addLords" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <button id="addLords" style="width: 160px; outline: none;" class="btn btn-outline quickadd" @click="$router.push({ name: 'AddRecord', query: { game: 'Lords of Waterdeep' } })">Quick Add</button>
                     </div>
                     <img src="/src/assets/addgame/LordsofWaterdeep.webp">
                 </div>
 
                 <div class="quickgame">
                     <div style="margin-left: 5px; margin-top: 3px;">
-                        <p class="gameTitle">Race for the Galaxy</p>
-                        <button id="addRace" style="width: 160px; outline: none;" class="btn btn-outline quickadd">Quick Add</button>
+                        <p class="gameTitle">Duel for Middle-Earth</p>
+                        <button id="addDuel" style="width: 160px; outline: none;" class="btn btn-outline quickadd" @click="$router.push({ name: 'AddRecord', query: { game: 'Duel for Middle-Earth' } })">Quick Add</button>
                     </div>
-                    <img src="/src/assets/addgame/RacefortheGalaxy.webp">
+                    <img src="/src/assets/addgame/DuelforMiddle-Earth.webp">
+                </div>
+
+                <div class="quickgame">
+                    <div style="margin-left: 5px; margin-top: 3px;">
+                        <p class="gameTitle">Catan</p>
+                        <button id="addCatan" style="width: 160px; outline: none;" class="btn btn-outline quickadd" @click="$router.push({ name: 'AddRecord', query: { game: 'Catan' } })">Quick Add</button>
+                    </div>
+                    <img src="/src/assets/addgame/Catan.webp">
                 </div>
             </div>
         </div>
@@ -414,6 +409,8 @@ export default {
 
 #latestGame span {
     color: white;
+    display: block;
+    overflow-wrap: anywhere;
 }
 
 .quickLink {
@@ -423,7 +420,7 @@ export default {
     background-color: #3A3B3C; 
     padding: 10px; 
     border-radius: 5px; 
-    margin-top: 10px; 
+    margin-top: 12px; 
     width: 270px;
 }
 
