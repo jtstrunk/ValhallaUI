@@ -7,7 +7,7 @@
     </div>
 
     <div id="availableGames">
-        <div v-for="game in filteredGames" class="card" @click="createPopup(game, this.gamePlayerCounts[game])">
+        <div v-for="game in filteredGames" :key="game" class="card" @click="createPopup(game)">
             <img src="../assets/icons/newpage.webp" class="icon newpage-icon" @click="navigateToGamePage(game)"/>
             <div class="img">
                 <img :src="getGameImage(game)">
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="card" @click="createPopup('', '1 - 6 Players')">
+        <div class="card" @click="createPopup('')">
             <div class="img">
                 <img :src="getGameImage('Unsupported')">
             </div>
@@ -288,7 +288,8 @@ import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import Dialog from 'primevue/dialog'
 import { userState } from "@/state/userState"
-import { getGamePlayerCounts } from '@/lib/helpers'
+import { mapState } from 'pinia'
+import { useSupportedGamesStore } from '@/stores/supportedGames'
 import InsertSlaytheSpirePopup from './GamePopups/InsertSlaytheSpirePopup.vue'
 import InsertRootPopup from './GamePopups/InsertRootPopup.vue'
 import InsertCoopGamePopup from './GamePopups/InsertCoopGamePopup.vue'
@@ -313,8 +314,6 @@ export default {
             insertingCustomGameName: '',
             insertingPlayerCount: null,
             filteredNames: [],
-            supportedGames: ['Dominion', 'Race for the Galaxy', 'Duel for Middle-Earth', 'Clank Catacombs', '7 Wonders Duel', 'Clank', 'Lords of Waterdeep', 'Star Wars The Deckbuilding Game', 'Catan', 'Slay the Spire', 
-                'Moonrakers', 'Heat', 'Space Base', 'Boss Monster', '5 Minute Marvel', '7 Wonders', 'Root', 'Stratego', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Munchkin'],
             winnerName: null,
             winnerScore: null,
             secondName: null,
@@ -342,6 +341,10 @@ export default {
         InsertDuelForMiddleEarthPopup
     },
     computed: {
+        ...mapState(useSupportedGamesStore, ['supportedGames', 'gamePlayerCounts', 'gamesByName']),
+        quickAddGame() {
+            return useSupportedGamesStore().loaded ? this.$route.query.game : undefined;
+        },
         filteredGames() {
             if (!this.searchGameName.trim()) {
                 return this.supportedGames;
@@ -349,6 +352,25 @@ export default {
             const search = this.searchGameName.trim().toLowerCase();
                 return this.supportedGames.filter(game => game.toLowerCase().includes(search)
             );
+        }
+    },
+    watch: {
+        quickAddGame: {
+            immediate: true,
+            handler(game) {
+                if (game === undefined) return;
+                if (typeof game !== 'string' || !this.supportedGames.includes(game)) {
+                    console.error('Cannot quick add an unsupported game:', game);
+                    this.$toast.add({
+                        severity: 'error',
+                        summary: 'Cannot add game',
+                        detail: 'This game is not in the supported-games catalog.',
+                        life: 7000
+                    });
+                    return;
+                }
+                this.createPopup(game);
+            }
         }
     },
     methods: {
@@ -360,12 +382,21 @@ export default {
             this.$router.push(`/game/${name}`);
         },
         createMapping(){
-            this.gamePlayerCounts = getGamePlayerCounts();
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
             }
         },
-        createPopup(gameName, playerCount){
+        createPopup(gameName){
+            const game = this.gamesByName[gameName];
+            if (gameName && !game) {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Cannot add game',
+                    detail: 'Supported-game information is unavailable. Please reload the catalog.',
+                    life: 7000
+                });
+                return;
+            }
             if (gameName == 'Slay the Spire') {
                 this.showSTS = true;
                 return;
@@ -383,7 +414,7 @@ export default {
                 return;
             }
 
-            this.insertingPlayerCount = playerCount.charAt(4);
+            this.insertingPlayerCount = gameName ? game.maximumplayercount : 6;
             this.showDialog = !this.showDialog
             this.insertingGameName = gameName;
             this.victoryType = null;
@@ -624,14 +655,6 @@ export default {
         }
         this.createMapping();
         this.fetchUsersPlayedWith('josh');
-        const game = this.$route.query.game;
-        if (game !== undefined) {
-            if (typeof game !== 'string' || !this.supportedGames.includes(game)) {
-                console.error('Cannot quick add an unsupported game:', game);
-            } else {
-                this.createPopup(game, this.gamePlayerCounts[game]);
-            }
-        }
     }
 }
 </script>

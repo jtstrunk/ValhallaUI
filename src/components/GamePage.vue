@@ -81,7 +81,8 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import { userState } from '/src/state/userState'
-import { getGamePlayerCounts } from '@/lib/helpers'
+import { mapState } from 'pinia'
+import { useSupportedGamesStore } from '@/stores/supportedGames'
 
 export default {
     name: "Profile",
@@ -178,6 +179,7 @@ export default {
         },
     },
     computed: {
+        ...mapState(useSupportedGamesStore, ['gamePlayerCounts']),
         gameImage() {
             const cleanedGameName = this.gameName.replace(/\s+/g, '');
             return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
@@ -200,7 +202,6 @@ export default {
             this.fetchGameInformation(searchName, this.gameName);
         }
         
-        this.gamePlayerCounts = getGamePlayerCounts();
     }
 }
 </script>

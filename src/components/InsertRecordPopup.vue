@@ -212,7 +212,8 @@
 import axios from "axios"
 import RecentGame from './RecentGame.vue'
 import { userState } from "@/state/userState"
-import { getGamePlayerCounts } from '@/lib/helpers'
+import { mapState } from 'pinia'
+import { useSupportedGamesStore } from '@/stores/supportedGames'
 
 export default {
     inheritAttrs: false,
@@ -245,8 +246,6 @@ export default {
             isVisitor: false,
             insertingGameName: this.gameName || '',
             filteredNames: [],
-            supportedGames: ['Dominion', 'Moonrakers', 'Clank', 'Lords of Waterdeep', 'Race for the Galaxy', 'Heat', 'Clank Catacombs',
-                'Space Base', 'Dune Imperium', 'Puerto Rico', 'Cosmic Encounter', 'Catan', 'Munchkin', 'Star Wars The Deckbuilding Game'],
         }
     },
     components: {
@@ -254,7 +253,6 @@ export default {
     },
     methods: {
         createMapping(){
-            this.gamePlayerCounts = getGamePlayerCounts();
             this.positionMapping = {
                 'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName, 'sixth': this.sixthName, 'seventh': this.seventhName,
             }
@@ -370,6 +368,7 @@ export default {
         },
     },
     computed: {
+        ...mapState(useSupportedGamesStore, ['supportedGames', 'gamePlayerCounts']),
         calculatedPlayerCount: {
             get() {
                 return this.insertingPlayerCount !== null ? this.insertingPlayerCount : null;

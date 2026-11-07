@@ -3,6 +3,17 @@ import { RouterLink, RouterView } from 'vue-router'
 import Header from './components/Header.vue'
 import MobileHeader from './components/MobileHeader.vue'
 import MobileFooter from './components/MobileFooter.vue'
+import { watch } from 'vue'
+import { userState } from './state/userState'
+import { useSupportedGamesStore } from './stores/supportedGames'
+
+const supportedGamesStore = useSupportedGamesStore()
+function loadSupportedGames() {
+  return supportedGamesStore.fetchSupportedGames(
+    userState.username === 'Guest' ? 'josh' : userState.username
+  )
+}
+watch(() => userState.username, loadSupportedGames, { immediate: true })
 </script>
 
 <template>
@@ -11,6 +22,11 @@ import MobileFooter from './components/MobileFooter.vue'
       :is="isMobile ? MobileHeader : Header" />
     <Toast />
     <div class="content-wrapper" ref="scrollContainer">
+      <p v-if="supportedGamesStore.loading" role="status">Loading supported games...</p>
+      <div v-if="supportedGamesStore.error" role="alert">
+        {{ supportedGamesStore.error }}
+        <button class="btn-outline" @click="loadSupportedGames">Retry</button>
+      </div>
       <RouterView :scrolled-to-bottom="isScrolledToBottom"/>
     </div>
     <MobileFooter v-if="isMobile && !isAuthRoute"/>

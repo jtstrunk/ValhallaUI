@@ -255,7 +255,8 @@
 </template>
 
 <script>
-import { getGamePlayerCounts } from '@/lib/helpers'
+import { mapState } from 'pinia'
+import { useSupportedGamesStore } from '@/stores/supportedGames'
 import InsertSlaytheSpirePopup from './GamePopups/InsertSlaytheSpirePopup.vue'
 import InsertRootPopup from './GamePopups/InsertRootPopup.vue'
 import InsertCoopGamePopup from './GamePopups/InsertCoopGamePopup.vue'
@@ -357,9 +358,18 @@ export default {
                 return;
             }
 
-            let playerCount = this.gamePlayerCounts[gameName]
+            const game = this.gamesByName[gameName];
+            if (!game) {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Cannot edit game',
+                    detail: 'Supported-game information is unavailable. Please reload the catalog.',
+                    life: 7000
+                });
+                return;
+            }
             this.gameid = this.gameData.gameid;
-            this.insertingPlayerCount = playerCount.charAt(4);
+            this.insertingPlayerCount = game.maximumplayercount;
             this.showDialog = !this.showDialog
         },
         searchName(event) {
@@ -510,6 +520,7 @@ export default {
         },
     },
     computed: {
+        ...mapState(useSupportedGamesStore, ['gamePlayerCounts', 'gamesByName']),
         gameNameStyle() {
         return {
             height: this.gameData.gamename.length > 14 ? '30px' : 'auto',
@@ -551,7 +562,6 @@ export default {
         }
     },
     created() {
-        this.gamePlayerCounts = getGamePlayerCounts();
         this.positionMapping = {
             'winner': this.winnerName, 'second': this.secondName, 'third': this.thirdName, 'fourth': this.fourthName, 'fifth': this.fifthName,
         }
