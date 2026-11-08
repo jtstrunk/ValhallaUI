@@ -83,6 +83,9 @@
     <div id="overlay" v-if="this.showDuelForMiddleEarth" @click="this.showDuelForMiddleEarth=!this.showDuelForMiddleEarth"></div>
     <InsertDuelForMiddleEarthPopup v-if="this.showDuelForMiddleEarth" :Type="'Update'" :GameData="gameData"
         @gameInserted="this.showDuelForMiddleEarth = false"></InsertDuelForMiddleEarthPopup>
+    <div id="overlay" v-if="showStarWars" @click="showStarWars = false"></div>
+    <InsertStarWarsTDBGPopup v-if="showStarWars" :Type="'Update'" :GameData="gameData"
+        @gameInserted="showStarWars = false"></InsertStarWarsTDBGPopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div style="width: 450px; display: flex; flex-direction: column; align-items: center; margin-bottom: 25px;">
@@ -315,6 +318,7 @@ import InsertRootPopup from './GamePopups/InsertRootPopup.vue'
 import InsertCoopGamePopup from './GamePopups/InsertCoopGamePopup.vue'
 import InsertBossMonsterPopup from './GamePopups/InsertBossMonsterPopup.vue'
 import InsertDuelForMiddleEarthPopup from './GamePopups/InsertDuelForMiddleEarthPopup.vue'
+import InsertStarWarsTDBGPopup from './GamePopups/InsertStarWarsTDBGPopup.vue'
 
 export default {
     name: "Home",
@@ -341,6 +345,7 @@ export default {
             showRoot: false,
             showBossMonster: false,
             showDuelForMiddleEarth: false,
+            showStarWars: false,
             showCoopGame: false,
             insertingPlayerCount: null,
             insertingGameName: this.gameData.gamename,
@@ -369,7 +374,8 @@ export default {
         InsertRootPopup,
         InsertCoopGamePopup,
         InsertBossMonsterPopup,
-        InsertDuelForMiddleEarthPopup
+        InsertDuelForMiddleEarthPopup,
+        InsertStarWarsTDBGPopup
     },
     methods: {
         navigateToGamePage(name) {
@@ -401,6 +407,9 @@ export default {
                 return;
             } else if (gameName == 'Duel for Middle-Earth') {
                 this.showDuelForMiddleEarth = true;
+                return;
+            } else if (gameName == 'Star Wars The Deckbuilding Game') {
+                this.showStarWars = true;
                 return;
             }
 

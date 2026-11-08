@@ -4,7 +4,7 @@
             <img class="gameimg" :src="imageSource" style="border-top-right-radius: 5px;">
         </div>
         <div class="gameContent">
-            <h4 class="gameName" :style="gameNameStyle" @click="navigateToGamePage(gameData.gamename)">{{ gameData.gamename }}</h4>
+            <h4 class="gameName" :style="gameNameStyle" :title="gameData.gamename" @click="navigateToGamePage(gameData.gamename)">{{ displayedGameName }}</h4>
             <h5>Winner: {{ this.winnerName }}</h5>
             <h5>Second: {{ this.secondName }}</h5>
             <span class='gameID' style="font-size: smaller;">Game ID {{ gameData.gameid}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -26,6 +26,9 @@
     <div id="overlay" v-if="this.showDuelForMiddleEarth" @click="this.showDuelForMiddleEarth=!this.showDuelForMiddleEarth"></div>
     <InsertDuelForMiddleEarthPopup v-if="this.showDuelForMiddleEarth" :Type="'Update'" :GameData="gameData"
         @gameInserted="this.showDuelForMiddleEarth = false"></InsertDuelForMiddleEarthPopup>
+    <div id="overlay" v-if="showStarWars" @click="showStarWars = false"></div>
+    <InsertStarWarsTDBGPopup v-if="showStarWars" :Type="'Update'" :GameData="gameData"
+        @gameInserted="showStarWars = false"></InsertStarWarsTDBGPopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div style="width: 450px; display: flex; flex-direction: column; align-items: center; margin-bottom: 25px;">
@@ -262,6 +265,7 @@ import InsertRootPopup from './GamePopups/InsertRootPopup.vue'
 import InsertCoopGamePopup from './GamePopups/InsertCoopGamePopup.vue'
 import InsertBossMonsterPopup from './GamePopups/InsertBossMonsterPopup.vue'
 import InsertDuelForMiddleEarthPopup from './GamePopups/InsertDuelForMiddleEarthPopup.vue'
+import InsertStarWarsTDBGPopup from './GamePopups/InsertStarWarsTDBGPopup.vue'
 
 export default {
     name: "Home",
@@ -304,6 +308,7 @@ export default {
             showRoot: false,
             showBossMonster: false,
             showDuelForMiddleEarth: false,
+            showStarWars: false,
             showCoopGame: false,
             insertingPlayerCount: null,
             insertingGameName: this.gameData.gamename,
@@ -331,7 +336,8 @@ export default {
         InsertRootPopup,
         InsertCoopGamePopup,
         InsertBossMonsterPopup,
-        InsertDuelForMiddleEarthPopup
+        InsertDuelForMiddleEarthPopup,
+        InsertStarWarsTDBGPopup
     },
     methods: {
         navigateToGamePage(name) {
@@ -355,6 +361,9 @@ export default {
                 return;
             } else if (gameName == 'Duel for Middle-Earth') {
                 this.showDuelForMiddleEarth = true;
+                return;
+            } else if (gameName == 'Star Wars The Deckbuilding Game') {
+                this.showStarWars = true;
                 return;
             }
 
@@ -521,11 +530,15 @@ export default {
     },
     computed: {
         ...mapState(useSupportedGamesStore, ['gamePlayerCounts', 'gamesByName']),
+        displayedGameName() {
+            const name = this.gameData.gamename;
+            return name.length > 29 ? `${name.slice(0, 26)}...` : name;
+        },
         gameNameStyle() {
-        return {
-            height: this.gameData.gamename.length > 14 ? '30px' : 'auto',
-            marginBottom: this.gameData.gamename.length > 14 ? '25px' : '32px'
-            }
+            return {
+                height: this.gameData.gamename.length > 14 ? '48px' : 'auto',
+                marginBottom: this.gameData.gamename.length > 14 ? '7px' : '32px'
+            };
         },
         imageSource() {
             // const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
@@ -605,6 +618,9 @@ export default {
     font-size: 20px !important;
     font-weight: 600;
     overflow-wrap: break-word;
+    line-height: 1.2;
+    max-height: 2.4em;
+    overflow: hidden;
 }
 
 .gameContent h5 {

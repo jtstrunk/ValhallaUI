@@ -48,6 +48,9 @@
     <div id="overlay" v-if="this.showDuelForMiddleEarth" @click="this.showDuelForMiddleEarth=!this.showDuelForMiddleEarth"></div>
     <InsertDuelForMiddleEarthPopup v-if="this.showDuelForMiddleEarth" :Type="'Insert'"
         @gameInserted="this.showDuelForMiddleEarth = false"></InsertDuelForMiddleEarthPopup>
+    <div id="overlay" v-if="showStarWars" @click="showStarWars = false"></div>
+    <InsertStarWarsTDBGPopup v-if="showStarWars" :Type="'Insert'"
+        @gameInserted="showStarWars = false"></InsertStarWarsTDBGPopup>
     <div id="overlay" v-if="this.showDialog" @click="this.showDialog=!this.showDialog"></div>
     <div id="popups" class="gamepopup" v-if="this.showDialog"> 
         <div class="popupContainer">
@@ -295,6 +298,7 @@ import InsertRootPopup from './GamePopups/InsertRootPopup.vue'
 import InsertCoopGamePopup from './GamePopups/InsertCoopGamePopup.vue'
 import InsertBossMonsterPopup from './GamePopups/InsertBossMonsterPopup.vue'
 import InsertDuelForMiddleEarthPopup from './GamePopups/InsertDuelForMiddleEarthPopup.vue'
+import InsertStarWarsTDBGPopup from './GamePopups/InsertStarWarsTDBGPopup.vue'
 
 export default {
     name: "Add Record",
@@ -307,6 +311,7 @@ export default {
             showRoot: false,
             showBossMonster: false,
             showDuelForMiddleEarth: false,
+            showStarWars: false,
             showCoopGame: false,
             isVisitor: false,
             searchGameName: '',
@@ -338,7 +343,8 @@ export default {
         InsertRootPopup,
         InsertCoopGamePopup,
         InsertBossMonsterPopup,
-        InsertDuelForMiddleEarthPopup
+        InsertDuelForMiddleEarthPopup,
+        InsertStarWarsTDBGPopup
     },
     computed: {
         ...mapState(useSupportedGamesStore, ['supportedGames', 'gamePlayerCounts', 'gamesByName']),
@@ -411,6 +417,9 @@ export default {
                 return;
             } else if (gameName == 'Duel for Middle-Earth') {
                 this.showDuelForMiddleEarth = true;
+                return;
+            } else if (gameName == 'Star Wars The Deckbuilding Game') {
+                this.showStarWars = true;
                 return;
             }
 

@@ -25,7 +25,6 @@ watch(() => userState.username, loadSupportedGames, { immediate: true })
       <p v-if="supportedGamesStore.loading" role="status">Loading supported games...</p>
       <div v-if="supportedGamesStore.error" role="alert">
         {{ supportedGamesStore.error }}
-        <button class="btn-outline" @click="loadSupportedGames">Retry</button>
       </div>
       <RouterView :scrolled-to-bottom="isScrolledToBottom"/>
     </div>
