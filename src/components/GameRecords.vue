@@ -38,25 +38,36 @@
                             
                         </div>
                     </div>
+                    <div class="game-filter">
+                        <label for="mobile-game-filter">Games</label>
+                        <component :is="gameSelectComponent" v-model="selectedGameFilter"
+                            inputId="mobile-game-filter" :options="orderedSupportedGames"
+                            :placeholder="searchType === 'inclusive' ? 'Select games' : 'Select a game'"
+                            :loading="supportedGamesLoading" :disabled="supportedGamesLoading || !!supportedGamesError"
+                            showClear :showToggleAll="false" class="game-filter-select"
+                            :pt="{ overlay: { class: 'game-filter-overlay', style: { backgroundColor: '#404040', color: 'white' } } }">
+                            <template #value="{ placeholder }">
+                                <span class="game-filter-names">{{ showingGames.length ? showingGames.join(', ') : placeholder }}</span>
+                            </template>
+                            <template v-if="searchType === 'inclusive'" #header>
+                                <label class="game-filter-select-all">
+                                    <Checkbox :modelValue="allGamesSelected" binary
+                                        aria-label="Select all games"
+                                        :disabled="orderedSupportedGames.length === 0"
+                                        @update:modelValue="setAllGamesSelected" />
+                                    Select all games
+                                </label>
+                            </template>
+                        </component>
+                    </div>
                     <div class="filterContainer" style="display: flex; flex-direction: row;">
                         <div class="games filterSection">
                             <h4>Favorites</h4>
                             <div class="test">
                                 <button id="clearbtn" @click="resetGames">Clear All</button>
-                                <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingGame('Dominion')">Dominion</button>
-                                <button :class="['gamebtn', showingGames.includes('Heat') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingGame('Heat')">Heat</button>
-                                <button :class="['gamebtn', showingGames.includes('Clank') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingGame('Clank')">Clank</button>
-                                <button :class="['gamebtn', showingGames.includes('Lords of Waterdeep') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingGame('Lords of Waterdeep')">Lords of Wate</button>
-                                <button :class="['gamebtn', showingGames.includes('Race for the Galaxy') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingGame('Race for the Galaxy')">Race for the</button>
-                                <button :class="['gamebtn', showingGames.includes('Moonrakers') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingGame('Moonrakers')">Moonrakers</button>
-                                <button :class="['gamebtn', showingGames.includes('Space Base') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingGame('Space Base')">Space Base</button>
+                                <button v-for="game in favoriteGames" :key="game.name"
+                                    :class="['gamebtn', showingGames.includes(game.name) ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingGame(game.name)">{{ game.label }}</button>
                             </div>
                         </div>
                         <div class="games filterSection">
@@ -64,10 +75,10 @@
                             <div class="test">
                                 <button :class="['gamebtn', showingThemes.includes('space') ? 'btn-main' : 'btn-outline']"
                                     @click="toggleShowingTheme('space')">Space</button>
-                                <button :class="['gamebtn', showingThemes.includes('medieval') ? 'btn-main' : 'btn-outline']"
-                                    @click="toggleShowingTheme('medieval')">Medieval</button>
                                 <button :class="['gamebtn', showingThemes.includes('fantasy') ? 'btn-main' : 'btn-outline']"
                                     @click="toggleShowingTheme('fantasy')">Fantasy</button>
+                                <button :class="['gamebtn', showingThemes.includes('historical') ? 'btn-main' : 'btn-outline']"
+                                    @click="toggleShowingTheme('historical')">Historical</button>                                
                             </div>
                         </div>
                         <div class="games filterSection">
@@ -85,7 +96,7 @@
                 </div>
             </div>
             <!-- desktop -->
-            <div v-if="!isMobile" style="position: sticky; top: 50px; height: 455px;" >
+            <div v-if="!isMobile" class="desktop-filters">
                 <div class="section">
                     <h3>Search Type</h3>
                     <div style="display: flex; flex-direction: row; justify-content: space-around;">
@@ -99,36 +110,47 @@
                         </div>
                     </div>
                 </div>
-                <div class="mobileHide" style="display: flex; flex-direction: row;">
+                <div class="section game-filter">
+                    <label for="desktop-game-filter">Games</label>
+                    <component :is="gameSelectComponent" v-model="selectedGameFilter"
+                        inputId="desktop-game-filter" :options="orderedSupportedGames"
+                        :placeholder="searchType === 'inclusive' ? 'Select games' : 'Select a game'"
+                        :loading="supportedGamesLoading" :disabled="supportedGamesLoading || !!supportedGamesError"
+                        showClear :showToggleAll="false" class="game-filter-select"
+                        :pt="{ overlay: { class: 'game-filter-overlay', style: { backgroundColor: '#404040', color: 'white' } } }">
+                        <template #value="{ placeholder }">
+                            <span class="game-filter-names">{{ showingGames.length ? showingGames.join(', ') : placeholder }}</span>
+                        </template>
+                        <template v-if="searchType === 'inclusive'" #header>
+                            <label class="game-filter-select-all">
+                                <Checkbox :modelValue="allGamesSelected" binary
+                                    aria-label="Select all games"
+                                    :disabled="orderedSupportedGames.length === 0"
+                                    @update:modelValue="setAllGamesSelected" />
+                                Select all games
+                            </label>
+                        </template>
+                    </component>
+                </div>
+                <div class="mobileHide desktop-filter-categories">
                     <div class="section games">
                         <h3>Favorites</h3>
-                        <button :class="['gamebtn', showingGames.includes('Dominion') ? 'btn-main' : 'btn-outline']"
-                            @click="toggleShowingGame('Dominion')">Dominion</button>
-                        <button :class="['gamebtn', showingGames.includes('Heat') ? 'btn-main' : 'btn-outline']"
-                            @click="toggleShowingGame('Heat')">Heat</button>
-                        <button :class="['gamebtn', showingGames.includes('Clank') ? 'btn-main' : 'btn-outline']"
-                            @click="toggleShowingGame('Clank')">Clank</button>
-                        <button :class="['gamebtn', showingGames.includes('Lords of Waterdeep') ? 'btn-main' : 'btn-outline']"
-                            @click="toggleShowingGame('Lords of Waterdeep')">Lords of Wate</button>
-                        <button :class="['gamebtn', showingGames.includes('Race for the Galaxy') ? 'btn-main' : 'btn-outline']"
-                            @click="toggleShowingGame('Race for the Galaxy')">Race for the</button>
-                        <button :class="['gamebtn', showingGames.includes('Moonrakers') ? 'btn-main' : 'btn-outline']"
-                            @click="toggleShowingGame('Moonrakers')">Moonrakers</button>
-                        <button :class="['gamebtn', showingGames.includes('Space Base') ? 'btn-main' : 'btn-outline']"
-                            @click="toggleShowingGame('Space Base')">Space Base</button>
+                        <button v-for="game in favoriteGames" :key="game.name"
+                            :class="['gamebtn', showingGames.includes(game.name) ? 'btn-main' : 'btn-outline']"
+                            @click="toggleShowingGame(game.name)">{{ game.label }}</button>
                         <button id="clearbtn" @click="resetGames" style="margin-top: 25px;">Clear All</button>
                     </div>
-                    <div class="section games">
-                        <div class="games">
+                    <div class="desktop-filter-groups">
+                        <div class="section games">
                             <h3>Themes</h3>
                             <button :class="['gamebtn', showingThemes.includes('space') ? 'btn-main' : 'btn-outline']"
                                 @click="toggleShowingTheme('space')">Space</button>
-                            <button :class="['gamebtn', showingThemes.includes('medieval') ? 'btn-main' : 'btn-outline']"
-                                @click="toggleShowingTheme('medieval')">Medieval</button>
                             <button :class="['gamebtn', showingThemes.includes('fantasy') ? 'btn-main' : 'btn-outline']"
                                 @click="toggleShowingTheme('fantasy')">Fantasy</button>
+                            <button :class="['gamebtn', showingThemes.includes('historical') ? 'btn-main' : 'btn-outline']"
+                                @click="toggleShowingTheme('historical')">Historical</button>
                         </div>
-                        <div class="games">
+                        <div class="section games">
                             <h3>Mechanics</h3>
                             <button :class="['gamebtn', showingTypes.includes('deckBuilding') ? 'btn-main' : 'btn-outline']"
                                 @click="toggleShowingType('deckBuilding')">Deck Building</button>
@@ -183,6 +205,11 @@
 
 <script>
 import axios from "axios"
+import { mapState } from 'pinia'
+import Select from 'primevue/select'
+import MultiSelect from 'primevue/multiselect'
+import Checkbox from 'primevue/checkbox'
+import { useSupportedGamesStore } from '@/stores/supportedGames'
 import RecentGame from './RecentGame.vue'
 import { userState } from '/src/state/userState'
 
@@ -192,13 +219,22 @@ export default {
         return{
             userName: userState.username,
             isMobile: window.innerWidth < 440,
+            favoriteGames: [
+                { name: 'Dominion', label: 'Dominion' },
+                { name: 'Race for the Galaxy', label: 'Race for the' },
+                { name: 'Puerto Rico', label: 'Puerto Rico' },
+                { name: 'Clank', label: 'Clank' },
+                { name: 'Lords of Waterdeep', label: 'Lords of Wate' },
+                { name: 'Space Base', label: 'Space Base' },
+                { name: 'Duel for Middle-Earth', label: 'Duel for Middl' },
+            ],
             deckBuilding: ['fakegame', 'Dominion', 'Moonrakers', 'Clank', 'Clank Catacombs', 'Dune Imperium', 'Slay the Spire', 'Star Wars The Deckbuilding Game'],
             workerPlacement : ['fakegame', 'Puerto Rico', 'Dune Imperium', 'Lords of Waterdeep'],
-            resourceManagement : ['fakegame', 'Catan', 'Space Base', 'Puerto Rico'],
+            resourceManagement : ['fakegame', 'Catan', 'Space Base', 'Puerto Rico', 'Race for the Galaxy', 'Dune Imperium', 'Lords of Waterdeep'],
             roleSelection : ['fakegame', 'Race for the Galaxy', 'Puerto Rico'],
-            space: ['Star Wars The Deckbuilding Game', 'Moonrakers', 'Space Base', 'Dune Imperium', 'Race for the Galaxy'],
-            medieval : ['Dominion', 'Puerto Rico', 'Lords of Waterdeep', 'Catan'],
-            fantasy : ['Clank', 'Clank Catacombs', 'Munchkin', 'Slay the Spire'],
+            space: ['Star Wars The Deckbuilding Game', 'Moonrakers', 'Space Base', 'Dune Imperium', 'Race for the Galaxy', 'Cosmic Encounter'],
+            historical : ['Dominion', 'Puerto Rico', 'Catan', '7 Wonders', '7 Wonders Duel'],
+            fantasy : ['Clank', 'Clank Catacombs', 'Munchkin', 'Slay the Spire', 'Lords of Waterdeep', 'Duel for Middle-Earth', 'Boss Monster', 'Root'],
             recentGames: [],
             showingGames: [],
             showingThemes: [],
@@ -213,7 +249,40 @@ export default {
         }
     },
     components: {
-        RecentGame
+        RecentGame,
+        Checkbox
+    },
+    computed: {
+        ...mapState(useSupportedGamesStore, {
+            supportedGames: 'supportedGames',
+            supportedGamesLoading: 'loading',
+            supportedGamesError: 'error'
+        }),
+        orderedSupportedGames() {
+            const playCounts = new Map();
+            for (const game of this.recentGames) {
+                playCounts.set(game.gamename, (playCounts.get(game.gamename) ?? 0) + 1);
+            }
+            return [...this.supportedGames].sort((first, second) =>
+                (playCounts.get(second) ?? 0) - (playCounts.get(first) ?? 0) ||
+                first.localeCompare(second)
+            );
+        },
+        gameSelectComponent() {
+            return this.searchType === 'inclusive' ? MultiSelect : Select;
+        },
+        allGamesSelected() {
+            return this.orderedSupportedGames.length > 0 &&
+                this.orderedSupportedGames.every(game => this.showingGames.includes(game));
+        },
+        selectedGameFilter: {
+            get() {
+                return this.searchType === 'inclusive' ? this.showingGames : (this.showingGames[0] ?? null);
+            },
+            set(value) {
+                this.showingGames = this.searchType === 'inclusive' ? (value ?? []) : (value == null ? [] : [value]);
+            }
+        }
     },
     watch: {
         searchType() {
@@ -222,6 +291,9 @@ export default {
         }
     },
     methods: {
+        setAllGamesSelected(checked) {
+            this.showingGames = checked ? [...this.orderedSupportedGames] : [];
+        },
         toggleShowingGame(gameName){
             if(this.searchType == 'inclusive') { // if showingGames doesnt contain game add it, if it does remove it
                 if(!this.showingGames.includes(gameName)) {
@@ -353,6 +425,136 @@ export default {
 </script>
 
 <style>
+.desktop-filters {
+    position: sticky;
+    top: 50px;
+    align-self: flex-start;
+    display: grid;
+    gap: 10px;
+    width: 260px;
+    flex-shrink: 0;
+    margin: 10px;
+}
+.desktop-filters .section {
+    margin: 0;
+    min-width: 0;
+}
+.desktop-filter-categories {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.desktop-filter-groups {
+    display: grid;
+    gap: 10px;
+}
+.desktop-filters .games {
+    height: auto;
+}
+.desktop-filters .game-filter {
+    width: 100%;
+}
+.game-filter {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 260px;
+    max-width: 100%;
+    box-sizing: border-box;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.desktop-filters h3,
+.mobileHeader h3,
+.mobileHeader h4,
+.game-filter > label {
+    color: white;
+    font-family: 'Manolo Mono', sans-serif !important;
+    font-weight: bold;
+}
+.desktop-filters .game-filter > label {
+    font-size: 1.17em;
+}
+.game-filter-select {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    background-color: #404040;
+    color: white;
+    padding: 7px 10px;
+    border-radius: 5px;
+}
+.game-filter-select .p-multiselect-label-container,
+.game-filter-select .p-multiselect-label,
+.game-filter-select .p-select-label {
+    min-width: 0;
+    padding: 0;
+    white-space: normal;
+}
+.game-filter-names {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+    max-height: 4.2em;
+}
+.game-filter-select .p-select-clear-icon,
+.game-filter-select .p-multiselect-clear-icon {
+    position: static;
+    transform: none;
+    margin: 0;
+    grid-column: 2;
+    grid-row: 1;
+    cursor: pointer;
+}
+.game-filter-select .p-select-dropdown,
+.game-filter-select .p-multiselect-dropdown {
+    grid-column: 3;
+    grid-row: 1;
+    width: 16px;
+}
+.game-filter-select-all {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+.game-filter-overlay {
+    background-color: #404040;
+    color: white;
+    border-radius: 5px;
+}
+.game-filter-overlay .p-select-option,
+.game-filter-overlay .p-multiselect-option,
+.game-filter-overlay .p-multiselect-header {
+    padding: 6px 10px;
+    gap: 8px;
+}
+.game-filter-overlay .p-select-option:hover,
+.game-filter-overlay .p-select-option-selected,
+.game-filter-overlay .p-select-option.p-focus,
+.game-filter-overlay .p-multiselect-option:hover,
+.game-filter-overlay .p-multiselect-option-selected,
+.game-filter-overlay .p-multiselect-option.p-focus {
+    background-color: #138496;
+}
+.game-filter-overlay .p-checkbox-box {
+    background-color: #404040;
+    border: 1px solid white;
+    border-radius: 3px;
+    width: 18px;
+    height: 18px;
+}
+.game-filter-overlay .p-checkbox-checked .p-checkbox-box {
+    background-color: #17a2b8;
+}
 .searchType label {
     color: #fff;
     font-family: 'Manolo Mono', sans-serif !important;
@@ -501,6 +703,9 @@ h3 {
         padding: 10px !important;
         margin: 0px 10px !important;
         background-color: #242526;
+    }
+    .mobileHeader .game-filter {
+        width: 100%;
     }
 
     .filterContainer {
