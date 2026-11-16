@@ -181,7 +181,7 @@ export default {
     computed: {
         ...mapState(useSupportedGamesStore, ['gamePlayerCounts']),
         gameImage() {
-            const cleanedGameName = this.gameName.replace(/\s+/g, '');
+            const cleanedGameName = this.gameName.replace(/[\s:]/g, '');
             return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
         },
         capitalizedCharacterName() {

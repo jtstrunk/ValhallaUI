@@ -591,7 +591,7 @@ export default {
             return this.users.find(user => user.id === this.gameData.posterid)?.username
         },
         imageSource() {
-            const cleanedGameName = this.gameData.gamename.replace(/\s+/g, '');
+            const cleanedGameName = this.gameData.gamename.replace(/[\s:]/g, '');
             return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
         },
         profileImageSrc() {

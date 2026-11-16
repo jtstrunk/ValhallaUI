@@ -381,7 +381,7 @@ export default {
     },
     methods: {
         getGameImage(game) {
-            const cleanedGameName = game.replace(/\s+/g, '');
+            const cleanedGameName = game.replace(/[\s:]/g, '');
             return new URL(`../assets/addgame/${cleanedGameName}.webp`, import.meta.url).href;
         },
         navigateToGamePage(name) {
